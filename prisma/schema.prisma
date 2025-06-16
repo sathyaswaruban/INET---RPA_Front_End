@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 Int          @id @default(autoincrement())
+  email              String       @unique
+  password           String
+  name               String?
+  role               Role         @default(USER)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  createdNavigations Navigation[] @relation("CreatedNavigations")
+  updatedNavigations Navigation[] @relation("UpdatedNavigations")
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  USER
+  HR
+  MARKETING
+}
+
+enum NavType {
+  MAIN
+  DROPDOWN
+  FOOTER
+  SOCIAL
+  UTILITY
+}
+
+model Navigation {
+  id          String   @id @default(uuid())
+  title       String
+  href        String
+  description String?
+  type        NavType
+  parentId    String?
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  isExternal  Boolean  @default(false)
+  icon        String?
+  roles       Json // Using Json type for roles array
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   User     @relation("CreatedNavigations", fields: [createdById], references: [id])
+  createdById Int
+  updatedBy   User?    @relation("UpdatedNavigations", fields: [updatedById], references: [id])
+  updatedById Int?
+
+  // For hierarchical relationships
+  children Navigation[] @relation("NavigationHierarchy")
+  parent   Navigation?  @relation("NavigationHierarchy", fields: [parentId], references: [id])
+
+  @@index([order])
+  @@index([parentId])
+}
