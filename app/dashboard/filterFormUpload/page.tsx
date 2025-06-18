@@ -383,6 +383,7 @@ const FilterForm = () => {
                     </CardHeader>
                     <CardContent>
                         <ul className="text-sm space-y-2 list-disc list-inside text-muted-foreground">
+                            <li><b>Not_In_Vendor</b> : Data Present in Ihub Portal But not in Vendor Excel</li>
                             <li><b>Not in Portal</b> : Data Present in Vendor Excel But not in Ihub Portal</li>
                             <li><b>Vend_suc - Not_In_IhubPortal</b> : Success in Vendor Excel but not in Ihub Portal</li>
                             <li><b>Vend_IHub_Succ - NIL</b> : Success in both Vendor and Ihub But not in Ihub Ledger</li>
@@ -398,7 +399,6 @@ const FilterForm = () => {
                             <li><b>Vend_Fail - Ihub_Ini</b> : Failed in Vendor and Initiated in Ihub and Present in Ihub Ledger</li>
                             <li><b>Tenant_Ini_Not_In_Hub</b> : Initiated in Tenant Database but not present in Ihub Database</li>
                             <li><b>Matched_Values</b> : Values with matched status</li>
-                            <li><b>Not_In_Vendor</b> : Data Present in Ihub Portal But not in Vendor Excel</li>
                         </ul>
                     </CardContent>
                 </Card>
