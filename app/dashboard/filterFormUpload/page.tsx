@@ -403,12 +403,11 @@ const FilterForm = () => {
                     </CardContent>
                 </Card>
             </div>
-            <br/><br/>
-            <div className="flex flex-col lg:flex-row gap-4 justify-center" >
-            {/* Results Section - Only show if apiResponse exists and isSuccess is true */}
-            {apiResponse?.isSuccess && (
-                <ResultsViewer responseData={apiResponse} />
-            )}</div>
+            <div className="flex flex-col lg:flex-row gap-4 mt-4 justify-center" >
+                {/* Results Section - Only show if apiResponse exists and isSuccess is true */}
+                {apiResponse?.isSuccess && (
+                    <ResultsViewer responseData={apiResponse} />
+                )}</div>
         </div>
     );
 };
