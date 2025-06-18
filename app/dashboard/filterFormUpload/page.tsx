@@ -27,6 +27,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ResultsViewer } from "@/components/ResultsViewer";
 import { WidthIcon } from "@radix-ui/react-icons";
+import ReconciliationGuide from "@/components/ReconciliationAccordion";
+import ReconciliationAccordion from "@/components/ReconciliationAccordion";
 
 // Schema for form validation
 const formSchema = z.object({
@@ -222,160 +224,165 @@ const FilterForm = () => {
         }
     };
     return (
-        <div className="flex flex-col items-center min-h-screen p-4">
-            <Card className="w-full max-w-lg mb-8">
-                <CardHeader>
-                    <CardTitle className="text-2xl font-bold text-center">
-                        SELECT INPUT DETAILS
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(processData)} className="space-y-6">
-                            <div className="flex gap-4 justify-between">
-                                {/* From Date */}
+        <div className="flex flex-col min-h-screen p-4">
+            <div className="flex flex-col lg:flex-row gap-4 justify-center">
+                <Card className="w-full lg:w-1/2">
+                    <CardHeader>
+                        <CardTitle className="text-2xl font-bold text-center">
+                            SELECT INPUT DETAILS
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(processData)} className="space-y-6">
+                                <div className="flex gap-4 justify-between">
+                                    {/* From Date */}
+                                    <div className="w-full">
+                                        <FormField
+                                            control={form.control}
+                                            name="fromDate"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>From Date</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="date" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+
+                                    <div className="w-full">
+                                        {/* To Date */}
+                                        <FormField
+                                            control={form.control}
+                                            name="toDate"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>To Date</FormLabel>
+                                                    <FormControl>
+                                                        <Input type="date" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                </div>
                                 <div className="w-full">
+                                    {/* Service Name */}
                                     <FormField
                                         control={form.control}
-                                        name="fromDate"
+                                        name="serviceName"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>From Date</FormLabel>
-                                                <FormControl>
-                                                    <Input type="date" {...field} />
-                                                </FormControl>
+                                                <FormLabel>Select Service</FormLabel>
+                                                <Select value={field.value} onValueChange={field.onChange}>
+                                                    <FormControl>
+                                                        <SelectTrigger className="w-full">
+                                                            <SelectValue placeholder="--Select service--" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        {serviceOptions.map((option) => (
+                                                            <SelectItem
+                                                                key={option.value}
+                                                                value={option.value}
+                                                                disabled={option.disabled}
+                                                                className={option.disabled ? "text-red-500" : ""}
+                                                            >
+                                                                {option.label}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                 </div>
 
-                                <div className="w-full">
-                                    {/* To Date */}
+                                {/* Transaction Type (only visible for Aeps) */}
+                                {selectedService === "AEPS" && (
                                     <FormField
                                         control={form.control}
-                                        name="toDate"
+                                        name="transactionType"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>To Date</FormLabel>
-                                                <FormControl>
-                                                    <Input type="date" {...field} />
-                                                </FormControl>
+                                                <FormLabel>Transaction Type</FormLabel>
+                                                <Select onValueChange={field.onChange}>
+                                                    <FormControl>
+                                                        <SelectTrigger className="w-full">
+                                                            <SelectValue placeholder="--Select transaction--" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        {transactionOptions.map((option) => (
+                                                            <SelectItem key={option.value} value={option.value}>
+                                                                {option.label}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
-                                </div>
-                            </div>
-                            <div className="w-full">
-                                {/* Service Name */}
-                                <FormField
-                                    control={form.control}
-                                    name="serviceName"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Select Service</FormLabel>
-                                            <Select value={field.value} onValueChange={field.onChange}>
-                                                <FormControl>
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="--Select service--" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {serviceOptions.map((option) => (
-                                                        <SelectItem
-                                                            key={option.value}
-                                                            value={option.value}
-                                                            disabled={option.disabled}
-                                                            className={option.disabled ? "text-red-500" : ""}
-                                                        >
-                                                            {option.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-
-                            {/* Transaction Type (only visible for Aeps) */}
-                            {selectedService === "AEPS" && (
-                                <FormField
-                                    control={form.control}
-                                    name="transactionType"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Transaction Type</FormLabel>
-                                            <Select onValueChange={field.onChange}>
-                                                <FormControl>
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="--Select transaction--" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {transactionOptions.map((option) => (
-                                                        <SelectItem key={option.value} value={option.value}>
-                                                            {option.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            )}
-
-                            {/* File Upload */}
-                            <FormField
-                                control={form.control}
-                                name="file"
-                                render={() => (
-                                    <FormItem>
-                                        <FormLabel>Upload Excel File</FormLabel>
-                                        <div className="flex items-center gap-4">
-                                            <Button asChild variant="outline">
-                                                <label className="cursor-pointer">
-                                                    Choose File
-                                                    <Input
-                                                        type="file"
-                                                        accept=".xlsx"
-                                                        className="hidden"
-                                                        onChange={handleFileChange}
-                                                    />
-                                                </label>
-                                            </Button>
-                                            <span className="text-sm text-muted-foreground">
-                                                {fileName}
-                                            </span>
-                                        </div>
-                                        <FormMessage />
-                                    </FormItem>
                                 )}
-                            />
 
-                            {/* Action Buttons */}
-                            <div className="flex gap-4">
-                                <Button type="submit" className="flex-1" disabled={isSubmitting}>
-                                    {isSubmitting ? "Processing..." : "Process"}
-                                </Button>
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="flex-1"
-                                    onClick={clearForm}
-                                    disabled={isSubmitting}
-                                >
-                                    Clear
-                                </Button>
-                            </div>
-                        </form>
-                    </Form>
-                </CardContent>
-            </Card>
+                                {/* File Upload */}
+                                <FormField
+                                    control={form.control}
+                                    name="file"
+                                    render={() => (
+                                        <FormItem>
+                                            <FormLabel>Upload Excel File</FormLabel>
+                                            <div className="flex items-center gap-4">
+                                                <Button asChild variant="outline">
+                                                    <label className="cursor-pointer">
+                                                        Choose File
+                                                        <Input
+                                                            type="file"
+                                                            accept=".xlsx"
+                                                            className="hidden"
+                                                            onChange={handleFileChange}
+                                                        />
+                                                    </label>
+                                                </Button>
+                                                <span className="text-sm text-muted-foreground">
+                                                    {fileName}
+                                                </span>
+                                            </div>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
+                                {/* Action Buttons */}
+                                <div className="flex gap-4">
+                                    <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                                        {isSubmitting ? "Processing..." : "Process"}
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="flex-1"
+                                        onClick={clearForm}
+                                        disabled={isSubmitting}
+                                    >
+                                        Clear
+                                    </Button>
+                                </div>
+                            </form>
+                        </Form>
+                    </CardContent>
+                </Card>
+
+                {/* <Card className="w-full lg:w-1/2">
+                   
+                </Card> */}
+            </div>
             {/* Results Section - Only show if apiResponse exists and isSuccess is true */}
             {apiResponse?.isSuccess && (
                 <ResultsViewer responseData={apiResponse} />
