@@ -1,7 +1,7 @@
 "use client";
 
 import { SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "@/components/ui/sidebar";
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { Home, List, RefreshCcw} from "lucide-react";
 import React from "react";
 import { usePathname } from "next/navigation";
 
@@ -18,8 +18,14 @@ export default function InetSidebarContent() {
     {
       title: "Auto Reconciliation",
       url: "/dashboard/filterFormUpload",
-      icon: Inbox,
+      icon: RefreshCcw,
     },
+    {
+      title: "History Table",
+      url: "/dashboard/historyTable",
+      icon: List,
+    },
+
 
   ];
 
@@ -51,24 +57,6 @@ export default function InetSidebarContent() {
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
-      <SidebarRail></SidebarRail>
-      {/* <SidebarGroup>
-        <SidebarGroupLabel className="text-primary">User</SidebarGroupLabel>
-        <SidebarGroupContent>
-          <SidebarMenu>
-            {userItems.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild isActive={item.url === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(item.url)}>
-                  <a href={item.url}>
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup> */}
     </SidebarContent>
   );
 }

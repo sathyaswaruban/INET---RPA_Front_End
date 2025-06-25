@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import axios from "axios";
@@ -66,12 +66,33 @@ const transactionOptions = [
     { value: "2", label: "Withdrawal" },
     { value: "3", label: "Mini Statement" },
 ];
-
+interface User {
+    id: number;
+    email: string;
+    name: string;
+    role: "ADMIN" | "USER";
+    createdAt: string;
+}
 const FilterForm = () => {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [fileName, setFileName] = useState("No file chosen");
     const [apiResponse, setApiResponse] = useState<any>(null); // To store API response
+    const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get("/api/auth/me");
+                setUser(response?.data?.user);
+            } catch (error) {
+                toast.error("Failed to fetch user data");
+                router.push("/auth/login");
+            }
+        };
+
+        fetchUser();
+    }, [router]);
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -137,7 +158,7 @@ const FilterForm = () => {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
-                timeout: 60000,
+                timeout: 120000,
             });
 
             // console.log("After axios request", res);
@@ -152,12 +173,35 @@ const FilterForm = () => {
                     let Message = response?.data?.message
                     toast.success(Message);
                     setApiResponse(response.data);
+                    // Save to DB
+                    await axios.post("/api/user-task-history", {
+                        uid: user?.id,
+                        userName: user?.name,
+                        serviceName: values.serviceName,
+                        fromDate: values.fromDate,
+                        toDate: values.toDate,
+                        uploadedFileName: values.file.name,
+                        responseMessage: Message,
+                        responseStatus: "SUCCESS", // or "FAILURE"
+                        transactionType: values.transactionType,
+                    });
                 } else {
                     let errorMessage = " Error processing file..! Check Inputs and try again..!";
                     if (response?.data?.message.length > 0) {
                         errorMessage = response?.data?.message
                     }
                     toast.error(errorMessage, { duration: 5000 });
+                    await axios.post("/api/user-task-history", {
+                        uid: user?.id,
+                        userName: user?.name,
+                        serviceName: values.serviceName,
+                        fromDate: values.fromDate,
+                        toDate: values.toDate,
+                        uploadedFileName: values.file.name,
+                        responseMessage: errorMessage,
+                        responseStatus: "FAILURE",
+                        transactionType: values.transactionType,
+                    });
                     setApiResponse(null);
                 }
             } else {
@@ -168,14 +212,26 @@ const FilterForm = () => {
 
             // First check if it's our custom SERVER_UNREACHABLE error
             if (error instanceof Error && error.message === "SERVER_UNREACHABLE") {
-                toast.error("Server is not reachable. Please check your network connection and try again.", {
-                    duration: 10000,
+                let errorMessage = "Server is not reachable. Please check your network connection and try again."
+                toast.error(errorMessage, {
+                    duration: 5000,
                     position: 'top-center',
                     style: {
                         background: '#ffebee',
                         color: '#b71c1c',
                         fontWeight: 'bold',
                     }
+                });
+                await axios.post("/api/user-task-history", {
+                    uid: user?.id,
+                    userName: user?.name,
+                    serviceName: values.serviceName,
+                    fromDate: values.fromDate,
+                    toDate: values.toDate,
+                    uploadedFileName: values.file.name,
+                    responseMessage: errorMessage,
+                    responseStatus: "FAILURE",
+                    transactionType: values.transactionType,
                 });
             }
             // Then check for Axios errors
@@ -188,14 +244,38 @@ const FilterForm = () => {
                 });
 
                 if (error.code === "ERR_NETWORK") {
-                    toast.error("Network Error: Could not connect to server. Check your Internet connection and try again..!", {
-                        duration: 15000,
+                    let errorMessage = "Network Error: Could not connect to server. Check your Internet connection and try again..!";
+                    toast.error(errorMessage, {
+                        duration: 5000,
                         position: 'top-center'
+                    });
+                    await axios.post("/api/user-task-history", {
+                        uid: user?.id,
+                        userName: user?.name,
+                        serviceName: values.serviceName,
+                        fromDate: values.fromDate,
+                        toDate: values.toDate,
+                        uploadedFileName: values.file.name,
+                        responseMessage: errorMessage,
+                        responseStatus: "FAILURE",
+                        transactionType: values.transactionType,
                     });
                 }
                 else if (error.code === "ECONNABORTED") {
-                    toast.error("Request timed out. Server is taking too long to respond..!", {
-                        duration: 100000
+                    let errorMessage = "Request timed out. Server is taking too long to respond..!";
+                    toast.error(errorMessage, {
+                        duration: 5000
+                    });
+                    await axios.post("/api/user-task-history", {
+                        uid: user?.id,
+                        userName: user?.name,
+                        serviceName: values.serviceName,
+                        fromDate: values.fromDate,
+                        toDate: values.toDate,
+                        uploadedFileName: values.file.name,
+                        responseMessage: errorMessage,
+                        responseStatus: "FAILURE",
+                        transactionType: values.transactionType,
                     });
                 }
                 else if (error.response) {
@@ -377,7 +457,7 @@ const FilterForm = () => {
                 </Card>
                 <Card className="w-full lg:w-1/2 max-h-[60vh] overflow-y-auto">
                     <CardHeader>
-                        <CardTitle className="text-lg font-semibold text-center">
+                        <CardTitle className="text-lg font-semibold md:table-fixed text-center">
                             Status Labels
                         </CardTitle>
                     </CardHeader>

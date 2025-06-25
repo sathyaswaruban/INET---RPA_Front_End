@@ -63,3 +63,18 @@ model Navigation {
   @@index([order])
   @@index([parentId])
 }
+
+model user_task_history {
+  id                Int      @id @default(autoincrement())
+  uid               Int
+  UserName          String
+  ServiceName       String
+  FromDate          DateTime
+  ToDate            DateTime
+  UploadedFileName  String
+  ResponseMessage   String
+  createdAt         DateTime @default(now())
+  TransactionType   Int?
+  ResponseStatus    String
+}
+

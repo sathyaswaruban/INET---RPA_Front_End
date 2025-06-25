@@ -2,12 +2,6 @@
 
 import React, { useEffect } from "react";
 import "aos/dist/aos.css";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
-import { PartnersMarquee } from "@/components/PartnersMarquee";
-import { HeroSection } from "@/components/HeroSection";
-import { DynamicHero } from "@/components/DynamicHero";
-import { MarqueeTestimonials } from "@/components/MarqueeTestimonials";
 import Aos from "aos";
 import LoginPage from "./auth/login/page";
 
