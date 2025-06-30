@@ -1,4 +1,3 @@
-// /api/user-task-history/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prismaClient";
 
@@ -17,7 +16,6 @@ export async function POST(req: NextRequest) {
             responseStatus,
         } = data;
 
-        // Convert date strings to Date objects
         const toDateObj = (str: string) => {
             const date = new Date(`${str}T00:00:00Z`);
             if (isNaN(date.getTime())) throw new Error(`Invalid date: ${str}`);

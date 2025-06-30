@@ -1,10 +1,9 @@
-// /api/user-task-history/route.ts
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prismaClient";
 
 function formatIST(date: Date) {
   const ist = new Date(date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
-  return ist.toISOString().slice(0, 19).replace("T", " "); // "YYYY-MM-DD HH:mm:ss"
+  return ist.toISOString().slice(0, 19).replace("T", " ");
 }
 
 
@@ -14,13 +13,11 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
-    // Convert createdAt to IST for each record
     const dataWithIST = history.map((item) => ({
       ...item,
       createdAt: formatIST(item.createdAt)
     }));
 
-    // Return the modified version
     return NextResponse.json({ success: true, data: dataWithIST });
   } catch (error) {
     console.error("Fetch history failed", error);

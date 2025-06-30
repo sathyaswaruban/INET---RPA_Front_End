@@ -80,6 +80,7 @@ const FilterForm = () => {
     const [apiResponse, setApiResponse] = useState<any>(null); // To store API response
     const [user, setUser] = useState<User | null>(null);
 
+
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -106,7 +107,11 @@ const FilterForm = () => {
     });
 
     const selectedService = form.watch("serviceName");
-
+    useEffect(() => {
+        if (selectedService !== "AEPS") {
+            form.setValue("transactionType", "default", { shouldValidate: false });
+        }
+    }, [selectedService, form]);
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -130,7 +135,20 @@ const FilterForm = () => {
             return null;
         }
     };
+    const savingHistory = async (values: any, Message: string, status: string) => {
+        await axios.post("/api/user-task-history", {
+            uid: user?.id,
+            userName: user?.name,
+            serviceName: values.serviceName,
+            fromDate: values.fromDate,
+            toDate: values.toDate,
+            uploadedFileName: values.file.name,
+            responseMessage: Message,
+            responseStatus: status,
+            transactionType: values.transactionType,
+        });
 
+    }
     const processData = async (values: FormValues) => {
         setIsSubmitting(true);
         setApiResponse(null);
@@ -148,18 +166,18 @@ const FilterForm = () => {
             // console.log("Before axios request");
 
             // Remove the .catch() here and let the try/catch handle it
-            const res = await axios.post("http://192.168.1.157:5000/api/reconciliation", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-                timeout: 120000,
-            });
-            // const res = await axios.post("http://localhost:5000/api/reconciliation", formData, {
+            // const res = await axios.post("http://192.168.1.157:5000/api/reconciliation", formData, {
             //     headers: {
             //         "Content-Type": "multipart/form-data",
             //     },
             //     timeout: 120000,
             // });
+            const res = await axios.post("http://localhost:5000/api/reconciliation", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                timeout: 120000,
+            });
 
             // console.log("After axios request", res);
 
@@ -171,37 +189,26 @@ const FilterForm = () => {
             if (response.status === 200) {
                 if (response.data?.isSuccess) {
                     let Message = response?.data?.message
-                    toast.success(Message);
-                    setApiResponse(response.data);
-                    // Save to DB
-                    await axios.post("/api/user-task-history", {
-                        uid: user?.id,
-                        userName: user?.name,
-                        serviceName: values.serviceName,
-                        fromDate: values.fromDate,
-                        toDate: values.toDate,
-                        uploadedFileName: values.file.name,
-                        responseMessage: Message,
-                        responseStatus: "SUCCESS", // or "FAILURE"
-                        transactionType: values.transactionType,
+                    toast.success(Message, {
+                        duration: 5000,
+                        position: 'top-center'
                     });
+                    setApiResponse(response.data);
+                    let status = 'Success'
+                    savingHistory(values, Message, status);
+
                 } else {
                     let errorMessage = " Error processing file..! Check Inputs and try again..!";
                     if (response?.data?.message.length > 0) {
                         errorMessage = response?.data?.message
                     }
-                    toast.error(errorMessage, { duration: 5000 });
-                    await axios.post("/api/user-task-history", {
-                        uid: user?.id,
-                        userName: user?.name,
-                        serviceName: values.serviceName,
-                        fromDate: values.fromDate,
-                        toDate: values.toDate,
-                        uploadedFileName: values.file.name,
-                        responseMessage: errorMessage,
-                        responseStatus: "FAILURE",
-                        transactionType: values.transactionType,
-                    });
+                    toast.error(errorMessage,
+                        {
+                            duration: 5000,
+                            position: 'top-center'
+                        });
+                    let status = 'Failure'
+                    savingHistory(values, errorMessage, status);
                     setApiResponse(null);
                 }
             } else {
@@ -222,17 +229,8 @@ const FilterForm = () => {
                         fontWeight: 'bold',
                     }
                 });
-                await axios.post("/api/user-task-history", {
-                    uid: user?.id,
-                    userName: user?.name,
-                    serviceName: values.serviceName,
-                    fromDate: values.fromDate,
-                    toDate: values.toDate,
-                    uploadedFileName: values.file.name,
-                    responseMessage: errorMessage,
-                    responseStatus: "FAILURE",
-                    transactionType: values.transactionType,
-                });
+                let status = 'Failure'
+                savingHistory(values, errorMessage, status);
             }
             // Then check for Axios errors
             else if (axios.isAxiosError(error)) {
@@ -244,55 +242,74 @@ const FilterForm = () => {
                 });
 
                 if (error.code === "ERR_NETWORK") {
-                    let errorMessage = "Network Error: Could not connect to server. Check your Internet connection and try again..!";
+                    let errorMessage = "Network Error: Server is not reachable. Check your Internet connection and try again..!";
                     toast.error(errorMessage, {
                         duration: 5000,
                         position: 'top-center'
                     });
-                    await axios.post("/api/user-task-history", {
-                        uid: user?.id,
-                        userName: user?.name,
-                        serviceName: values.serviceName,
-                        fromDate: values.fromDate,
-                        toDate: values.toDate,
-                        uploadedFileName: values.file.name,
-                        responseMessage: errorMessage,
-                        responseStatus: "FAILURE",
-                        transactionType: values.transactionType,
-                    });
+                    let status = 'Failure'
+                    savingHistory(values, errorMessage, status);
+
                 }
                 else if (error.code === "ECONNABORTED") {
                     let errorMessage = "Request timed out. Server is taking too long to respond..!";
                     toast.error(errorMessage, {
-                        duration: 5000
+                        duration: 5000,
+                        position: 'top-center'
+
                     });
-                    await axios.post("/api/user-task-history", {
-                        uid: user?.id,
-                        userName: user?.name,
-                        serviceName: values.serviceName,
-                        fromDate: values.fromDate,
-                        toDate: values.toDate,
-                        uploadedFileName: values.file.name,
-                        responseMessage: errorMessage,
-                        responseStatus: "FAILURE",
-                        transactionType: values.transactionType,
-                    });
+                    let status = 'Failure'
+                    savingHistory(values, errorMessage, status);
                 }
                 else if (error.response) {
                     // Server responded with error status
-                    toast.error(`Server error (${error.response.status}): ${error.response.data?.message || 'No error message'}`);
+                    toast.error(`Server error (${error.response.status}): ${error.response.data?.message || 'No error message'}`,
+                        {
+                            duration: 5000,
+                            position: 'top-center'
+
+                        }
+                    );
+                    let status = 'Failure'
+                    savingHistory(values, error.response.data?.message, status);
                 }
                 else {
-                    toast.error("Network request failed: " + error.message);
+                    toast.error("Network request failed: " + error.message,
+                        {
+                            duration: 5000,
+                            position: 'top-center'
+
+                        }
+                    );
+                    let status = 'Failure'
+                    savingHistory(values, error.message, status);
+
                 }
             }
             // Handle other types of errors
             else if (error instanceof Error) {
-                toast.error(error.message);
+                toast.error(error.message,
+                    {
+                        duration: 5000,
+                        position: 'top-center'
+
+                    }
+                );
+                let status = 'Failure'
+                savingHistory(values, error.message, status);
             }
             // Final fallback
             else {
-                toast.error("An unknown error occurred");
+                let message = '"An unknown error occurred"'
+                toast.error(message,
+                    {
+                        duration: 5000,
+                        position: 'top-center'
+
+                    }
+                );
+                let status = 'Failure'
+                savingHistory(values, message, status);
             }
 
             setApiResponse(null);

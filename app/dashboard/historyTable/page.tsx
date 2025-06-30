@@ -93,7 +93,7 @@ const HistoryTableWithFilters = () => {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4 text-center">User Task History</h2>
 
-      {/* Filters */}
+      
       <div className="bg-white shadow rounded-lg p-4 mb-6 justify-content grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
         <div>
           <label className="block text-sm font-bold">From Date</label>
@@ -139,7 +139,7 @@ const HistoryTableWithFilters = () => {
         </div>
       </div>
 
-      {/* Table */}
+      
       <div className="overflow-x-auto shadow border rounded-lg">
         <table className="min-w-full bg-white text-sm">
           <thead className="text-white text-left bg-[#0097eb]">
