@@ -165,7 +165,7 @@ const HistoryTableWithFilters = () => {
             ) : (
               paginatedData.map((entry, index) => (
                 <tr key={entry.id} className="border-t hover:bg-gray-50">
-                  <td className="px-4 py-2">{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td> {/* S.No */}
+                  <td className="px-4 py-2">{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
                   <td className="px-4 py-2">{entry.UserName}</td>
                   <td className="px-4 py-2">{entry.ServiceName}</td>
                   <td className="px-4 py-2">{entry.FromDate.slice(0, 10)}</td>
