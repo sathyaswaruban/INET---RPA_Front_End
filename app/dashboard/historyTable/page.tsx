@@ -71,7 +71,7 @@ const HistoryTableWithFilters = () => {
     const todayStr = formatDate(new Date());
 
     const todayData = data.filter((item: History) => {
-      const recordDate = new Date(item.createdAt).toISOString().slice(0, 10); // ✅ FIXED
+      const recordDate = new Date(item.createdAt).toISOString().slice(0, 10);
       return recordDate === todayStr;
     });
 
@@ -93,7 +93,7 @@ const HistoryTableWithFilters = () => {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4 text-center">User Task History</h2>
 
-      
+
       <div className="bg-white shadow rounded-lg p-4 mb-6 justify-content grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
         <div>
           <label className="block text-sm font-bold">From Date</label>
@@ -139,11 +139,12 @@ const HistoryTableWithFilters = () => {
         </div>
       </div>
 
-      
+
       <div className="overflow-x-auto shadow border rounded-lg">
         <table className="min-w-full bg-white text-sm">
           <thead className="text-white text-left bg-[#0097eb]">
             <tr>
+              <th className="px-4 py-2">S.No</th>
               <th className="px-4 py-2">User</th>
               <th className="px-4 py-2">Service</th>
               <th className="px-4 py-2">From</th>
@@ -157,23 +158,21 @@ const HistoryTableWithFilters = () => {
           <tbody>
             {paginatedData.length === 0 ? (
               <tr>
-                <td colSpan={8} className="text-center px-4 py-4 text-gray-500">
+                <td colSpan={9} className="text-center px-4 py-4 text-gray-500">
                   No records found
                 </td>
               </tr>
             ) : (
-              paginatedData.map((entry) => (
+              paginatedData.map((entry, index) => (
                 <tr key={entry.id} className="border-t hover:bg-gray-50">
+                  <td className="px-4 py-2">{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td> {/* S.No */}
                   <td className="px-4 py-2">{entry.UserName}</td>
                   <td className="px-4 py-2">{entry.ServiceName}</td>
                   <td className="px-4 py-2">{entry.FromDate.slice(0, 10)}</td>
                   <td className="px-4 py-2">{entry.ToDate.slice(0, 10)}</td>
                   <td className="px-4 py-2 truncate max-w-[120px]">{entry.UploadedFileName}</td>
                   <td className="px-4 py-2 truncate max-w-[160px]">{entry.ResponseMessage}</td>
-                  <td
-                    className={`px-4 py-2 font-semibold ${entry.ResponseStatus === "SUCCESS" ? "text-green-600" : "text-red-500"
-                      }`}
-                  >
+                  <td className={`px-4 py-2 font-semibold ${entry.ResponseStatus === "Success" ? "text-green-600" : "text-red-500"}`}>
                     {entry.ResponseStatus}
                   </td>
                   <td className="px-4 py-2">{entry.createdAt}</td>
@@ -181,6 +180,7 @@ const HistoryTableWithFilters = () => {
               ))
             )}
           </tbody>
+
         </table>
       </div>
 
