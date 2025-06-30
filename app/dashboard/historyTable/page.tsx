@@ -37,7 +37,7 @@ const HistoryTableWithFilters = () => {
           const todayStr = formatDate(new Date());
 
           const todayData = allData.filter((item: History) => {
-            const recordDate = item.createdAt.slice(0, 10);
+            const recordDate = new Date(item.createdAt).toISOString().slice(0, 10); // ✅ FIXED
             return recordDate === todayStr;
           });
 
@@ -71,9 +71,10 @@ const HistoryTableWithFilters = () => {
     const todayStr = formatDate(new Date());
 
     const todayData = data.filter((item: History) => {
-      const recordDate = item.createdAt.slice(0, 10);
+      const recordDate = new Date(item.createdAt).toISOString().slice(0, 10); // ✅ FIXED
       return recordDate === todayStr;
     });
+
 
     setFromDate(todayStr);
     setToDate(todayStr);
@@ -93,7 +94,7 @@ const HistoryTableWithFilters = () => {
       <h2 className="text-2xl font-bold mb-4 text-center">User Task History</h2>
 
       {/* Filters */}
-      <div className="bg-white shadow rounded-lg p-4 mb-6 grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+      <div className="bg-white shadow rounded-lg p-4 mb-6 justify-content grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
         <div>
           <label className="block text-sm font-bold">From Date</label>
           <input
@@ -175,7 +176,7 @@ const HistoryTableWithFilters = () => {
                   >
                     {entry.ResponseStatus}
                   </td>
-                  <td className="px-4 py-2">{new Date(entry.createdAt).toLocaleString()}</td>
+                  <td className="px-4 py-2">{entry.createdAt}</td>
                 </tr>
               ))
             )}

@@ -24,6 +24,13 @@ export async function POST(req: NextRequest) {
             return date;
         };
 
+
+        function getISTDate() {
+            const now = new Date();
+            const istOffset = 5.5 * 60 * 60 * 1000;
+            return new Date(now.getTime() + istOffset);
+        }
+
         const newRecord = await prisma.user_task_history.create({
             data: {
                 uid,
@@ -35,9 +42,10 @@ export async function POST(req: NextRequest) {
                 ResponseMessage: responseMessage,
                 TransactionType: transactionType ? parseInt(transactionType) : null,
                 ResponseStatus: responseStatus,
-                createdAt: new Date(),
+                createdAt: getISTDate(),
             },
         });
+
 
         return NextResponse.json({ success: true, data: newRecord });
 
