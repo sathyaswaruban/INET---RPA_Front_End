@@ -28,8 +28,6 @@ const HistoryTableWithFilters = () => {
   const [toDate, setToDate] = useState(today);
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [error, setError] = useState('');
-
 
   useEffect(() => {
     const fetchHistory = async () => {
