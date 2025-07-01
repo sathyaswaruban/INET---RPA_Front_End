@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 
 type History = {
   id: number;
@@ -27,6 +28,8 @@ const HistoryTableWithFilters = () => {
   const [toDate, setToDate] = useState(today);
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [error, setError] = useState('');
+
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -66,6 +69,35 @@ const HistoryTableWithFilters = () => {
     setFiltered(filteredData);
     setCurrentPage(1);
   };
+  const handleToDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedToDate = e.target.value;
+    setToDate(selectedToDate);
+    const todayStr = formatDate(new Date());
+
+
+    // Validation
+    if (fromDate && selectedToDate < fromDate) {
+      toast.error('❌ To Date cannot be earlier than From Date');
+      setToDate(todayStr);
+
+    }
+
+  };
+
+  const handleFromDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFromDate = e.target.value;
+    const todayStr = formatDate(new Date());
+
+    setFromDate(selectedFromDate);
+
+    // Optional: validate toDate again
+    if (toDate && toDate < selectedFromDate) {
+      toast.error('❌ To Date cannot be earlier than From Date');
+      setFromDate(todayStr);
+    }
+
+  };
+
 
   const handleClear = () => {
     const todayStr = formatDate(new Date());
@@ -99,8 +131,8 @@ const HistoryTableWithFilters = () => {
           <label className="block text-sm font-bold">From Date</label>
           <input
             type="date"
+            onChange={handleFromDateChange}
             value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
             className="border border-gray-300 rounded px-3 py-2 w-full"
           />
         </div>
@@ -109,7 +141,7 @@ const HistoryTableWithFilters = () => {
           <input
             type="date"
             value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
+            onChange={handleToDateChange}
             className="border border-gray-300 rounded px-3 py-2 w-full"
           />
         </div>

@@ -21,7 +21,15 @@ export async function POST(req: NextRequest) {
             if (isNaN(date.getTime())) throw new Error(`Invalid date: ${str}`);
             return date;
         };
+        
+        // LIVE SERVER WORKING FUNCTION
+        // function getISTDate(): Date {
+        //     // Method 1: If server is in IST
+        //     return new Date();
 
+        //     // // Method 2: Force IST conversion
+        //     // return new Date(Date.now() + (5.5 * 60 * 60 * 1000));
+        // }
 
         function getISTDate() {
             const now = new Date();
