@@ -337,7 +337,7 @@ const FilterForm = () => {
                                             name="fromDate"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>From Date</FormLabel>
+                                                    <FormLabel className="font-bold">From Date</FormLabel>
                                                     <FormControl>
                                                         <Input type="date" {...field} />
                                                     </FormControl>
@@ -354,7 +354,7 @@ const FilterForm = () => {
                                             name="toDate"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>To Date</FormLabel>
+                                                    <FormLabel className="font-bold">To Date</FormLabel>
                                                     <FormControl>
                                                         <Input type="date" {...field} />
                                                     </FormControl>
@@ -371,7 +371,7 @@ const FilterForm = () => {
                                         name="serviceName"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Select Service</FormLabel>
+                                                <FormLabel className="font-bold">Select Service</FormLabel>
                                                 <Select value={field.value} onValueChange={field.onChange}>
                                                     <FormControl>
                                                         <SelectTrigger className="w-full">
@@ -404,7 +404,7 @@ const FilterForm = () => {
                                         name="transactionType"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Transaction Type</FormLabel>
+                                                <FormLabel className="font-bold">Transaction Type</FormLabel>
                                                 <Select onValueChange={field.onChange}>
                                                     <FormControl>
                                                         <SelectTrigger className="w-full">
@@ -431,7 +431,7 @@ const FilterForm = () => {
                                     name="file"
                                     render={() => (
                                         <FormItem>
-                                            <FormLabel>Upload Excel File</FormLabel>
+                                            <FormLabel className="font-bold">Upload Excel File</FormLabel>
                                             <div className="flex items-center gap-4">
                                                 <Button asChild variant="outline">
                                                     <label className="cursor-pointer">
@@ -455,7 +455,7 @@ const FilterForm = () => {
 
                                 {/* Action Buttons */}
                                 <div className="flex gap-4">
-                                    <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                                    <Button type="submit" className="flex-1 font-bold" disabled={isSubmitting}>
                                         {isSubmitting ? "Processing..." : "Process"}
                                     </Button>
                                     <Button

@@ -77,7 +77,10 @@ const HistoryTableWithFilters = () => {
 
     // Validation
     if (fromDate && selectedToDate < fromDate) {
-      toast.error('❌ To Date cannot be earlier than From Date');
+      toast.error('To Date cannot be earlier than From Date.', {
+        position: "top-center",
+        duration: 2000,
+      });
       setToDate(todayStr);
 
     }
@@ -92,7 +95,10 @@ const HistoryTableWithFilters = () => {
 
     // Optional: validate toDate again
     if (toDate && toDate < selectedFromDate) {
-      toast.error('❌ To Date cannot be earlier than From Date');
+      toast.error('To Date cannot be earlier than From Date.', {
+        position: "top-center",
+        duration: 2000,
+      });
       setFromDate(todayStr);
     }
 
