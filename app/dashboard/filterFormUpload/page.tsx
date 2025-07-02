@@ -55,7 +55,7 @@ type FormValues = z.infer<typeof formSchema>;
 const serviceOptions = [
     { value: "RECHARGE", label: "PaySprint-Recharge" },
     { value: "AEPS", label: "PaySprint-Aeps" },
-    { value: "IMT", label: "PaySprint-IMT" },
+    { value: "MATM", label: "Mobile ATM (M-ATM)" },
     { value: "BBPS", label: "BBPS" },
     { value: "Pan_UTI", label: "Pan_UTI" },
     { value: "Pan_NSDL", label: "Pan_NSDL", disabled: true },
@@ -207,7 +207,7 @@ const FilterForm = () => {
                             duration: 5000,
                             position: 'top-center'
                         });
-                    let status = 'Failure'
+                    let status = 'Failed'
                     savingHistory(values, errorMessage, status);
                     setApiResponse(null);
                 }

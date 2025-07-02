@@ -60,7 +60,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     });
     const service_name = localData?.service_name || " "
     // console.log(service_name)
-
+    
     const orderedColumns = [
         "CATEGORY",
         "TENANT_ID",
@@ -72,8 +72,9 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
         "VENDOR_DATE",
         "VENDOR_STATUS",
         "IHUB_MASTER_STATUS",
-        "IHUB_LEDGER_STATUS",
         `${service_name}_STATUS`,
+        "IHUB_LEDGER_STATUS",
+        "BILL_FETCH_STATUS",
         // "TENANT_LEDGER_STATUS",
         "TRANSACTION_DEBIT",
         "TRANSACTION_CREDIT",
