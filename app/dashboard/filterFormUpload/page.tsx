@@ -57,8 +57,8 @@ const serviceOptions = [
     { value: "AEPS", label: "PaySprint-Aeps" },
     { value: "MATM", label: "Mobile ATM (M-ATM)" },
     { value: "BBPS", label: "BBPS" },
-    { value: "Pan_UTI", label: "Pan_UTI" },
-    { value: "Pan_NSDL", label: "Pan_NSDL", disabled: true },
+    { value: "PASSPORT", label: "Passport" },
+    { value: "LIC", label: "LIC - Premimum" },
 ];
 
 const transactionOptions = [
@@ -383,8 +383,6 @@ const FilterForm = () => {
                                                             <SelectItem
                                                                 key={option.value}
                                                                 value={option.value}
-                                                                disabled={option.disabled}
-                                                                className={option.disabled ? "text-red-500" : ""}
                                                             >
                                                                 {option.label}
                                                             </SelectItem>
