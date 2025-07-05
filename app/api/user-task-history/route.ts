@@ -32,9 +32,7 @@ export async function POST(req: NextRequest) {
         // }
 
         function getISTDate() {
-            const now = new Date();
-            const istOffset = 5.5 * 60 * 60 * 1000;
-            return new Date(now.getTime() + istOffset);
+            return new Date();
         }
 
         const newRecord = await prisma.user_task_history.create({

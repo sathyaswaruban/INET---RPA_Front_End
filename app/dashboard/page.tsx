@@ -86,19 +86,19 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm font-medium text-gray-500">Name</p>
-                <p className="mt-1 text-sm text-gray-900">{user.name}</p>
+                <p className="mt-1 text-sm">{user.name}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Email</p>
-                <p className="mt-1 text-sm text-gray-900">{user.email}</p>
+                <p className="mt-1 text-sm">{user.email}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Account Created</p>
-                <p className="mt-1 text-sm text-gray-900">{new Date(user.createdAt).toLocaleDateString()}</p>
+                <p className="mt-1 text-sm">{new Date(user.createdAt).toLocaleDateString()}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">User ID</p>
-                <p className="mt-1 text-sm text-gray-900">{user.id}</p>
+                <p className="mt-1 text-sm">{user.id}</p>
               </div>
             </div>
           </div>

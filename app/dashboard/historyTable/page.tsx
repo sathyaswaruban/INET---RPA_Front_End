@@ -3,6 +3,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/ui/card"
+
 
 type History = {
   id: number;
@@ -130,54 +137,61 @@ const HistoryTableWithFilters = () => {
       <h2 className="text-2xl font-bold mb-4 text-center">User Task History</h2>
 
 
-      <div className="bg-white shadow rounded-lg p-4 mb-6 justify-content grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-        <div>
-          <label className="block text-sm font-bold">From Date</label>
-          <input
-            type="date"
-            onChange={handleFromDateChange}
-            value={fromDate}
-            className="border border-gray-300 rounded px-3 py-2 w-full"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-bold">To Date</label>
-          <input
-            type="date"
-            value={toDate}
-            onChange={handleToDateChange}
-            className="border border-gray-300 rounded px-3 py-2 w-full"
-          />
-        </div>
-        <div className="md:col-span-2">
-          <label className="block text-sm font-bold">Search</label>
-          <input
-            type="text"
-            placeholder="Search by Name, Service, Status"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            className="border border-gray-300 rounded px-3 py-2 w-full"
-          />
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={handleFilter}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
-          >
-            Search
-          </button>
-          <button
-            onClick={handleClear}
-            className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 w-full"
-          >
-            Clear
-          </button>
-        </div>
-      </div>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-xl font-bold">Filter Reports</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+            <div>
+              <label className="block text-sm font-bold mb-1">From Date</label>
+              <input
+                type="date"
+                onChange={handleFromDateChange}
+                value={fromDate}
+                className="border border-gray-300 rounded px-3 py-2 w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold mb-1">To Date</label>
+              <input
+                type="date"
+                value={toDate}
+                onChange={handleToDateChange}
+                className="border border-gray-300 rounded px-3 py-2 w-full"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-bold mb-1">Search</label>
+              <input
+                type="text"
+                placeholder="Search by Name, Service, Status"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className="border border-gray-300 rounded px-3 py-2 w-full"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleFilter}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
+              >
+                Search
+              </button>
+              <button
+                onClick={handleClear}
+                className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 w-full"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
 
-      <div className="overflow-x-auto shadow border rounded-lg">
-        <table className="min-w-full bg-white text-sm">
+      <div className="overflow-x-auto shadow border rounded-lg bg-[var(--card)] text-[var(--card-foreground)]">
+        <table className="min-w-full text-sm">
           <thead className="text-white text-left bg-[#0097eb]">
             <tr>
               <th className="px-4 py-2">S.No</th>
@@ -194,13 +208,13 @@ const HistoryTableWithFilters = () => {
           <tbody>
             {paginatedData.length === 0 ? (
               <tr>
-                <td colSpan={9} className="text-center px-4 py-4 text-gray-500">
+                <td colSpan={9} className="text-center px-4 py-4 text-muted-foreground">
                   No records found
                 </td>
               </tr>
             ) : (
               paginatedData.map((entry, index) => (
-                <tr key={entry.id} className="border-t hover:bg-gray-50">
+                <tr key={entry.id} className="border-t hover:bg-[var(--muted)] transition-colors">
                   <td className="px-4 py-2">{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
                   <td className="px-4 py-2">{entry.UserName}</td>
                   <td className="px-4 py-2">{entry.ServiceName}</td>
@@ -216,7 +230,6 @@ const HistoryTableWithFilters = () => {
               ))
             )}
           </tbody>
-
         </table>
       </div>
 

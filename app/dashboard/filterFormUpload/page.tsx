@@ -59,6 +59,7 @@ const serviceOptions = [
     { value: "BBPS", label: "BBPS" },
     { value: "PASSPORT", label: "Passport" },
     { value: "LIC", label: "LIC - Premimum" },
+    { value: "ASTRO", label: "Astro Horoscope" },
 ];
 
 const transactionOptions = [
@@ -166,18 +167,18 @@ const FilterForm = () => {
             // console.log("Before axios request");
 
             // Remove the .catch() here and let the try/catch handle it
-            const res = await axios.post("http://192.168.1.157:5000/api/reconciliation", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-                timeout: 120000,
-            });
-            // const res = await axios.post("http://localhost:5000/api/reconciliation", formData, {
+            // const res = await axios.post("http://192.168.1.157:5000/api/reconciliation", formData, {
             //     headers: {
             //         "Content-Type": "multipart/form-data",
             //     },
             //     timeout: 120000,
             // });
+            const res = await axios.post("http://localhost:5000/api/reconciliation", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                timeout: 120000,
+            });
 
             // console.log("After axios request", res);
 
@@ -470,33 +471,34 @@ const FilterForm = () => {
                         </Form>
                     </CardContent>
                 </Card>
-                <Card className="w-full bg-blue-50 lg:w-1/1 mx-5 max-h-[60vh] overflow-y-auto">
+                <Card className="w-full bg-blue-50 dark:bg-[var(--card)] lg:w-full mx-5 max-h-[60vh] overflow-y-auto">
                     <CardHeader>
-                        <CardTitle className="text-lg font-semibold md:table-fixed text-center">
+                        <CardTitle className="text-xl text-secondary font-bold text-center">
                             Status Labels
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <ul className="text-sm space-y-2 pl-10 list-disc list-inside text-muted-foreground">
-                            <li><b>Not_In_Vendor</b> : Data Present in Ihub Portal But not in Vendor Excel.</li>
-                            <li><b>Not in Portal</b> : Data Present in Vendor Excel But not in Ihub Portal.</li>
-                            <li><b>Vend_suc - Not_In_IhubPortal</b> : Success in Vendor Excel but not in Ihub Portal.</li>
-                            <li><b>Vend_IHub_Succ - NIL</b> : Success in both Vendor and Ihub But not in Ihub Ledger.</li>
-                            <li><b>Vend_IHub_Fail - NIL</b> : Failed in both Vendor and Ihub But not in Ihub Ledger.</li>
-                            <li><b>Vend_Suc - IHub_Fail - NIL</b> : Success in Vendor and Failed in Ihub But not in Ihub Ledger.</li>
-                            <li><b>Vend_Suc - Ihub_Ini - NIL</b> : Success in Vendor and Initiated in Ihub But not in Ihub Ledger.</li>
-                            <li><b>Vend_Fail - Ihub_Ini - NIL</b> : Failed in Vendor and Initiated in Ihub But not in Ihub Ledger.</li>
-                            <li><b>Vend_Suc - Ihub_Suc</b> : Success in both Vendor and Ihub and Present in Ihub Ledger.</li>
-                            <li><b>Vend_Fail - Ihub_Suc</b> : Failed in Vendor and Success in Ihub and Present in Ihub Ledger.</li>
-                            <li><b>Vend_Suc - Ihub_Fail</b> : Failed in Ihub and Success in Vendor and Present in Ihub Ledger.</li>
-                            <li><b>Vend_Fail - Ihub_Fail</b> : Failed in both Vendor and Ihub and Present in Ihub Ledger.</li>
-                            <li><b>Vend_Suc - Ihub_Ini</b> : Success in Vendor and Initiated in Ihub and Present in Ihub Ledger.</li>
-                            <li><b>Vend_Fail - Ihub_Ini</b> : Failed in Vendor and Initiated in Ihub and Present in Ihub Ledger.</li>
-                            <li><b>Tenant_Ini_Not_In_Hub</b> : Initiated in Tenant Database but not present in Ihub Database.</li>
-                            <li><b>Matched_Values</b> : Values with matched status.</li>
+                            <li><b>Not_In_Vendor</b>: Data Present in Ihub Portal But not in Vendor Excel.</li>
+                            <li><b>Not in Portal</b>: Data Present in Vendor Excel But not in Ihub Portal.</li>
+                            <li><b>Vend_suc - Not_In_IhubPortal</b>: Success in Vendor Excel but not in Ihub Portal.</li>
+                            <li><b>Vend_IHub_Succ - NIL</b>: Success in both Vendor and Ihub But not in Ihub Ledger.</li>
+                            <li><b>Vend_IHub_Fail - NIL</b>: Failed in both Vendor and Ihub But not in Ihub Ledger.</li>
+                            <li><b>Vend_Suc - IHub_Fail - NIL</b>: Success in Vendor and Failed in Ihub But not in Ihub Ledger.</li>
+                            <li><b>Vend_Suc - Ihub_Ini - NIL</b>: Success in Vendor and Initiated in Ihub But not in Ihub Ledger.</li>
+                            <li><b>Vend_Fail - Ihub_Ini - NIL</b>: Failed in Vendor and Initiated in Ihub But not in Ihub Ledger.</li>
+                            <li><b>Vend_Suc - Ihub_Suc</b>: Success in both Vendor and Ihub and Present in Ihub Ledger.</li>
+                            <li><b>Vend_Fail - Ihub_Suc</b>: Failed in Vendor and Success in Ihub and Present in Ihub Ledger.</li>
+                            <li><b>Vend_Suc - Ihub_Fail</b>: Failed in Ihub and Success in Vendor and Present in Ihub Ledger.</li>
+                            <li><b>Vend_Fail - Ihub_Fail</b>: Failed in both Vendor and Ihub and Present in Ihub Ledger.</li>
+                            <li><b>Vend_Suc - Ihub_Ini</b>: Success in Vendor and Initiated in Ihub and Present in Ihub Ledger.</li>
+                            <li><b>Vend_Fail - Ihub_Ini</b>: Failed in Vendor and Initiated in Ihub and Present in Ihub Ledger.</li>
+                            <li><b>Tenant_Ini_Not_In_Hub</b>: Initiated in Tenant Database but not present in Ihub Database.</li>
+                            <li><b>Matched_Values</b>: Values with matched status.</li>
                         </ul>
                     </CardContent>
                 </Card>
+
             </div>
             <div className="flex flex-col lg:flex-row gap-4 mt-4 justify-center" >
                 {/* Results Section - Only show if apiResponse exists and isSuccess is true */}

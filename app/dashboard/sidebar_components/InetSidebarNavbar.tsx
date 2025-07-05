@@ -49,9 +49,12 @@ export default function InetSidebarNavbar() {
   };
 
   return (
-    <div className="sticky top-0 z-50 bg-background border-b border-border/40 p-4 flex items-center justify-between">
+    <div className="sticky top-0 z-50 bg-background border-b border-border/40 p-4 flex items-center justify-between relative">
       <SidebarTrigger />
-
+      {/* <div className="absolute left-0 right-0 font-bold text-center text-primary text-xl">I-NET Report Recnciliation </div> */}
+      <div className="absolute left-0 right-0 text-center pointer-events-none z-0">
+        <span className="font-bold text-primary text-xl">I-NET Report Reconciliation</span>
+      </div>
       <div className="flex justify-between gap-2 items-center">
         <div className="flex mr-3 items-center gap-2 text-sm font-medium">
           <span className="text-primary">{greeting} 👋</span>
@@ -68,9 +71,15 @@ export default function InetSidebarNavbar() {
         <Button className="mr-3" variant="outline" size="icon" onClick={toggleTheme}>
           {theme === "dark" ? <SunIcon /> : <MoonIcon />}
         </Button>
-        <Button className="mr-5" variant="destructive" size="icon" onClick={handleLogout}>
+        <Button
+          className="mr-5 hover:bg-red-700 transition-colors duration-200"
+          variant="destructive"
+          size="icon"
+          onClick={handleLogout}
+        >
           <LogOut />
         </Button>
+
       </div>
     </div>
   );
