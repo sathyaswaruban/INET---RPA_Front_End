@@ -33,6 +33,8 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     const combinedData = localData?.data?.combined || [];
     const Total_success_count = localData?.data?.Total_Success_count || 0;
     const Total_failed_count = localData?.data?.Total_Failed_count || 0;
+    const Excel_count = localData?.data?.Excel_value_count;
+    const HUB_count = localData?.data?.HUB_Value_count;
     const otherSections = { ...localData.data };
     const message = localData?.data?.message || " "
     const dataSections = [
@@ -126,6 +128,8 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
         <div className="space-y-6 w-full max-w-6xl">
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2">
+                    <CardTitle className="font-bold text-orange-600">Excel Data Count : {Excel_count}</CardTitle>
+                    <CardTitle className="font-bold text-orange-600">HUB Data Count : {HUB_count}</CardTitle>
                     <CardTitle className="font-bold text-xl">TOTAL : {Total_success_count + Total_failed_count + combinedData.length}</CardTitle>
                     <CardTitle className="font-bold text-green-600">Total Success : {Total_success_count}</CardTitle>
                     <CardTitle className="font-bold text-red-600">Total Failed : {Total_failed_count}</CardTitle>

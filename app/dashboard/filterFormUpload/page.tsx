@@ -53,13 +53,15 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const serviceOptions = [
+    { value: "ASTRO", label: "Astro Horoscope" },
+    { value: "BBPS", label: "BBPS" },
+    { value: "LIC", label: "LIC - Premimum" },
+    { value: "MATM", label: "Micro ATM (M-ATM)" },
     { value: "RECHARGE", label: "PaySprint-Recharge" },
     { value: "AEPS", label: "PaySprint-Aeps" },
-    { value: "MATM", label: "Mobile ATM (M-ATM)" },
-    { value: "BBPS", label: "BBPS" },
+    { value: "PANUTI", label: "Pan-UTI"},
     { value: "PASSPORT", label: "Passport" },
-    { value: "LIC", label: "LIC - Premimum" },
-    { value: "ASTRO", label: "Astro Horoscope" },
+    { value: "UPI", label: "UPI - QR" },
 ];
 
 const transactionOptions = [
