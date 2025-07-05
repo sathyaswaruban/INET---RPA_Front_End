@@ -10,15 +10,16 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import LiveClock from "@/components/LiveClock";
 
 // Dynamically import the clock with no SSR
-const Clock = dynamic(
-  () => import('react-live-clock'),
-  {
-    ssr: false,
-    loading: () => <span className="text-secondary">--:--:-- --</span>
-  }
-);
+// const Clock = dynamic(
+//   () => import('react-live-clock'),
+//   {
+//     ssr: false,
+//     loading: () => <span className="text-secondary">--:--:-- --</span>
+//   }
+// );
 
 export default function InetSidebarNavbar() {
   const router = useRouter();
@@ -59,11 +60,7 @@ export default function InetSidebarNavbar() {
         <div className="flex mr-3 items-center gap-2 text-sm font-medium">
           <span className="text-primary">{greeting} 👋</span>
           {isMounted ? (
-            <Clock
-              format={'hh:mm:ss a'}
-              ticking={true}
-              timezone={'Asia/Kolkata'}
-            />
+            <LiveClock />
           ) : (
             <span className="text-secondary">--:--:-- --</span>
           )}
