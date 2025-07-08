@@ -62,27 +62,46 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     });
     const service_name = localData?.service_name || " "
     // console.log(service_name)
-    
-    const orderedColumns = [
-        "CATEGORY",
-        "TENANT_ID",
-        "IHUB_REFERENCE",
-        "REFID",
-        "IHUB_USERNAME",
-        "AMOUNT",
-        "SERVICE_DATE",
-        "VENDOR_DATE",
-        "VENDOR_STATUS",
-        "IHUB_MASTER_STATUS",
-        `${service_name}_STATUS`,
-        "IHUB_LEDGER_STATUS",
-        "BILL_FETCH_STATUS",
-        // "TENANT_LEDGER_STATUS",
-        "TRANSACTION_DEBIT",
-        "TRANSACTION_CREDIT",
-        "COMMISSION_CREDIT",
-        "COMMISSION_REVERSAL"
-    ];
+    let orderedColumns: string[] = [];
+
+    if (service_name !== "UPIQR") {
+        orderedColumns = [
+            "CATEGORY",
+            "TENANT_ID",
+            "IHUB_REFERENCE",
+            "REFID",
+            "IHUB_USERNAME",
+            "AMOUNT",
+            "SERVICE_DATE",
+            "VENDOR_DATE",
+            "VENDOR_STATUS",
+            "IHUB_MASTER_STATUS",
+            `${service_name}_STATUS`,
+            "IHUB_LEDGER_STATUS",
+            "BILL_FETCH_STATUS",
+            // "TENANT_LEDGER_STATUS",
+            "TRANSACTION_DEBIT",
+            "TRANSACTION_CREDIT",
+            "COMMISSION_CREDIT",
+            "COMMISSION_REVERSAL"
+        ];
+    } else {
+        orderedColumns = [
+            "CATEGORY",
+            "TENANT_ID",
+            "VENDOR_REFERENCE",
+            "REFID",
+            "IHUB_USERNAME",
+            "AMOUNT",
+            "SERVICE_DATE",
+            "VENDOR_DATE",
+            "VENDOR_STATUS",
+            "IHUB_MASTER_STATUS",
+            `${service_name}_STATUS`,
+            "TenantDB_wallettopup_status",
+            "Hub_Tntwallettopup_status"
+        ];
+    }
 
     const exportToExcel = (data: DataItem[], fileName: string) => {
         const worksheet = XLSX.utils.json_to_sheet(data);
@@ -116,24 +135,24 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     };
 
     const [paginationState, setPaginationState] = useState<{ [key: string]: number }>({});
-    const [currentPage, setCurrentPage] = useState(1);
+    // const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-    const totalPages = Math.ceil(combinedData.length / itemsPerPage);
-    const paginatedData = combinedData.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
+    // const totalPages = Math.ceil(combinedData.length / itemsPerPage);
+    // const paginatedData = combinedData.slice(
+    //     (currentPage - 1) * itemsPerPage,
+    //     currentPage * itemsPerPage
+    // );
 
     return (
         <div className="space-y-6 w-full max-w-6xl">
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2">
-                    <CardTitle className="font-bold text-orange-600">Excel Data Count : {Excel_count}</CardTitle>
+                    <CardTitle className="font-bold text-blue-600">Excel Data Count : {Excel_count}</CardTitle>
                     <CardTitle className="font-bold text-orange-600">HUB Data Count : {HUB_count}</CardTitle>
                     <CardTitle className="font-bold text-xl">TOTAL : {Total_success_count + Total_failed_count + combinedData.length}</CardTitle>
                     <CardTitle className="font-bold text-green-600">Total Success : {Total_success_count}</CardTitle>
                     <CardTitle className="font-bold text-red-600">Total Failed : {Total_failed_count}</CardTitle>
-                    <CardTitle className="font-bold text-orange-600">Combined Data Count : {combinedData.length}</CardTitle>
+                    <CardTitle className="font-bold text-violet-600">Combined Data Count : {combinedData.length}</CardTitle>
                     {combinedData.length > 0 && (
 
                         <Button

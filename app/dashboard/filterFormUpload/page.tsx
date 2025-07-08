@@ -59,9 +59,9 @@ const serviceOptions = [
     { value: "MATM", label: "Micro ATM (M-ATM)" },
     { value: "RECHARGE", label: "PaySprint-Recharge" },
     { value: "AEPS", label: "PaySprint-Aeps" },
-    { value: "PANUTI", label: "Pan-UTI"},
+    { value: "PANUTI", label: "Pan-UTI" },
     { value: "PASSPORT", label: "Passport" },
-    { value: "UPI", label: "UPI - QR" },
+    { value: "UPIQR", label: "UPI - QR" },
 ];
 
 const transactionOptions = [
@@ -188,7 +188,7 @@ const FilterForm = () => {
                 ...res,
                 data: normalizeResponse(res.data)
             };
-
+            console.log(response.status)
             if (response.status === 200) {
                 if (response.data?.isSuccess) {
                     let Message = response?.data?.message
@@ -201,7 +201,7 @@ const FilterForm = () => {
                     savingHistory(values, Message, status);
 
                 } else {
-                    let errorMessage = " Error processing file..! Check Inputs and try again..!";
+                    let errorMessage = "Error processing file..! Check Inputs and try again..!";
                     if (response?.data?.message.length > 0) {
                         errorMessage = response?.data?.message
                     }
