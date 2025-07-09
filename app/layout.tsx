@@ -2,12 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import localFont from "next/font/local";
-import { Globe } from "@/components/magicui/globe";
-import PageTransition from "@/components/PageTransition";
-import PageTransitionWrapper from "@/components/PageTransitionWrapper";
+
 import { Toaster } from "sonner";
 
 const geistSans = Geist({
