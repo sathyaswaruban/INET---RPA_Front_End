@@ -13,7 +13,7 @@ export default function page() {
     });
   }, []);
   return (
-    <div className="flex flex-col container gap-[40px] overflow-x-auto items-center justify-start mx-auto">
+    <div className="overflow-x-auto items-center justify-start mx-auto">
       <LoginPage></LoginPage>
     </div>
   );

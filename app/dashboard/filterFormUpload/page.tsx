@@ -60,6 +60,7 @@ const serviceOptions = [
     { value: "RECHARGE", label: "PaySprint-Recharge" },
     { value: "AEPS", label: "PaySprint-Aeps" },
     { value: "PANUTI", label: "Pan-UTI" },
+    { value: "PANNSDL", label: "Pan - NSDL" },
     { value: "PASSPORT", label: "Passport" },
     { value: "UPIQR", label: "UPI - QR" },
 ];

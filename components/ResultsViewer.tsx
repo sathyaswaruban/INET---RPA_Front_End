@@ -79,7 +79,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
             `${service_name}_STATUS`,
             "IHUB_LEDGER_STATUS",
             "BILL_FETCH_STATUS",
-            // "TENANT_LEDGER_STATUS",
+            "TENANT_LEDGER_STATUS",
             "TRANSACTION_DEBIT",
             "TRANSACTION_CREDIT",
             "COMMISSION_CREDIT",
@@ -126,8 +126,6 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
         saveAs(blob, 'detailed_results.xlsx');
     };
 
-
-    ``
     const formatValue = (value: any) => {
         if (value === null || value === undefined || value === "") return "N/A";
         if (typeof value === "number" && isNaN(value)) return "N/A";
