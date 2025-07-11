@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import {
@@ -8,8 +8,18 @@ import {
   CardHeader,
   CardTitle,
   CardContent,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import Loader from "../loader/page";
 
+// User and History types
+interface User {
+  id: number;
+  email: string;
+  name: string;
+  role: "ADMIN" | "USER";
+  createdAt: string;
+}
 
 type History = {
   id: number;
@@ -24,10 +34,12 @@ type History = {
   createdAt: string;
 };
 
+// Utility for formatting date to YYYY-MM-DD
 const formatDate = (date: Date) => date.toISOString().slice(0, 10);
 const ITEMS_PER_PAGE = 15;
 
 const HistoryTableWithFilters = () => {
+  // State declarations
   const today = formatDate(new Date());
   const [data, setData] = useState<History[]>([]);
   const [filtered, setFiltered] = useState<History[]>([]);
@@ -35,7 +47,26 @@ const HistoryTableWithFilters = () => {
   const [toDate, setToDate] = useState(today);
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const [isFiltering, setIsFiltering] = useState(false);
+  const router = useRouter();
 
+  // Fetch user info
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get("/api/auth/me");
+        setUser(response?.data?.user);
+      } catch (error) {
+        toast.error("Failed to fetch user data");
+        router.push("/auth/login");
+      }
+    };
+    fetchUser();
+  }, [router]);
+
+  // Fetch history data
   useEffect(() => {
     const fetchHistory = async () => {
       try {
@@ -43,24 +74,25 @@ const HistoryTableWithFilters = () => {
         if (res.data.success) {
           const allData = res.data.data;
           const todayStr = formatDate(new Date());
-
           const todayData = allData.filter((item: History) => {
-            const recordDate = new Date(item.createdAt).toISOString().slice(0, 10); // ✅ FIXED
+            const recordDate = new Date(item.createdAt).toISOString().slice(0, 10);
             return recordDate === todayStr;
           });
-
           setData(allData);
           setFiltered(todayData);
         }
       } catch (err) {
         console.error("Failed to fetch history", err);
+      } finally {
+        setIsLoading(false);
       }
     };
-
     fetchHistory();
   }, []);
 
-  const handleFilter = () => {
+  // Handlers
+  const handleFilter = useCallback(() => {
+    setIsFiltering(true);
     const filteredData = data.filter((item: History) => {
       const itemDate = item.createdAt.slice(0, 10);
       const inDateRange = itemDate >= fromDate && itemDate <= toDate;
@@ -68,37 +100,30 @@ const HistoryTableWithFilters = () => {
         item.UserName.toLowerCase().includes(searchText.toLowerCase()) ||
         item.ServiceName.toLowerCase().includes(searchText.toLowerCase()) ||
         item.ResponseStatus.toLowerCase().includes(searchText.toLowerCase());
-
       return inDateRange && (searchText === "" || textMatch);
     });
     setFiltered(filteredData);
     setCurrentPage(1);
-  };
-  const handleToDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsFiltering(false);
+  }, [data, fromDate, toDate, searchText]);
+
+  const handleToDateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedToDate = e.target.value;
     setToDate(selectedToDate);
     const todayStr = formatDate(new Date());
-
-
-    // Validation
     if (fromDate && selectedToDate < fromDate) {
       toast.error('To Date cannot be earlier than From Date.', {
         position: "top-center",
         duration: 2000,
       });
       setToDate(todayStr);
-
     }
+  }, [fromDate]);
 
-  };
-
-  const handleFromDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFromDateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFromDate = e.target.value;
     const todayStr = formatDate(new Date());
-
     setFromDate(selectedFromDate);
-
-    // Optional: validate toDate again
     if (toDate && toDate < selectedFromDate) {
       toast.error('To Date cannot be earlier than From Date.', {
         position: "top-center",
@@ -106,93 +131,104 @@ const HistoryTableWithFilters = () => {
       });
       setFromDate(todayStr);
     }
+  }, [toDate]);
 
-  };
-
-
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     const todayStr = formatDate(new Date());
-
     const todayData = data.filter((item: History) => {
       const recordDate = new Date(item.createdAt).toISOString().slice(0, 10);
       return recordDate === todayStr;
     });
-
-
     setFromDate(todayStr);
     setToDate(todayStr);
     setSearchText("");
     setFiltered(todayData);
     setCurrentPage(1);
-  };
+  }, [data]);
 
+  // Pagination logic
   const pageCount = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginatedData = filtered.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
 
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4 text-center">User Task History</h2>
-
-
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-xl font-bold">Filter Reports</CardTitle>
+    <div className="p-6 min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+      <h2 className="text-2xl font-bold mb-4 text-center" tabIndex={0}>User Task History</h2>
+      <Card className="mb-6 mt-0 pt-0 shadow-xl rounded-2xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
+        <CardHeader className="bg-gradient-to-r from-[var(--primary)] from-100% to-[var(--primary)]/80 to-80% rounded-t-2xl px-6 py-4">
+          <CardTitle className="text-xl font-bold text-[var(--primary-foreground)]">Filter Reports</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+          <form
+            className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end"
+            onSubmit={e => { e.preventDefault(); handleFilter(); }}
+            aria-label="Filter form"
+          >
             <div>
-              <label className="block text-sm font-bold mb-1">From Date</label>
+              <label htmlFor="from-date" className="block text-sm font-bold mb-1 text-[var(--primary)]">From Date</label>
               <input
+                id="from-date"
                 type="date"
                 onChange={handleFromDateChange}
                 value={fromDate}
-                className="border border-gray-300 rounded px-3 py-2 w-full"
+                className="border border-[var(--border)] rounded px-3 py-2 w-full focus:ring-2 focus:ring-[var(--primary)] bg-[var(--input)] text-[var(--foreground)]"
+                aria-label="From Date"
               />
             </div>
             <div>
-              <label className="block text-sm font-bold mb-1">To Date</label>
+              <label htmlFor="to-date" className="block text-sm font-bold mb-1 text-[var(--primary)]">To Date</label>
               <input
+                id="to-date"
                 type="date"
                 value={toDate}
                 onChange={handleToDateChange}
-                className="border border-gray-300 rounded px-3 py-2 w-full"
+                className="border border-[var(--border)] rounded px-3 py-2 w-full focus:ring-2 focus:ring-[var(--primary)] bg-[var(--input)] text-[var(--foreground)]"
+                aria-label="To Date"
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-bold mb-1">Search</label>
+              <label htmlFor="search" className="block text-sm font-bold mb-1 text-[var(--primary)]">Search</label>
               <input
+                id="search"
                 type="text"
                 placeholder="Search by Name, Service, Status"
                 value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                className="border border-gray-300 rounded px-3 py-2 w-full"
+                onChange={e => setSearchText(e.target.value)}
+                className="border border-[var(--border)] rounded px-3 py-2 w-full focus:ring-2 focus:ring-[var(--primary)] bg-[var(--input)] text-[var(--foreground)]"
+                aria-label="Search"
               />
             </div>
             <div className="flex gap-2">
               <button
+                type="submit"
                 onClick={handleFilter}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
+                className="bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] px-4 py-2 rounded-lg hover:from-[var(--secondary)] hover:to-[var(--primary)] w-full focus:outline-none focus:ring-2 focus:ring-[var(--primary)] flex items-center justify-center font-bold transition"
+                aria-label="Search"
+                disabled={isFiltering}
               >
-                Search
+                {isFiltering ? <span className="loader mr-2" /> : null}Search
               </button>
               <button
+                type="button"
                 onClick={handleClear}
-                className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 w-full"
+                className="border border-[var(--primary)] text-[var(--primary)] px-4 py-2 rounded-lg hover:bg-[var(--muted)] w-full focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-bold transition"
+                aria-label="Clear"
               >
                 Clear
               </button>
             </div>
-          </div>
+          </form>
         </CardContent>
       </Card>
-
-
-      <div className="overflow-x-auto shadow border rounded-lg bg-[var(--card)] text-[var(--card-foreground)]">
-        <table className="min-w-full text-sm">
-          <thead className="text-white text-left bg-[#0097eb]">
+      <div className="overflow-x-auto shadow-xl border border-[var(--border)] rounded-2xl bg-[var(--card)] text-[var(--card-foreground)]">
+        <table className="min-w-full text-sm" aria-label="User Task History Table">
+          <thead className="text-[var(--primary-foreground)] bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)]">
             <tr>
               <th className="px-4 py-2">S.No</th>
               <th className="px-4 py-2">User</th>
@@ -214,42 +250,49 @@ const HistoryTableWithFilters = () => {
               </tr>
             ) : (
               paginatedData.map((entry, index) => (
-                <tr key={entry.id} className="border-t hover:bg-[var(--muted)] transition-colors">
+                <tr key={entry.id} className="border-t border-[var(--border)] hover:bg-[var(--muted)] transition-colors">
                   <td className="px-4 py-2">{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
                   <td className="px-4 py-2">{entry.UserName}</td>
                   <td className="px-4 py-2">{entry.ServiceName}</td>
                   <td className="px-4 py-2">{entry.FromDate.slice(0, 10)}</td>
                   <td className="px-4 py-2">{entry.ToDate.slice(0, 10)}</td>
-                  <td className="px-4 py-2 truncate max-w-[120px]">{entry.UploadedFileName}</td>
-                  <td className="px-4 py-2 truncate max-w-[160px]">{entry.ResponseMessage}</td>
-                  <td className={`px-4 py-2 font-semibold ${entry.ResponseStatus === "Success" ? "text-green-600" : "text-red-500"}`}>
-                    {entry.ResponseStatus}
-                  </td>
+                  <td className="px-4 py-2 truncate max-w-[120px]" title={entry.UploadedFileName}>{entry.UploadedFileName}</td>
+                  <td className="px-4 py-2 truncate max-w-[160px]" title={entry.ResponseMessage}>{entry.ResponseMessage}</td>
+                  <td className={`px-4 py-2 font-semibold ${entry.ResponseStatus === "Success" ? "text-green-600" : "text-red-500"}`}>{entry.ResponseStatus}</td>
                   <td className="px-4 py-2">{entry.createdAt}</td>
                 </tr>
               ))
             )}
           </tbody>
+          {/* Summary row */}
+          <tfoot>
+            <tr>
+              <td colSpan={9} className="text-right px-4 py-2 text-xs text-[var(--muted-foreground)]">
+                Showing {filtered.length} record{filtered.length !== 1 ? "s" : ""} found
+              </td>
+            </tr>
+          </tfoot>
         </table>
       </div>
-
       {/* Pagination */}
-      <div className="flex justify-between items-center mt-4">
-        <span className="text-sm text-gray-600">
+      <div className="flex flex-col md:flex-row justify-between items-center mt-4 gap-2">
+        <span className="text-sm text-[var(--muted-foreground)]">
           Page {currentPage} of {pageCount}
         </span>
         <div className="flex gap-2">
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1}
-            className="bg-gray-200 text-gray-700 px-4 py-1 rounded disabled:opacity-50"
+            className="bg-[var(--muted)] text-[var(--primary)] px-4 py-1 rounded-lg disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-semibold transition"
+            aria-label="Previous Page"
           >
             Previous
           </button>
           <button
             onClick={() => setCurrentPage((p) => Math.min(p + 1, pageCount))}
             disabled={currentPage === pageCount}
-            className="bg-gray-200 text-gray-700 px-4 py-1 rounded disabled:opacity-50"
+            className="bg-[var(--muted)] text-[var(--primary)] px-4 py-1 rounded-lg disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-semibold transition"
+            aria-label="Next Page"
           >
             Next
           </button>

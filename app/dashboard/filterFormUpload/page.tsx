@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import axios from "axios";
@@ -26,6 +26,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ResultsViewer } from "@/components/ResultsViewer";
+import Loader from "../loader/page";
 
 // Schema for form validation
 const formSchema = z.object({
@@ -50,6 +51,7 @@ const formSchema = z.object({
     path: ["toDate"],
 });
 
+// Types
 type FormValues = z.infer<typeof formSchema>;
 
 const serviceOptions = [
@@ -70,6 +72,7 @@ const transactionOptions = [
     { value: "2", label: "Withdrawal" },
     { value: "3", label: "Mini Statement" },
 ];
+
 interface User {
     id: number;
     email: string;
@@ -77,14 +80,16 @@ interface User {
     role: "ADMIN" | "USER";
     createdAt: string;
 }
+
 const FilterForm = () => {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [fileName, setFileName] = useState("No file chosen");
     const [apiResponse, setApiResponse] = useState<any>(null); // To store API response
     const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-
+    // Fetch user info
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -93,12 +98,14 @@ const FilterForm = () => {
             } catch (error) {
                 toast.error("Failed to fetch user data");
                 router.push("/auth/login");
+            } finally {
+                setIsLoading(false);
             }
         };
-
         fetchUser();
     }, [router]);
 
+    // Form setup
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -110,27 +117,34 @@ const FilterForm = () => {
         },
     });
 
+    // Watch service selection
     const selectedService = form.watch("serviceName");
     useEffect(() => {
         if (selectedService !== "AEPS") {
             form.setValue("transactionType", "default", { shouldValidate: false });
         }
     }, [selectedService, form]);
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+    // File change handler
+    const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             form.setValue("file", file);
             setFileName(file.name);
             form.clearErrors("file");
         }
-    };
+    }, [form]);
 
-    const clearForm = () => {
+    // Clear form handler
+    const clearForm = useCallback(() => {
         form.reset();
         setFileName("No file chosen");
         setApiResponse(null);
-    };
+    }, [form]);
 
+
+
+    // Normalize API response
     const normalizeResponse = (responseData: any) => {
         try {
             return typeof responseData === "string" ? JSON.parse(responseData) : responseData;
@@ -139,7 +153,9 @@ const FilterForm = () => {
             return null;
         }
     };
-    const savingHistory = async (values: any, Message: string, status: string) => {
+
+    // Save history to backend
+    const savingHistory = useCallback(async (values: any, Message: string, status: string) => {
         await axios.post("/api/user-task-history", {
             uid: user?.id,
             userName: user?.name,
@@ -151,12 +167,12 @@ const FilterForm = () => {
             responseStatus: status,
             transactionType: values.transactionType,
         });
+    }, [user]);
 
-    }
-    const processData = async (values: FormValues) => {
+    // Form submit handler
+    const processData = useCallback(async (values: FormValues) => {
         setIsSubmitting(true);
         setApiResponse(null);
-
         try {
             const formData = new FormData();
             formData.append("from_date", values.fromDate);
@@ -166,52 +182,37 @@ const FilterForm = () => {
                 formData.append("transaction_type", values.transactionType);
             }
             formData.append("file", values.file);
-
-            // console.log("Before axios request");
-
-            
-            const res = await axios.post("http://192.168.1.157:5000/api/reconciliation", formData, {
+            const res = await axios.post("http://localhost:5000/api/reconciliation", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
                 timeout: 120000,
             });
-            // const res = await axios.post("http://localhost:5000/api/reconciliation", formData, {
-            //     headers: {
-            //         "Content-Type": "multipart/form-data",
-            //     },
-            //     timeout: 120000,
-            // });
-
-            // console.log("After axios request", res);
-
             const response = {
                 ...res,
                 data: normalizeResponse(res.data)
             };
-            console.log(response.status)
             if (response.status === 200) {
                 if (response.data?.isSuccess) {
-                    let Message = response?.data?.message
+                    let Message = response?.data?.message;
                     toast.success(Message, {
                         duration: 5000,
                         position: 'top-center'
                     });
                     setApiResponse(response.data);
-                    let status = 'Success'
+                    let status = 'Success';
                     savingHistory(values, Message, status);
-
                 } else {
                     let errorMessage = "Error processing file..! Check Inputs and try again..!";
+
                     if (response?.data?.message.length > 0) {
-                        errorMessage = response?.data?.message
+                        errorMessage = response?.data?.message;
                     }
-                    toast.error(errorMessage,
-                        {
-                            duration: 5000,
-                            position: 'top-center'
-                        });
-                    let status = 'Failed'
+                    toast.error(errorMessage, {
+                        duration: 5000,
+                        position: 'top-center'
+                    });
+                    let status = 'Failed';
                     savingHistory(values, errorMessage, status);
                     setApiResponse(null);
                 }
@@ -233,7 +234,7 @@ const FilterForm = () => {
                         fontWeight: 'bold',
                     }
                 });
-                let status = 'Failure'
+                let status = 'Failed'
                 savingHistory(values, errorMessage, status);
             }
             // Then check for Axios errors
@@ -251,7 +252,7 @@ const FilterForm = () => {
                         duration: 5000,
                         position: 'top-center'
                     });
-                    let status = 'Failure'
+                    let status = 'Failed'
                     savingHistory(values, errorMessage, status);
 
                 }
@@ -262,7 +263,7 @@ const FilterForm = () => {
                         position: 'top-center'
 
                     });
-                    let status = 'Failure'
+                    let status = 'Failed'
                     savingHistory(values, errorMessage, status);
                 }
                 else if (error.response) {
@@ -274,7 +275,7 @@ const FilterForm = () => {
 
                         }
                     );
-                    let status = 'Failure'
+                    let status = 'Failed'
                     savingHistory(values, error.response.data?.message, status);
                 }
                 else {
@@ -285,7 +286,7 @@ const FilterForm = () => {
 
                         }
                     );
-                    let status = 'Failure'
+                    let status = 'Failed'
                     savingHistory(values, error.message, status);
 
                 }
@@ -299,7 +300,7 @@ const FilterForm = () => {
 
                     }
                 );
-                let status = 'Failure'
+                let status = 'Failed'
                 savingHistory(values, error.message, status);
             }
             // Final fallback
@@ -312,7 +313,7 @@ const FilterForm = () => {
 
                     }
                 );
-                let status = 'Failure'
+                let status = 'Failed'
                 savingHistory(values, message, status);
             }
 
@@ -320,73 +321,84 @@ const FilterForm = () => {
         } finally {
             setIsSubmitting(false);
         }
-    };
+    }, [savingHistory]);
+
+    if (isLoading) {
+        return <Loader />;
+    }
+
     return (
         <div className="flex flex-col min-h-screen p-4">
             <div className="flex flex-col lg:flex-row gap-4 justify-center">
-                <Card className="w-full lg:w-1/2">
-                    <CardHeader>
-                        <CardTitle className="text-2xl font-bold text-center">
-                            SELECT INPUT DETAILS
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(processData)} className="space-y-6">
-                                <div className="flex gap-4 justify-between">
-                                    {/* From Date */}
-                                    <div className="w-full">
-                                        <FormField
-                                            control={form.control}
-                                            name="fromDate"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel className="font-bold">From Date</FormLabel>
-                                                    <FormControl>
-                                                        <Input type="date" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-
-                                    <div className="w-full">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 justify-center">
+                    {/* Input Field Card: 5 columns on large screens */}
+                    <Card className="col-span-12 lg:col-span-5 bg-[var(--card)] text-[var(--card-foreground)] shadow-2xl rounded-2xl border border-[var(--border)] p-0 m-0 overflow-hidden transition-colors">
+                        <CardHeader className="flex flex-col items-center justify-center bg-gradient-to-r from-[var(--primary)] from-100% to-[var(--primary)]/80 to-80% px-6 py-6 sticky top-0 z-10 shadow-md mb-0 rounded-t-2xl">
+                            <CardTitle className="text-3xl font-extrabold text-[var(--primary-foreground)] tracking-wide drop-shadow-lg">
+                                Select Input Details
+                            </CardTitle>
+                            <p className="text-[var(--primary-foreground)]/80 mt-2 text-sm font-medium text-center">
+                                Please fill in the details below to process your reconciliation.
+                            </p>
+                        </CardHeader>
+                        <CardContent className="py-8 px-8 pt-4 bg-[var(--card)] text-[var(--card-foreground)]">
+                            <Form {...form}>
+                                <form onSubmit={form.handleSubmit(processData)} className="space-y-8" aria-label="Filter Form">
+                                    <div className="flex gap-4 flex-col md:flex-row justify-between">
+                                        {/* From Date */}
+                                        <div className="w-full">
+                                            <FormField
+                                                control={form.control}
+                                                name="fromDate"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="font-semibold text-[var(--primary)]" htmlFor="from-date">From Date</FormLabel>
+                                                        <FormControl>
+                                                            <Input id="from-date" type="date" {...field} aria-label="From Date"
+                                                                className="rounded-lg border border-[var(--border)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)] transition bg-[var(--card)] text-[var(--card-foreground)]" />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
                                         {/* To Date */}
-                                        <FormField
-                                            control={form.control}
-                                            name="toDate"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel className="font-bold">To Date</FormLabel>
-                                                    <FormControl>
-                                                        <Input type="date" {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
+                                        <div className="w-full">
+                                            <FormField
+                                                control={form.control}
+                                                name="toDate"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="font-semibold text-[var(--primary)]" htmlFor="to-date">To Date</FormLabel>
+                                                        <FormControl>
+                                                            <Input id="to-date" type="date" {...field} aria-label="To Date"
+                                                                className="rounded-lg border border-[var(--border)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)] transition bg-[var(--card)] text-[var(--card-foreground)]" />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="w-full">
                                     {/* Service Name */}
                                     <FormField
                                         control={form.control}
                                         name="serviceName"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="font-bold">Select Service</FormLabel>
+                                                <FormLabel className="font-semibold text-[var(--primary)]" htmlFor="service-name">Select Service</FormLabel>
                                                 <Select value={field.value} onValueChange={field.onChange}>
                                                     <FormControl>
-                                                        <SelectTrigger className="w-full">
+                                                        <SelectTrigger className="w-full rounded-lg border border-[var(--border)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)] transition bg-[var(--card)] text-[var(--card-foreground)]" id="service-name" aria-label="Select Service">
                                                             <SelectValue placeholder="--Select service--" />
                                                         </SelectTrigger>
                                                     </FormControl>
-                                                    <SelectContent>
+                                                    <SelectContent className="bg-[var(--card)] text-[var(--card-foreground)]">
                                                         {serviceOptions.map((option) => (
                                                             <SelectItem
                                                                 key={option.value}
                                                                 value={option.value}
+                                                                className="hover:bg-[var(--muted)]"
                                                             >
                                                                 {option.label}
                                                             </SelectItem>
@@ -397,118 +409,248 @@ const FilterForm = () => {
                                             </FormItem>
                                         )}
                                     />
-                                </div>
-
-                                {/* Transaction Type (only visible for Aeps) */}
-                                {selectedService === "AEPS" && (
+                                    {/* Transaction Type (only visible for Aeps) */}
+                                    {selectedService === "AEPS" && (
+                                        <FormField
+                                            control={form.control}
+                                            name="transactionType"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="font-semibold text-[var(--primary)]" htmlFor="transaction-type">Transaction Type</FormLabel>
+                                                    <Select onValueChange={field.onChange}>
+                                                        <FormControl>
+                                                            <SelectTrigger className="w-full rounded-lg border border-[var(--border)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)] transition bg-[var(--card)] text-[var(--card-foreground)]" id="transaction-type" aria-label="Select Transaction Type">
+                                                                <SelectValue placeholder="--Select transaction--" />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent className="bg-[var(--card)] text-[var(--card-foreground)]">
+                                                            {transactionOptions.map((option) => (
+                                                                <SelectItem key={option.value} value={option.value} className="hover:bg-[var(--muted)]">
+                                                                    {option.label}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    )}
+                                    {/* File Upload */}
                                     <FormField
                                         control={form.control}
-                                        name="transactionType"
-                                        render={({ field }) => (
+                                        name="file"
+                                        render={() => (
                                             <FormItem>
-                                                <FormLabel className="font-bold">Transaction Type</FormLabel>
-                                                <Select onValueChange={field.onChange}>
-                                                    <FormControl>
-                                                        <SelectTrigger className="w-full">
-                                                            <SelectValue placeholder="--Select transaction--" />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        {transactionOptions.map((option) => (
-                                                            <SelectItem key={option.value} value={option.value}>
-                                                                {option.label}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
+                                                <FormLabel className="font-semibold text-[var(--primary)]" htmlFor="file-upload">Upload Excel File</FormLabel>
+                                                <div className="flex items-center gap-4">
+                                                    <Button asChild variant="outline" className="border-[var(--primary)] hover:bg-[var(--muted)] font-semibold">
+                                                        <label className="cursor-pointer" htmlFor="file-upload">
+                                                            Choose File
+                                                            <Input
+                                                                id="file-upload"
+                                                                type="file"
+                                                                accept=".xlsx"
+                                                                className="hidden"
+                                                                onChange={handleFileChange}
+                                                                aria-label="Upload Excel File"
+                                                            />
+                                                        </label>
+                                                    </Button>
+                                                    <span className="text-sm text-[var(--primary)] font-medium">
+                                                        {fileName}
+                                                    </span>
+                                                </div>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
-                                )}
-
-                                {/* File Upload */}
-                                <FormField
-                                    control={form.control}
-                                    name="file"
-                                    render={() => (
-                                        <FormItem>
-                                            <FormLabel className="font-bold">Upload Excel File</FormLabel>
-                                            <div className="flex items-center gap-4">
-                                                <Button asChild variant="outline">
-                                                    <label className="cursor-pointer">
-                                                        Choose File
-                                                        <Input
-                                                            type="file"
-                                                            accept=".xlsx"
-                                                            className="hidden"
-                                                            onChange={handleFileChange}
-                                                        />
-                                                    </label>
-                                                </Button>
-                                                <span className="text-sm text-muted-foreground">
-                                                    {fileName}
-                                                </span>
-                                            </div>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                {/* Action Buttons */}
-                                <div className="flex gap-4">
-                                    <Button type="submit" className="flex-1 font-bold" disabled={isSubmitting}>
-                                        {isSubmitting ? "Processing..." : "Process"}
-                                    </Button>
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        className="flex-1"
-                                        onClick={clearForm}
-                                        disabled={isSubmitting}
-                                    >
-                                        Clear
-                                    </Button>
-                                </div>
-                            </form>
-                        </Form>
-                    </CardContent>
-                </Card>
-                <Card className="w-full bg-blue-50 dark:bg-[var(--card)] lg:w-full mx-5 max-h-[60vh] overflow-y-auto">
-                    <CardHeader>
-                        <CardTitle className="text-xl text-secondary font-bold text-center">
-                            Status Labels
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <ul className="text-sm space-y-2 pl-10 list-disc list-inside text-muted-foreground">
-                            <li><b>Not_In_Vendor</b>: Data Present in Ihub Portal But not in Vendor Excel.</li>
-                            <li><b>Not in Portal</b>: Data Present in Vendor Excel But not in Ihub Portal.</li>
-                            <li><b>Vend_suc - Not_In_IhubPortal</b>: Success in Vendor Excel but not in Ihub Portal.</li>
-                            <li><b>Vend_IHub_Succ - NIL</b>: Success in both Vendor and Ihub But not in Ihub Ledger.</li>
-                            <li><b>Vend_IHub_Fail - NIL</b>: Failed in both Vendor and Ihub But not in Ihub Ledger.</li>
-                            <li><b>Vend_Suc - IHub_Fail - NIL</b>: Success in Vendor and Failed in Ihub But not in Ihub Ledger.</li>
-                            <li><b>Vend_Suc - Ihub_Ini - NIL</b>: Success in Vendor and Initiated in Ihub But not in Ihub Ledger.</li>
-                            <li><b>Vend_Fail - Ihub_Ini - NIL</b>: Failed in Vendor and Initiated in Ihub But not in Ihub Ledger.</li>
-                            <li><b>Vend_Suc - Ihub_Suc</b>: Success in both Vendor and Ihub and Present in Ihub Ledger.</li>
-                            <li><b>Vend_Fail - Ihub_Suc</b>: Failed in Vendor and Success in Ihub and Present in Ihub Ledger.</li>
-                            <li><b>Vend_Suc - Ihub_Fail</b>: Failed in Ihub and Success in Vendor and Present in Ihub Ledger.</li>
-                            <li><b>Vend_Fail - Ihub_Fail</b>: Failed in both Vendor and Ihub and Present in Ihub Ledger.</li>
-                            <li><b>Vend_Suc - Ihub_Ini</b>: Success in Vendor and Initiated in Ihub and Present in Ihub Ledger.</li>
-                            <li><b>Vend_Fail - Ihub_Ini</b>: Failed in Vendor and Initiated in Ihub and Present in Ihub Ledger.</li>
-                            <li><b>Tenant_Ini_Not_In_Hub</b>: Initiated in Tenant Database but not present in Ihub Database.</li>
-                            <li><b>Matched_Values</b>: Values with matched status.</li>
-                        </ul>
-                    </CardContent>
-                </Card>
-
+                                    {/* Action Buttons */}
+                                    <div className="flex gap-4">
+                                        <Button
+                                            type="submit"
+                                            className="flex-1 font-bold flex items-center justify-center bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] hover:from-[var(--secondary)] hover:to-[var(--primary)] shadow-lg rounded-lg transition"
+                                            disabled={isSubmitting}
+                                            aria-label="Process"
+                                        >
+                                            {isSubmitting ? <span className="loader mr-2" /> : null}
+                                            {isSubmitting ? "Processing..." : "Process"}
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="flex-1 border-[var(--primary)] text-[var(--primary)] font-bold hover:bg-[var(--muted)] rounded-lg transition"
+                                            onClick={clearForm}
+                                            disabled={isSubmitting}
+                                            aria-label="Clear"
+                                        >
+                                            Clear
+                                        </Button>
+                                    </div>
+                                </form>
+                            </Form>
+                        </CardContent>
+                    </Card>
+                    {/* Status Label Card: 7 columns on large screens */}
+                    <Card className="col-span-12 lg:col-span-7 max-h-[70vh] m-0 p-0 overflow-y-auto shadow-xl rounded-2xl border-0 bg-[var(--card)] text-[var(--card-foreground)]">
+                        <CardHeader className="flex flex-row items-center gap-3 bg-gradient-to-r from-[var(--primary)] from-100% to-[var(--primary)]/80 to-80% sticky top-0 z-10 rounded-t-2xl px-6 py-4 mb-0">
+                            <span className="inline-flex items-center justify-center bg-[var(--card)] text-[var(--primary)] rounded-full w-10 h-10 shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 20c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z" />
+                                </svg>
+                            </span>
+                            <CardTitle className="text-2xl font-bold text-[var(--primary-foreground)] tracking-wide">
+                                Status Labels
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="py-4 px-6 bg-[var(--card)] text-[var,--card-foreground]">
+                            <ul className="space-y-3">
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-blue-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Not_In_Vendor
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Data Present in Ihub Portal But not in Vendor Excel.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-blue-500 text-sm px-2 py-1 mr-2 text-center">
+                                        Not in Portal
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Data Present in Vendor Excel But not in Ihub Portal.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-green-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Vend_suc - Not_In_IhubPortal
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Success in Vendor Excel but not in Ihub Portal.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-green-700 text-sm px-2 py-1 mr-2 text-center">
+                                        Vend_IHub_Succ - NIL
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Success in both Vendor and Ihub But not in Ihub Ledger.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-red-500 text-sm px-2 py-1 mr-2 text-center">
+                                        Vend_IHub_Fail - NIL
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Failed in both Vendor and Ihub But not in Ihub Ledger.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-yellow-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Vend_Suc - IHub_Fail - NIL
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Success in Vendor and Failed in Ihub But not in Ihub Ledger.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-yellow-700 text-sm px-2 py-1 mr-2 text-center">
+                                        Vend_Suc - Ihub_Ini - NIL
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Success in Vendor and Initiated in Ihub But not in Ihub Ledger.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-red-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Vend_Fail - Ihub_Ini - NIL
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Failed in Vendor and Initiated in Ihub But not in Ihub Ledger.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-green-800 text-sm px-2 py-1 mr-2 text-center">
+                                        Vend_Suc - Ihub_Suc
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Success in both Vendor and Ihub and Present in Ihub Ledger.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-red-700 text-sm px-2 py-1 mr-2 text-center">
+                                        Vend_Fail - Ihub_Suc
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Failed in Vendor and Success in Ihub and Present in Ihub Ledger.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-purple-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Vend_Suc - Ihub_Fail
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Failed in Ihub and Success in Vendor and Present in Ihub Ledger.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-red-800 text-sm px-2 py-1 mr-2 text-center">
+                                        Vend_Fail - Ihub_Fail
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Failed in both Vendor and Ihub and Present in Ihub Ledger.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-cyan-700 text-sm px-2 py-1 mr-2 text-center">
+                                        Vend_Suc - Ihub_Ini
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Success in Vendor and Initiated in Ihub and Present in Ihub Ledger.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-orange-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Vend_Fail - Ihub_Ini
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Failed in Vendor and Initiated in Ihub and Present in Ihub Ledger.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-pink-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Tenant_Ini_Not_In_Hub
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Initiated in Tenant Database but not present in Ihub Database.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2 bg-[var(--muted)]/80 hover:bg-[var(--primary)]/10 transition rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="font-bold text-gray-700 text-sm px-2 py-1 mr-2 text-center">
+                                        Matched_Values
+                                    </span>
+                                    <span className="text-gray-600 text-sm px-2 py-1 mr-2 text-center">
+                                        Values with matched status.
+                                    </span>
+                                </li>
+                            </ul>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
             <div className="flex flex-col lg:flex-row gap-4 mt-4 justify-center" >
                 {/* Results Section - Only show if apiResponse exists and isSuccess is true */}
-                {apiResponse?.isSuccess && (
-                    <ResultsViewer responseData={apiResponse} />
-                )}</div>
-        </div>
+                {isSubmitting ? (
+                    <div className="flex justify-center w-full">
+                        <Loader />
+                    </div>
+                ) : (
+                    apiResponse?.isSuccess && (
+                        <ResultsViewer responseData={apiResponse} />
+                    )
+                )}
+            </div>
+        </div >
     );
 };
 

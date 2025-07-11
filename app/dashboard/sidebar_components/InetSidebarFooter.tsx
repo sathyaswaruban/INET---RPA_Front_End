@@ -15,7 +15,6 @@ interface User {
   createdAt: string;
 }
 
-
 export default function InetSidebarFooter() {
   const router = useRouter();
 
@@ -26,12 +25,7 @@ export default function InetSidebarFooter() {
     const fetchUser = async () => {
       try {
         const response = await axios.get("/api/auth/me");
-        // console.log('response', response);
-        // console.log('response.data', response?.data);
-        // console.log('response.data.user', response?.data?.user);
         setUser(response?.data?.user)
-        // console.log(user);
-
       } catch (error) {
         toast.error("Failed to fetch user data");
         router.push("/auth/login");
@@ -42,28 +36,26 @@ export default function InetSidebarFooter() {
 
     fetchUser();
   }, [router]);
+
   return (
-    <SidebarFooter>
+    <SidebarFooter className="bg-[var(--card)] border-t border-[var(--border)] rounded-b-2xl shadow-md">
       <SidebarMenu>
         <SidebarMenuItem>
           {user &&
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  <User2 /> {user?.name}
-                  <ChevronUp className="ml-auto" />
+                <SidebarMenuButton className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] font-bold hover:from-[var(--secondary)] hover:to-[var(--primary)] transition">
+                  <User2 className="w-5 h-5" /> {user?.name}
+                  <ChevronUp className="ml-auto w-4 h-4" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width]">
-                <p>{ }</p>
-
-                <DropdownMenuItem>
-                  <span> {user?.email}</span>
+              <DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width] bg-[var(--card)] border border-[var(--border)] rounded-xl shadow-lg text-[var(--card-foreground)]">
+                <DropdownMenuItem className="text-xs font-medium text-[var(--primary)]">
+                  <span>{user?.email}</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span> {user?.role}</span>
+                <DropdownMenuItem className="text-xs font-medium text-[var(--secondary)]">
+                  <span>{user?.role}</span>
                 </DropdownMenuItem>
-
               </DropdownMenuContent>
             </DropdownMenu>
           }

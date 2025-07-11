@@ -16,7 +16,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import * as XLSX from 'xlsx';
 import { memo, useEffect, useState } from "react";
-import { FileSpreadsheet, LockIcon, X } from "lucide-react";
+import { FileSpreadsheet } from "lucide-react";
 import toast from "react-hot-toast";
 import { saveAs } from 'file-saver';
 
@@ -61,7 +61,6 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
         return Array.isArray(sectionData) && sectionData.length > 0;
     });
     const service_name = localData?.service_name || " "
-    // console.log(service_name)
     let orderedColumns: string[] = [];
 
     if (service_name !== "UPIQR") {
@@ -133,63 +132,73 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     };
 
     const [paginationState, setPaginationState] = useState<{ [key: string]: number }>({});
-    // const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-    // const totalPages = Math.ceil(combinedData.length / itemsPerPage);
-    // const paginatedData = combinedData.slice(
-    //     (currentPage - 1) * itemsPerPage,
-    //     currentPage * itemsPerPage
-    // );
 
     return (
-        <div className="space-y-6 w-full max-w-6xl">
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-2">
-                    <CardTitle className="font-bold text-blue-600">Excel Data Count : {Excel_count}</CardTitle>
-                    <CardTitle className="font-bold text-orange-600">HUB Data Count : {HUB_count}</CardTitle>
-                    <CardTitle className="font-bold text-xl">TOTAL : {Total_success_count + Total_failed_count + combinedData.length}</CardTitle>
-                    <CardTitle className="font-bold text-green-600">Total Success : {Total_success_count}</CardTitle>
-                    <CardTitle className="font-bold text-red-600">Total Failed : {Total_failed_count}</CardTitle>
-                    <CardTitle className="font-bold text-violet-600">Combined Data Count : {combinedData.length}</CardTitle>
+        <div className="space-y-8 w-full max-w-6xl mx-auto px-2 md:px-0">
+            <Card className="shadow-lg rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
+                <CardHeader className="flex flex-wrap gap-4 items-center justify-between">
+                    <div className="flex flex-wrap gap-4 items-center">
+                        <CardTitle className="text-[var(--primary)] text-base md:text-s bg-[var(--muted)] px-3 py-1 rounded-lg shadow-sm">
+                            Excel Data Count: <span className="ml-1">{Excel_count}</span>
+                        </CardTitle>
+                        <CardTitle className="text-orange-600 text-base md:text-s bg-orange-100 dark:bg-orange-900/40 px-3 py-1 rounded-lg shadow-sm">
+                            HUB Data Count: <span className="ml-1">{HUB_count}</span>
+                        </CardTitle>
+                        <CardTitle className="text-xl text-[var(--foreground)] bg-[var(--muted)] px-3 py-1 rounded-lg shadow-s">
+                            TOTAL: <span className="ml-1">{Total_success_count + Total_failed_count + combinedData.length}</span>
+                        </CardTitle>
+                        <CardTitle className="text-green-600 text-base md:text-s bg-green-100 dark:bg-green-900/40 px-3 py-1 rounded-lg shadow-sm">
+                            Total Success: <span className="ml-1">{Total_success_count}</span>
+                        </CardTitle>
+                        <CardTitle className="text-red-600 text-base md:text-s bg-red-100 dark:bg-red-900/40 px-2 py-1 rounded-lg shadow-sm">
+                            Total Failed: <span className="ml-1">{Total_failed_count}</span>
+                        </CardTitle>
+                        <CardTitle className="text-violet-600 text-base md:text-s bg-violet-100 dark:bg-violet-900/40 px-3 py-1 rounded-lg shadow-sm">
+                            Combined Data Count: <span className="ml-1">{combinedData.length}</span>
+                        </CardTitle>
+                    </div>
                     {combinedData.length > 0 && (
-
                         <Button
                             onClick={() => exportToExcel(combinedData, 'combined_data')}
                             variant="outline"
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 border-green-400 hover:bg-green-200 dark:hover:bg-green-900/20 transition rounded-lg shadow-sm"
                         >
                             <FileSpreadsheet className="w-4 h-4 text-green-600" />
-                            Export Combined Data to Excel
+                            <span className="font-semibold text-green-700 dark:text-green-300">Export Combined Data</span>
                         </Button>
                     )}
                 </CardHeader>
             </Card>
 
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle className="font-bold text-xl">DETAILED RESULTS</CardTitle>
+            <Card className="shadow-xl rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="font-bold text-2xl text-[var(--primary)] tracking-tight">Detailed Results</CardTitle>
                     {activeSections.length > 0 && (
-                        <Button onClick={exportAllTabsToExcel} variant="outline" className="flex items-center  gap-2">
+                        <Button
+                            onClick={exportAllTabsToExcel}
+                            variant="outline"
+                            className="flex items-center gap-2 border-[var(--primary)] hover:bg-[var(--muted)] transition rounded-lg shadow-sm"
+                        >
                             <FileSpreadsheet className="h-4 w-4 text-green-600" />
-                            Export All Tabs
+                            <span className="font-semibold text-[var(--primary)]">Export All Tabs</span>
                         </Button>
-
                     )}
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-0">
                     {activeSections.length === 0 ? (
-                        <div className="text-center p-4">
+                        <div className="text-center p-8 text-[var(--muted-foreground)] text-lg font-medium">
                             <p>{message}</p>
                         </div>
                     ) : (
                         <Tabs defaultValue={activeSections[0]?.key || ''} className="w-full">
                             <div className="overflow-x-auto pb-2">
-                                <TabsList className="flex w-full justify-start bg-[#1c9eda] rounded-md p-1">
+                                <TabsList className="flex w-full justify-start bg-gradient-to-r from-[var(--primary)] via-[var(--primary)] to-[var(--secondary)] rounded-lg p-1 shadow-md">
                                     {activeSections.map((section) => (
                                         <TabsTrigger
                                             key={section.key}
                                             value={section.key}
-                                            className="text-white px-4 py-2 rounded-md hover:bg-[#1580b5] data-[state=active]:bg-white data-[state=active]:text-[#1c9eda] transition-colors"
+                                            className="text-[var(--primary-foreground)] px-4 py-2 rounded-md font-semibold hover:bg-[var(--primary)]/80 data-[state=active]:bg-[var(--card)] data-[state=active]:text-[var(--primary)] transition-colors shadow-sm"
                                         >
                                             {section.label}
                                         </TabsTrigger>
@@ -213,19 +222,22 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
                                 };
 
                                 return (
-                                    <TabsContent key={section.key} value={section.key} className="pt-4">
-                                        <Card>
-                                            <CardHeader className="flex flex-row items-center justify-between">
-                                                <CardTitle className="font-bold text-xl">{section.label}</CardTitle>
-                                                <span className="font-bold">Total count: {data.length}</span>
+                                    <TabsContent key={section.key} value={section.key} className="pt-6">
+                                        <Card className="rounded-lg shadow-md border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
+                                            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                                <CardTitle className="font-bold text-lg text-[var(--primary)]">{section.label}</CardTitle>
+                                                <span className="font-bold text-[var(--foreground)] bg-[var(--muted)] px-2 py-1 rounded-md shadow-sm">Total: {data.length}</span>
                                             </CardHeader>
-                                            <CardContent>
-                                                <div className="overflow-x-auto">
+                                            <CardContent className="pt-0">
+                                                <div className="overflow-x-auto rounded-lg border border-[var(--border)] bg-[var(--card)] shadow-inner">
                                                     <Table>
-                                                        <TableHeader className="bg-[#0097eb]">
-                                                            <TableRow >
+                                                        <TableHeader className="bg-gradient-to-r from-[var(--primary)] from-100% to-[var(--primary)]/80 to-80%">
+                                                            <TableRow>
                                                                 {orderedColumns.map((column) => (
-                                                                    <TableHead key={column} className="font-bold text-white hover:text-white hover:bg-[#0097eb]">
+                                                                    <TableHead
+                                                                        key={column}
+                                                                        className="font-bold text-[var(--primary-foreground)] text-sm uppercase tracking-wide px-3 py-2 whitespace-nowrap"
+                                                                    >
                                                                         {column.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())}
                                                                     </TableHead>
                                                                 ))}
@@ -233,9 +245,15 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
                                                         </TableHeader>
                                                         <TableBody>
                                                             {paginatedData.map((item: DataItem, index: number) => (
-                                                                <TableRow key={index}>
+                                                                <TableRow
+                                                                    key={index}
+                                                                    className="hover:bg-[var(--muted)] transition"
+                                                                >
                                                                     {orderedColumns.map((column) => (
-                                                                        <TableCell key={`${index}-${column}`}>
+                                                                        <TableCell
+                                                                            key={`${index}-${column}`}
+                                                                            className="px-3 py-2 text-[var(--card-foreground)] text-sm whitespace-nowrap"
+                                                                        >
                                                                             {formatValue(item[column])}
                                                                         </TableCell>
                                                                     ))}
@@ -245,15 +263,19 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
                                                     </Table>
 
                                                     {totalPages > 1 && (
-                                                        <div className="flex justify-between items-center mt-4">
-                                                            <p className="text-sm text-gray-600">
-                                                                Page {currentPage} of {totalPages}
+                                                        <div className="flex flex-col md:flex-row justify-between items-center mt-6 gap-2 px-2">
+                                                            <p className="text-sm text-[var(--muted-foreground)]">
+                                                                Page <span className="font-semibold">{currentPage}</span> of <span className="font-semibold">{totalPages}</span>
                                                             </p>
-                                                            <div className="space-x-2">
+                                                            <div className="flex gap-2">
                                                                 <Button
                                                                     variant="outline"
                                                                     onClick={() => changePage(Math.max(currentPage - 1, 1))}
                                                                     disabled={currentPage === 1}
+                                                                    className={`rounded-lg px-4 py-1 font-semibold transition ${currentPage === 1
+                                                                            ? "bg-[var(--muted)] text-[var(--muted-foreground)] border-[var(--border)] cursor-not-allowed"
+                                                                            : "hover:bg-[var(--muted)] hover:text-[var(--primary)] border-[var(--primary)]"
+                                                                        }`}
                                                                 >
                                                                     Previous
                                                                 </Button>
@@ -261,6 +283,10 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
                                                                     variant="outline"
                                                                     onClick={() => changePage(Math.min(currentPage + 1, totalPages))}
                                                                     disabled={currentPage === totalPages}
+                                                                    className={`rounded-lg px-4 py-1 font-semibold transition ${currentPage === totalPages
+                                                                            ? "bg-[var(--muted)] text-[var(--muted-foreground)] border-[var(--border)] cursor-not-allowed"
+                                                                            : "hover:bg-[var(--muted)] hover:text-[var(--primary)] border-[var(--primary)]"
+                                                                        }`}
                                                                 >
                                                                     Next
                                                                 </Button>

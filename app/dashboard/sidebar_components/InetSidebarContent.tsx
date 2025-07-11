@@ -76,9 +76,11 @@ export default function InetSidebarContent() {
   );
 
   return (
-    <SidebarContent>
+    <SidebarContent className="bg-[var(--card)] text-[var(--card-foreground)] border-r border-[var(--border)] shadow-xl rounded-b-2xl">
       <SidebarGroup>
-        <SidebarGroupLabel className="text-primary">Dashboard</SidebarGroupLabel>
+        <SidebarGroupLabel className="text-[var(--primary)] font-bold tracking-wide">
+          Dashboard
+        </SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
             {filteredItems.map((item) => {
@@ -92,17 +94,27 @@ export default function InetSidebarContent() {
                   <SidebarMenuButton asChild isActive={isActive}>
                     <a
                       href={item.url}
-                      className="flex items-center gap-2 px-2 py-1 rounded-md duration-200"
+                      className={`flex items-center gap-2 px-2 py-2 rounded-lg duration-200 transition
+                        ${
+                          isActive
+                            ? "bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] shadow font-bold"
+                            : "hover:bg-[var(--muted)] text-[var(--muted-foreground)]"
+                        }
+                      `}
                     >
                       <item.icon
-                        className={isActive ? "text-black" : "text-muted-foreground"}
+                        className={`h-5 w-5 ${
+                          isActive
+                            ? "text-[var(--primary-foreground)]"
+                            : "text-[var(--muted-foreground)]"
+                        }`}
                       />
                       <span
-                        className={
+                        className={`${
                           isActive
-                            ? "text-primary font-bold"
-                            : "text-muted-foreground"
-                        }
+                            ? "text-[var(--primary-foreground)] font-bold"
+                            : "text-[var(--muted-foreground)]"
+                        }`}
                       >
                         {item.title}
                       </span>
