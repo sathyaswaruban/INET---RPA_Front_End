@@ -33,9 +33,9 @@ export default function LoginPage() {
       <div className="hidden lg:flex flex-col justify-center items-center flex-[0_0_50%] h-full">
         <img
           src="/images/loginpage/loginpg.jpg"
-          alt="Login Illustration"
-          className="object-cover rounded-2xl shadow-2xl w-4/5 h-[420px] max-w-xl"
-          style={{ minWidth: 0 }}
+          alt="Login Page"
+          className="object-cover rounded-2xl shadow-2xl w-5/5 h-[500px] max-w-xl"
+          style={{ minWidth: 0, minHeight: 0 }}
         />
       </div>
       {/* Login Card Column */}
