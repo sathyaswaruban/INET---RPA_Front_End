@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
             if (isNaN(date.getTime())) throw new Error(`Invalid date: ${str}`);
             return date;
         };
-        
+
         // LIVE SERVER WORKING FUNCTION
         // function getISTDate(): Date {
         //     // Method 1: If server is in IST
@@ -31,10 +31,12 @@ export async function POST(req: NextRequest) {
         //     // return new Date(Date.now() + (5.5 * 60 * 60 * 1000));
         // }
 
-        function getISTDate() {
-            return new Date();
+        function getISTDate(): Date {
+            const now = new Date();
+            // Convert to IST by adding 5.5 hours in milliseconds
+            const istOffset = 5.5 * 60 * 60 * 1000;
+            return new Date(now.getTime() + istOffset);
         }
-
         const newRecord = await prisma.user_task_history.create({
             data: {
                 uid,

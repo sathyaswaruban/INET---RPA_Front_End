@@ -32,9 +32,9 @@ export default function LoginPage() {
       {/* Left Image Column - now col-6 */}
       <div className="hidden lg:flex flex-col justify-center items-center flex-[0_0_50%] h-full">
         <img
-          src="/images/loginpage/loginpg.jpg"
+          src="/images/loginpage/loginpg.png"
           alt="Login Page"
-          className="object-cover rounded-2xl shadow-2xl w-5/5 h-[500px] max-w-xl"
+          className="object-cover  w-5/5 h-[450px] max-w-xl"
           style={{ minWidth: 0, minHeight: 0 }}
         />
       </div>
@@ -52,7 +52,7 @@ export default function LoginPage() {
           </div>
           <div className="text-center">
             <h6 className="text-3xl md:text-4xl font-extrabold text-[var(--primary)] mb-2">
-              Welcome Back
+              Welcome
             </h6>
             <p className="text-sm text-[var(--muted-foreground)] mb-6">
               Sign in to continue to Report Reconciliation

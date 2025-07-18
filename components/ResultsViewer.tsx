@@ -45,6 +45,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
         { key: "VEND_SUC_IHUB_FAIL-NIL", label: "Vend_Suc - IHub_Fail - NIL" },
         { key: "IHUB_INT_VEND_SUC-NIL", label: "Vend_Suc - Ihub_Ini - NIL" },
         { key: "VEND_FAIL_IHUB_INT-NIL", label: "Vend_Fail - Ihub_Ini - NIL" },
+        { key: "IHUB_VEND_FAIL", label: "Vend_IHUB_Fail - NIL" },
         { key: "VEND_IHUB_SUC", label: "Vend_Suc - Ihub_Suc" },
         { key: "VEND_FAIL_IHUB_SUC", label: "Vend_Fail - Ihub_Suc" },
         { key: "VEND_SUC_IHUB_FAIL", label: "Vend_Suc - Ihub_Fail" },

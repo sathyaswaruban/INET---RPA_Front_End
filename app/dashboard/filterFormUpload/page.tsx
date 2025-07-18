@@ -57,6 +57,7 @@ type FormValues = z.infer<typeof formSchema>;
 const serviceOptions = [
     { value: "ASTRO", label: "Astro Horoscope" },
     { value: "BBPS", label: "BBPS" },
+    { value: "DMT", label: "DMT" },
     { value: "LIC", label: "LIC - Premimum" },
     { value: "MATM", label: "Micro ATM (M-ATM)" },
     { value: "RECHARGE", label: "PaySprint-Recharge" },
@@ -188,6 +189,12 @@ const FilterForm = () => {
                 },
                 timeout: 120000,
             });
+            // const res = await axios.post("http://192.168.1.157:5000/api/reconciliation", formData, {
+            //     headers: {
+            //         "Content-Type": "multipart/form-data",
+            //     },
+            //     timeout: 120000,
+            // });
             const response = {
                 ...res,
                 data: normalizeResponse(res.data)
