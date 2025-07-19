@@ -54,7 +54,13 @@ export default function InetSidebarFooter() {
                   <span>{user?.email}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="text-xs font-medium text-[var(--secondary)]">
-                  <span>{user?.role}</span>
+                  <span>Name: {user?.name}</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="text-xs font-medium text-[var(--secondary)]">
+                  <span>Role: {user?.role}</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="text-xs font-medium text-[var(--secondary)]">
+                  <span>UserID: {user?.id}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

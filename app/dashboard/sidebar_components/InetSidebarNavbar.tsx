@@ -20,8 +20,8 @@ export default function InetSidebarNavbar() {
     now.getHours() < 12
       ? "Good Morning"
       : now.getHours() < 18
-      ? "Good Afternoon"
-      : "Good Evening";
+        ? "Good Afternoon"
+        : "Good Evening";
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
@@ -47,6 +47,7 @@ export default function InetSidebarNavbar() {
   return (
     <div className="sticky top-0 z-50 bg-[var(--card)] border-b border-[var(--border)] p-4 flex flex-content items-center justify-between rounded-b-2xl shadow-xl">
       <SidebarTrigger />
+
       <div className="absolute left-0 right-0 text-center pointer-events-none z-0">
         <span className=" font-bold text-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent drop-shadow">
           I-NET Report Reconciliation
