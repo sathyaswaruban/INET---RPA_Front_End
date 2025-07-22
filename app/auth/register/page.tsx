@@ -6,12 +6,18 @@ import toast from "react-hot-toast";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    email: string;
+    password: string;
+    name: string;
+    role: "USER" | "ADMIN";
+  }>({
     email: "",
     password: "",
     name: "",
-    role: "USER" as "USER" | "ADMIN",
+    role: "USER",
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -122,6 +128,7 @@ export default function RegisterPage() {
               >
                 <option value="USER">User</option>
                 <option value="ADMIN">Admin</option>
+                <option value="SUPER_ADMIN">Super Admin</option>
               </select>
             </div>
           </div>
@@ -130,9 +137,8 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                }`}
             >
               {isSubmitting ? "Registering..." : "Register User"}
             </button>

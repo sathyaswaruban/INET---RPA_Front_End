@@ -10,6 +10,9 @@ import axios from "axios";
 import Loader from "./loader/page";
 import { set } from "zod";
 import '../globals.css';
+import { FileSpreadsheet } from "lucide-react";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 interface User {
   id: number;
@@ -25,7 +28,7 @@ interface Ebodata {
     TN_Active_list: any[];
     UP_Active_list?: any[];
     current_month_expiry_list?: any[];
-    current_month_active_list?: any[];
+    AP_Active_list?: any[];
     last_month_inactive_list?: any[];
   };
   isSuccess: boolean;
@@ -33,8 +36,37 @@ interface Ebodata {
   service_name: string;
 }
 
-const formatDate = (date: Date) => date.toISOString().slice(0, 10);
+const exportListToExcel = (list: any[], fileName: string) => {
+  if (!Array.isArray(list) || list.length === 0) {
+    alert("No data available to export.");
+    return;
+  }
 
+  // Map data to ensure correct column order
+  const mappedList = list.map((item) => ({
+    UserName: item.UserName || "",
+    FirstName: item.FirstName || "",
+    MobileNo: item.MobileNo || "",
+    Email: item.Email || "",
+    Expiry_Date: formatDate(item.Expiry_Date),
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(mappedList);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+  const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+  saveAs(blob, `${fileName}.xlsx`);
+};
+
+const formatDate = (dateString: string) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -103,65 +135,105 @@ export default function DashboardPage() {
           </div>
         </div>)}
       {user.role === "USER" && (
-        <div className="flex items-start mb-8">
-          <h1 className="text-2xl font-bold text-[var(--primary)]">Home Page</h1>
-        </div>)}
+          <div className="flex items-start mb-8">
+            <h1 className="text-2xl font-bold text-[var(--primary)]">Home Page / Dashboard</h1>
+          </div>)}
       <div className="min-h-screen p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-          <Card className="glass-card hover-glow">
-            <CardHeader className="card-header">
+          <Card className="glass-card hover-glow relative">
+            <CardHeader className="card-header flex justify-between items-start">
               <CardTitle className="card-title">Inet Active User Count</CardTitle>
             </CardHeader>
-            <CardContent className="card-content">
+            <CardContent className="card-content text-green-600">
               <p>{data?.data?.Active_list?.length ?? 0}</p>
+              <button
+                onClick={() => exportListToExcel(data?.data?.Active_list ?? [], "Inet_Active_Users")}
+                className="absolute bottom-2 right-2 bg-white-600 text-green-600 border border-green-600  text-sm px-3 py-1 rounded hover:bg-green-100 flex items-center gap-1">
+                <FileSpreadsheet className="w-4 h-4" />
+              </button>
             </CardContent>
           </Card>
 
-          <Card className="glass-card hover-glow">
-            <CardHeader className="card-header">
+          <Card className="glass-card hover-glow relative">
+            <CardHeader className="card-header flex justify-between items-start">
               <CardTitle className="card-title">Inet TN User Count</CardTitle>
             </CardHeader>
             <CardContent className="card-content">
               <p>{data?.data?.TN_Active_list?.length ?? 0}</p>
+              <button
+                onClick={() =>
+                  exportListToExcel(
+                    data?.data?.TN_Active_list ?? [],
+                    `TN_Active_list_${new Date().toISOString().slice(0, 10)}`
+                  )
+                } className="absolute bottom-2 right-2 bg-white-600 text-green-600 border border-green-600  text-sm px-3 py-1 rounded hover:bg-green-100 flex items-center gap-1">
+                <FileSpreadsheet className="w-4 h-4" />
+              </button>
             </CardContent>
           </Card>
 
-          <Card className="glass-card hover-glow">
-            <CardHeader className="card-header">
-              <CardTitle className="card-title">Inet Other User Count</CardTitle>
+          <Card className="glass-card hover-glow relative">
+            <CardHeader className="card-header flex justify-between items-start">
+              <CardTitle className="card-title">Inet UP User Count</CardTitle>
+
             </CardHeader>
             <CardContent className="card-content">
               <p>{data?.data?.UP_Active_list?.length ?? 0}</p>
+              <button
+                onClick={() => exportListToExcel(data?.data?.UP_Active_list ?? [], `UP_Active_list_${new Date().toISOString().slice(0, 10)}`)}
+                className="absolute bottom-2 right-2 bg-white-600 text-green-600 border border-green-600  text-sm px-3 py-1 rounded hover:bg-green-100 flex items-center gap-1">
+                <FileSpreadsheet className="w-4 h-4" />
+              </button>
             </CardContent>
           </Card>
 
-          <Card className="glass-card hover-glow">
-            <CardHeader className="card-header">
-              <CardTitle className="card-title">Current Month Expiry User</CardTitle>
-            </CardHeader>
-            <CardContent className="card-content text-color-red">
-              <p>{data?.data?.current_month_expiry_list?.length ?? 0}</p>
-            </CardContent>
-          </Card>
+          <Card className="glass-card hover-glow relative">
+            <CardHeader className="card-header flex justify-between items-start">
+              <CardTitle className="card-title">Inet AP User Count</CardTitle>
 
-          <Card className="glass-card hover-glow">
-            <CardHeader className="card-header">
-              <CardTitle className="card-title">Next Month Active</CardTitle>
             </CardHeader>
             <CardContent className="card-content">
-              <p>{data?.data?.current_month_active_list?.length ?? 0}</p>
+              <p>{data?.data?.AP_Active_list?.length ?? 0}</p>
+              <button
+                onClick={() => exportListToExcel(data?.data?.AP_Active_list ?? [], `AP_Active_list_${new Date().toISOString().slice(0, 10)}`)}
+                className="absolute bottom-2 right-2 bg-white-600 text-green-600 border border-green-600  text-sm px-3 py-1 rounded hover:bg-green-100 flex items-center gap-1">
+                <FileSpreadsheet className="w-4 h-4" />
+              </button>
             </CardContent>
           </Card>
 
-          <Card className="glass-card hover-glow">
-            <CardHeader className="card-header">
+          <Card className="glass-card hover-glow relative">
+            <CardHeader className="card-header flex justify-between items-start">
+              <CardTitle className="card-title">Current Month Expiry User</CardTitle>
+
+            </CardHeader>
+            <CardContent className="card-content text-red-600">
+              <p>{data?.data?.current_month_expiry_list?.length ?? 0}</p>
+              <button
+                onClick={() => exportListToExcel(data?.data?.current_month_expiry_list ?? [], `current_month_expiry_list_${new Date().toISOString().slice(0, 10)}`)}
+                className="absolute bottom-2 right-2 bg-white-600 text-green-600 border border-green-600  text-sm px-3 py-1 rounded hover:bg-green-100 flex items-center gap-1">
+                <FileSpreadsheet className="w-4 h-4" />
+              </button>
+            </CardContent>
+          </Card>
+
+
+          <Card className="glass-card hover-glow relative">
+            <CardHeader className="card-header flex justify-between items-start">
               <CardTitle className="card-title">Past Month Expired Count</CardTitle>
             </CardHeader>
-            <CardContent className="card-content">
+            <CardContent className="card-content text-red-600">
               <p>{data?.data?.last_month_inactive_list?.length ?? 0}</p>
+              <button
+                onClick={() => exportListToExcel(data?.data?.last_month_inactive_list ?? [], `last_month_inactive_list_${new Date().toISOString().slice(0, 10)}`)}
+                className="absolute bottom-2 right-2 bg-white-600 text-green-600 border border-green-600  text-sm px-3 py-1 rounded hover:bg-green-100 flex items-center gap-1"
+              >
+                <FileSpreadsheet className="w-4 h-4" />
+              </button>
             </CardContent>
           </Card>
+
         </div>
       </div>
     </div>

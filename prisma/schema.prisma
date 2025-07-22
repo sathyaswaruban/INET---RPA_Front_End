@@ -24,9 +24,10 @@ model User {
 
 enum Role {
   ADMIN
-  USER
-  HR
-  MARKETING
+  ACCOUNTS
+  CUSTOMER SUPPORT
+  SUPER_ADMIN
+
 }
 
 enum NavType {
