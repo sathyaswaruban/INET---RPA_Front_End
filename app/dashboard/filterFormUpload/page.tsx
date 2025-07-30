@@ -58,6 +58,7 @@ const serviceOptions = [
     { value: "ASTRO", label: "Astro Horoscope" },
     { value: "BBPS", label: "BBPS" },
     { value: "DMT", label: "DMT" },
+    { value: "INSURANCE_OFFLINE", label: "Insurance - Offline" },
     { value: "LIC", label: "LIC - Premium" },
     { value: "MATM", label: "Micro ATM (M-ATM)" },
     { value: "RECHARGE", label: "PaySprint-Recharge" },
