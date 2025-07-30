@@ -71,7 +71,46 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     const today = new Date();
     const formattedDate = today.toISOString().split('T')[0];
 
-    if (service_name !== "UPIQR") {
+    if (service_name == "PASSPORT") {
+        orderedColumns = [
+            "CATEGORY",
+            "TENANT_ID",
+            "IHUB_REFERENCE",
+            "REFID",
+            "IHUB_USERNAME",
+            "AMOUNT",
+            "HUB_AMOUNT",
+            "SERVICE_DATE",
+            "VENDOR_DATE",
+            "VENDOR_STATUS",
+            "IHUB_MASTER_STATUS",
+            `${service_name}_STATUS`,
+            "IHUB_LEDGER_STATUS",
+            "BILL_FETCH_STATUS",
+            "TENANT_LEDGER_STATUS",
+            "TRANSACTION_DEBIT",
+            "TRANSACTION_CREDIT",
+            "COMMISSION_CREDIT",
+            "COMMISSION_REVERSAL"
+        ];
+    } else if (service_name === "UPIQR") {
+        orderedColumns = [
+            "CATEGORY",
+            "TENANT_ID",
+            "VENDOR_REFERENCE",
+            "REFID",
+            "IHUB_USERNAME",
+            "AMOUNT",
+            "SERVICE_DATE",
+            "VENDOR_DATE",
+            "VENDOR_STATUS",
+            "IHUB_MASTER_STATUS",
+            `${service_name}_STATUS`,
+            "TenantDB_wallettopup_status",
+            "Hub_Tntwallettopup_status"
+        ];
+    }
+    else {
         orderedColumns = [
             "CATEGORY",
             "TENANT_ID",
@@ -90,24 +129,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
             "TRANSACTION_DEBIT",
             "TRANSACTION_CREDIT",
             "COMMISSION_CREDIT",
-            "COMMISSION_REVERSAL"
-        ];
-    } else {
-        orderedColumns = [
-            "CATEGORY",
-            "TENANT_ID",
-            "VENDOR_REFERENCE",
-            "REFID",
-            "IHUB_USERNAME",
-            "AMOUNT",
-            "SERVICE_DATE",
-            "VENDOR_DATE",
-            "VENDOR_STATUS",
-            "IHUB_MASTER_STATUS",
-            `${service_name}_STATUS`,
-            "TenantDB_wallettopup_status",
-            "Hub_Tntwallettopup_status"
-        ];
+            "COMMISSION_REVERSAL"]
     }
 
     const exportToExcel = (data: DataItem[], fileName: string) => {
@@ -305,29 +327,31 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
                                                             <p className="text-sm text-[var(--muted-foreground)]">
                                                                 Page <span className="font-semibold">{currentPage}</span> of <span className="font-semibold">{totalPages}</span>
                                                             </p>
-                                                            <div className="flex gap-2">
+                                                            <div className="flex gap-2 mb-2">
                                                                 <Button
                                                                     variant="outline"
                                                                     onClick={() => changePage(Math.max(currentPage - 1, 1))}
                                                                     disabled={currentPage === 1}
                                                                     className={`rounded-lg px-4 py-1 font-semibold transition ${currentPage === 1
-                                                                        ? "bg-[var(--muted)] text-[var(--muted-foreground)] border-[var(--border)] cursor-not-allowed"
-                                                                        : "hover:bg-[var(--muted)] hover:text-[var(--primary)] border-[var(--primary)]"
+                                                                            ? "bg-[var(--muted)] text-[var(--muted-foreground)] border-[var(--border)] cursor-not-allowed"
+                                                                            : "hover:bg-[var(--muted)] hover:text-[var(--primary)] border-[var(--primary)]"
                                                                         }`}
                                                                 >
-                                                                    Previous
+                                                                    &lt;&lt;
                                                                 </Button>
+
                                                                 <Button
                                                                     variant="outline"
                                                                     onClick={() => changePage(Math.min(currentPage + 1, totalPages))}
                                                                     disabled={currentPage === totalPages}
                                                                     className={`rounded-lg px-4 py-1 font-semibold transition ${currentPage === totalPages
-                                                                        ? "bg-[var(--muted)] text-[var(--muted-foreground)] border-[var(--border)] cursor-not-allowed"
-                                                                        : "hover:bg-[var(--muted)] hover:text-[var(--primary)] border-[var(--primary)]"
+                                                                            ? "bg-[var(--muted)] text-[var(--muted-foreground)] border-[var(--border)] cursor-not-allowed"
+                                                                            : "hover:bg-[var(--muted)] hover:text-[var(--primary)] border-[var(--primary)]"
                                                                         }`}
                                                                 >
-                                                                    Next
+                                                                    &gt;&gt;
                                                                 </Button>
+
                                                             </div>
                                                         </div>
                                                     )}
