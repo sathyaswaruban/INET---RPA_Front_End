@@ -283,19 +283,21 @@ const HistoryTableWithFilters = () => {
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1}
-            className="bg-[var(--muted)] text-[var(--primary)] px-4 py-1 rounded-lg disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-semibold transition"
+            className="bg-[var(--muted)] text-[var(--primary)] px-4 py-1 rounded-lg disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-bold text-xl transition"
             aria-label="Previous Page"
           >
-            Previous
+            &laquo;
           </button>
+
           <button
             onClick={() => setCurrentPage((p) => Math.min(p + 1, pageCount))}
             disabled={currentPage === pageCount}
-            className="bg-[var(--muted)] text-[var(--primary)] px-4 py-1 rounded-lg disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-semibold transition"
+            className="bg-[var(--muted)] text-[var(--primary)] px-4 py-1 rounded-lg disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-bold text-xl transition"
             aria-label="Next Page"
           >
-            Next
+            &raquo;
           </button>
+
         </div>
       </div>
     </div>
