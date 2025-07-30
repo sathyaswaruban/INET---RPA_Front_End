@@ -58,7 +58,7 @@ const serviceOptions = [
     { value: "ASTRO", label: "Astro Horoscope" },
     { value: "BBPS", label: "BBPS" },
     { value: "DMT", label: "DMT" },
-    { value: "LIC", label: "LIC - Premimum" },
+    { value: "LIC", label: "LIC - Premium" },
     { value: "MATM", label: "Micro ATM (M-ATM)" },
     { value: "RECHARGE", label: "PaySprint-Recharge" },
     { value: "AEPS", label: "PaySprint-Aeps" },
@@ -183,18 +183,18 @@ const FilterForm = () => {
                 formData.append("transaction_type", values.transactionType);
             }
             formData.append("file", values.file);
-            // const res = await axios.post("http://localhost:5000/api/reconciliation", formData, {
-            //     headers: {
-            //         "Content-Type": "multipart/form-data",
-            //     },
-            //     timeout: 120000,
-            // });
-            const res = await axios.post("http://192.168.1.157:5000/api/reconciliation", formData, {
+            const res = await axios.post("http://localhost:5000/api/reconciliation", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
                 timeout: 120000,
             });
+            // const res = await axios.post("http://192.168.1.157:5000/api/reconciliation", formData, {
+            //     headers: {
+            //         "Content-Type": "multipart/form-data",
+            //     },
+            //     timeout: 120000,
+            // });
             const response = {
                 ...res,
                 data: normalizeResponse(res.data)

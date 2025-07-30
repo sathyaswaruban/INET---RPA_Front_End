@@ -41,28 +41,35 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
         { key: "not_in_Portal", label: "Not in Portal" },
         { key: "NOT_IN_PORTAL_VENDOR_SUCC", label: "Vend_suc - Not_In_IhubPortal" },
         { key: "VEND_IHUB_SUC-NIL", label: "Vend_IHub_Succ - NIL" },
-        { key: "VEND_FAIL_IHUB_SUC-NIL", label: "Vend_IHub_Fail - NIL" },
+        { key: "VEND_FAIL_IHUB_SUC-NIL", label: "Vend_Fail_IHub_Suc - NIL" },
         { key: "VEND_SUC_IHUB_FAIL-NIL", label: "Vend_Suc - IHub_Fail - NIL" },
         { key: "IHUB_INT_VEND_SUC-NIL", label: "Vend_Suc - Ihub_Ini - NIL" },
         { key: "VEND_FAIL_IHUB_INT-NIL", label: "Vend_Fail - Ihub_Ini - NIL" },
+        { key: "IHUB_VEND_FAIL-NIL", label: "Vend_IHub_Fail - NIL" },
         { key: "IHUB_VEND_FAIL", label: "Vend_IHUB_Fail - NIL" },
-        { key: "VEND_IHUB_SUC", label: "Vend_Suc - Ihub_Suc" },
         { key: "VEND_FAIL_IHUB_SUC", label: "Vend_Fail - Ihub_Suc" },
         { key: "VEND_SUC_IHUB_FAIL", label: "Vend_Suc - Ihub_Fail" },
-        { key: "IHUB_VEND_FAIL", label: "Vend_Fail - Ihub_Fail" },
         { key: "IHUB_INT_VEND_SUC", label: "Vend_Suc - Ihub_Ini" },
         { key: "VEND_FAIL_IHUB_INT", label: "Vend_Fail - Ihub_Ini" },
         { key: "Tenant_db_ini_not_in_hubdb", label: "Tenant_Ini_Not_In_Hub" },
         { key: "matched", label: "Matched_Values" },
         { key: "not_in_vendor", label: "Not_In_Vendor" },
     ];
+    const matchedSection = [{ key: "VEND_IHUB_SUC", label: "Vend_Suc - Ihub_Suc" }, { key: "VEND_IHUB_FAIL", label: "Vend_Fail - Ihub_Fail" }];
 
     const activeSections = dataSections.filter(section => {
         const sectionData = otherSections[section.key];
         return Array.isArray(sectionData) && sectionData.length > 0;
     });
+
+    const activeMatchedSections = matchedSection.filter(section => {
+        const sectionData = otherSections[section.key];
+        return Array.isArray(sectionData) && sectionData.length > 0;
+    });
     const service_name = localData?.service_name || " "
     let orderedColumns: string[] = [];
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0];
 
     if (service_name !== "UPIQR") {
         orderedColumns = [
@@ -110,6 +117,22 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
         XLSX.writeFile(workbook, `${fileName}.xlsx`);
     };
 
+    const exportMatchedTabsToExcel = () => {
+        const workbook = XLSX.utils.book_new();
+
+        activeMatchedSections.forEach((section) => {
+            const data = otherSections[section.key] || [];
+            if (data.length > 0) {
+                const worksheet = XLSX.utils.json_to_sheet(data, { header: orderedColumns });
+                XLSX.utils.book_append_sheet(workbook, worksheet, section.label || section.key);
+            }
+        });
+
+        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+        saveAs(blob, `Matched_result_${service_name}_${formattedDate}.xlsx`);
+    };
+
     const exportAllTabsToExcel = () => {
         const workbook = XLSX.utils.book_new();
 
@@ -123,7 +146,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
 
         const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-        saveAs(blob, 'detailed_results.xlsx');
+        saveAs(blob, `detailed_result_${service_name}_${formattedDate}.xlsx`);
     };
 
     const formatValue = (value: any) => {
@@ -139,17 +162,17 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
         <div className="space-y-8 w-full max-w-6xl mx-auto px-2 md:px-0">
             <Card className="shadow-lg rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
                 <CardHeader className="flex flex-wrap gap-4 items-center justify-between">
-                    <div className="flex flex-wrap gap-4 items-center">
+                    <div className="flex items-center gap-3 overflow-x-auto whitespace-nowrap">
                         <CardTitle className="text-[var(--primary)] text-base md:text-s bg-[var(--muted)] px-3 py-1 rounded-lg shadow-sm">
                             Excel Data Count: <span className="ml-1">{Excel_count}</span>
                         </CardTitle>
                         <CardTitle className="text-orange-600 text-base md:text-s bg-orange-100 dark:bg-orange-900/40 px-3 py-1 rounded-lg shadow-sm">
                             HUB Data Count: <span className="ml-1">{HUB_count}</span>
                         </CardTitle>
-                        <CardTitle className="text-xl text-[var(--foreground)] bg-[var(--muted)] px-3 py-1 rounded-lg shadow-s">
+                        <CardTitle className="text-black text-base md:text-s bg-gray-100 dark:bg-orange-900/40 px-3 py-1 rounded-lg shadow-sm">
                             TOTAL: <span className="ml-1">{Total_success_count + Total_failed_count + combinedData.length}</span>
                         </CardTitle>
-                        <CardTitle className="text-green-600 text-base md:text-s bg-green-100 dark:bg-green-900/40 px-3 py-1 rounded-lg shadow-sm">
+                        <CardTitle className="text-green-800 text-base md:text-s bg-green-100 dark:bg-green-900/40 px-3 py-1 rounded-lg shadow-sm">
                             Total Success: <span className="ml-1">{Total_success_count}</span>
                         </CardTitle>
                         <CardTitle className="text-red-600 text-base md:text-s bg-red-100 dark:bg-red-900/40 px-2 py-1 rounded-lg shadow-sm">
@@ -159,18 +182,32 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
                             Combined Data Count: <span className="ml-1">{combinedData.length}</span>
                         </CardTitle>
                     </div>
+                </CardHeader>
+
+                <CardContent className="flex justify-end mt-5 gap-6">
                     {combinedData.length > 0 && (
                         <Button
                             onClick={() => exportToExcel(combinedData, 'combined_data')}
                             variant="outline"
-                            className="flex items-center gap-2 border-green-400 hover:bg-green-200 dark:hover:bg-green-900/20 transition rounded-lg shadow-sm"
+                            className="border-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900/20 transition rounded-lg shadow-sm"
                         >
                             <FileSpreadsheet className="w-4 h-4 text-green-600" />
-                            <span className="font-semibold text-green-700 dark:text-green-300">Export Combined Data</span>
+                            <span className="font-semibold text-gray dark:text-green-100">Export Combined Data</span>
                         </Button>
                     )}
-                </CardHeader>
+                    {activeMatchedSections.length > 0 && (
+                        <Button
+                            onClick={exportMatchedTabsToExcel}
+                            variant="outline"
+                            className="border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition rounded-lg shadow-sm"
+                        >
+                            <FileSpreadsheet className="w-4 h-4 text-green-600" />
+                            <span className="font-semibold text-blue-800 ">Export Matched Data</span>
+                        </Button>
+                    )}
+                </CardContent>
             </Card>
+
 
             <Card className="shadow-xl rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -274,8 +311,8 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
                                                                     onClick={() => changePage(Math.max(currentPage - 1, 1))}
                                                                     disabled={currentPage === 1}
                                                                     className={`rounded-lg px-4 py-1 font-semibold transition ${currentPage === 1
-                                                                            ? "bg-[var(--muted)] text-[var(--muted-foreground)] border-[var(--border)] cursor-not-allowed"
-                                                                            : "hover:bg-[var(--muted)] hover:text-[var(--primary)] border-[var(--primary)]"
+                                                                        ? "bg-[var(--muted)] text-[var(--muted-foreground)] border-[var(--border)] cursor-not-allowed"
+                                                                        : "hover:bg-[var(--muted)] hover:text-[var(--primary)] border-[var(--primary)]"
                                                                         }`}
                                                                 >
                                                                     Previous
@@ -285,8 +322,8 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
                                                                     onClick={() => changePage(Math.min(currentPage + 1, totalPages))}
                                                                     disabled={currentPage === totalPages}
                                                                     className={`rounded-lg px-4 py-1 font-semibold transition ${currentPage === totalPages
-                                                                            ? "bg-[var(--muted)] text-[var(--muted-foreground)] border-[var(--border)] cursor-not-allowed"
-                                                                            : "hover:bg-[var(--muted)] hover:text-[var(--primary)] border-[var(--primary)]"
+                                                                        ? "bg-[var(--muted)] text-[var(--muted-foreground)] border-[var(--border)] cursor-not-allowed"
+                                                                        : "hover:bg-[var(--muted)] hover:text-[var(--primary)] border-[var(--primary)]"
                                                                         }`}
                                                                 >
                                                                     Next
