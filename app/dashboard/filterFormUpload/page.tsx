@@ -56,6 +56,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 const serviceOptions = [
     { value: "ASTRO", label: "Astro Horoscope" },
+    { value: "ABHIBUS", label: "Abhibus" },
     { value: "BBPS", label: "BBPS" },
     { value: "DMT", label: "DMT" },
     { value: "INSURANCE_OFFLINE", label: "Insurance - Offline" },
@@ -66,7 +67,10 @@ const serviceOptions = [
     { value: "PANUTI", label: "Pan-UTI" },
     { value: "PANNSDL", label: "Pan - NSDL" },
     { value: "PASSPORT", label: "Passport" },
+    { value: "SULTANPURSCA", label: "Sultanpur RPT_SCA" },
+    { value: "SULTANPUR_IS", label: "Sultanpur IS_Quota" },
     { value: "UPIQR", label: "UPI - QR" },
+
 ];
 
 const transactionOptions = [
