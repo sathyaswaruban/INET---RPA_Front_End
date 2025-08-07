@@ -69,7 +69,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     const formattedDate = today.toISOString().split('T')[0];
     let matchedSection: { key: string; label: string }[] = [];
 
-    if (service_name === "SULTANPURSCA" || service_name === "SULTANPUR_IS") {
+    if (service_name === "SULTANPURSCA" || service_name === "SULTANPUR_IS" || service_name=="CHITRAKOOT_IS" || service_name == "CHITRAKOOT_SCA") {
         matchedSection = [{ key: "matched", label: "VEN_IHUB" }];
     } else {
         matchedSection = [
@@ -122,7 +122,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
             "Hub_Tntwallettopup_status"
         ];
     }
-    else if (service_name == "SULTANPURSCA" || service_name == "SULTANPUR_IS") {
+    else if (service_name == "SULTANPURSCA" || service_name == "SULTANPUR_IS" || service_name=="CHITRAKOOT_IS" || service_name == "CHITRAKOOT_SCA") {
         orderedColumns = [
             "EBO_ID",
             "USERNAME",

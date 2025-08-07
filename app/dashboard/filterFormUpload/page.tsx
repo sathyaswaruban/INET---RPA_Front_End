@@ -67,10 +67,11 @@ const serviceOptions = [
     { value: "PANUTI", label: "Pan-UTI" },
     { value: "PANNSDL", label: "Pan - NSDL" },
     { value: "PASSPORT", label: "Passport" },
+    { value: "UPIQR", label: "UPI - QR" },
     { value: "SULTANPURSCA", label: "Sultanpur RPT_SCA" },
     { value: "SULTANPUR_IS", label: "Sultanpur IS_Quota" },
-    { value: "UPIQR", label: "UPI - QR" },
-
+    { value: "CHITRAKOOT_SCA", label: "Chitrakoot RPT_SCA" },
+    { value: "CHITRAKOOT_IS", label: "Chitrakoot IS_Quota" },
 ];
 
 const transactionOptions = [
