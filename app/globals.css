@@ -67,7 +67,7 @@
 
 
 .glass-card {
-  @apply w-full h-[160px] p-0 rounded-2xl border border-[var(--border)] bg-[var(--card)]/60 text-[var(--card-foreground)] backdrop-blur-md shadow-lg transition-all duration-300;
+  @apply w-full h-[150px] p-0 rounded-2xl border border-[var(--border)] bg-[var(--card)]/60 text-[var(--card-foreground)] backdrop-blur-md shadow-lg transition-all duration-300;
 }
 
 /* hover effect */
@@ -87,7 +87,7 @@
 
 /* content styling */
 .card-content {
-  @apply text-center font-bold text-4xl mt-3;
+  @apply text-center font-bold text-4xl;
 }
  
 :root {

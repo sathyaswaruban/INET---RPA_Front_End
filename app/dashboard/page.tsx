@@ -119,7 +119,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] p-4 md:p-8">
+    <div className="flex flex-col bg-[var(--background)] text-[var(--foreground)] p-4 md:p-8">
 
       {user.role === "ADMIN" && (
         <div className="flex justify-between">
@@ -140,10 +140,10 @@ export default function DashboardPage() {
           <div className="flex items-start mb-8">
             <h1 className="text-2xl font-bold text-[var(--primary)]">Home Page / Dashboard</h1>
           </div>)}
-      <div className="min-h-screen p-4">
+      <div className="p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-          <Card className="glass-card hover-glow relative">
+          <Card className="glass-card hover-glow cursor-pointer relative">
             <CardHeader className="card-header flex justify-between items-start">
               <CardTitle className="card-title">Inet Active User Count</CardTitle>
             </CardHeader>
@@ -157,7 +157,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="glass-card hover-glow relative">
+          <Card className="glass-card hover-glow cursor-pointer relative">
             <CardHeader className="card-header flex justify-between items-start">
               <CardTitle className="card-title">Inet TN User Count</CardTitle>
             </CardHeader>
@@ -175,7 +175,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="glass-card hover-glow relative">
+          <Card className="glass-card hover-glow cursor-pointer relative">
             <CardHeader className="card-header flex justify-between items-start">
               <CardTitle className="card-title">Inet UP User Count</CardTitle>
 
@@ -190,7 +190,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="glass-card hover-glow relative">
+          <Card className="glass-card hover-glow cursor-pointer relative">
             <CardHeader className="card-header flex justify-between items-start">
               <CardTitle className="card-title">Inet AP User Count</CardTitle>
 
@@ -205,7 +205,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="glass-card hover-glow relative">
+          <Card className="glass-card hover-glow cursor-pointer relative">
             <CardHeader className="card-header flex justify-between items-start">
               <CardTitle className="card-title">Current Month Expiry User</CardTitle>
 
@@ -221,7 +221,7 @@ export default function DashboardPage() {
           </Card>
 
 
-          <Card className="glass-card hover-glow relative">
+          <Card className="glass-card hover-glow cursor-pointer relative">
             <CardHeader className="card-header flex justify-between items-start">
               <CardTitle className="card-title">Past Month Expired Count</CardTitle>
             </CardHeader>

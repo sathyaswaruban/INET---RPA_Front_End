@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Home, List, RefreshCcw } from "lucide-react";
+import { Home, List, RefreshCcw,Users } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -52,6 +52,12 @@ export default function InetSidebarContent() {
       title: "Home",
       url: "/dashboard",
       icon: Home,
+      roles: ["ADMIN", "USER"],
+    },
+    {
+      title: "IHUB User Details",
+      url: "/dashboard/ihubuserdetails",
+      icon: Users,
       roles: ["ADMIN", "USER"],
     },
     {

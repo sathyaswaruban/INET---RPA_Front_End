@@ -17,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import * as XLSX from 'xlsx';
 import { memo, useEffect, useState } from "react";
 import { FileSpreadsheet } from "lucide-react";
-import toast from "react-hot-toast";
 import { saveAs } from 'file-saver';
 
 interface DataItem {
@@ -46,7 +45,6 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
         { key: "IHUB_INT_VEND_SUC-NIL", label: "Vend_Suc - Ihub_Ini - NIL" },
         { key: "VEND_FAIL_IHUB_INT-NIL", label: "Vend_Fail - Ihub_Ini - NIL" },
         { key: "IHUB_VEND_FAIL-NIL", label: "Vend_IHub_Fail - NIL" },
-        { key: "IHUB_VEND_FAIL", label: "Vend_IHUB_Fail - NIL" },
         { key: "VEND_FAIL_IHUB_SUC", label: "Vend_Fail - Ihub_Suc" },
         { key: "VEND_SUC_IHUB_FAIL", label: "Vend_Suc - Ihub_Fail" },
         { key: "IHUB_INT_VEND_SUC", label: "Vend_Suc - Ihub_Ini" },
@@ -74,7 +72,9 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     } else {
         matchedSection = [
             { key: "VEND_IHUB_SUC", label: "Vend_Suc - Ihub_Suc" },
-            { key: "VEND_IHUB_FAIL", label: "Vend_Fail - Ihub_Fail" }
+            { key: "VEND_IHUB_FAIL", label: "Vend_Fail - Ihub_Fail" },
+            {key: "VEND_IHUB_SUC-NIL", label: "Vend_IHub_Succ - NIL"},
+            { key: "IHUB_VEND_FAIL-NIL", label: "Vend_IHub_Fail - NIL" },
         ];
     }
 

@@ -45,16 +45,18 @@ export default function InetSidebarNavbar() {
   };
 
   return (
-    <div className="sticky top-0 z-50 bg-[var(--card)] border-b border-[var(--border)] p-4 flex flex-content items-center justify-between rounded-b-2xl shadow-xl">
-      <SidebarTrigger />
+    <div className="sticky top-0 z-50 bg-[var(--card)] border-b border-[var(--border)] p-4 flex flex-wrap items-center justify-between rounded-b-2xl shadow-xl gap-4">
+      <div className="flex items-center gap-2">
+        <SidebarTrigger />
+      </div>
 
-      <div className="absolute left-0 right-0 text-center pointer-events-none z-0">
-        <span className=" font-bold text-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent drop-shadow">
+      <div className="flex-1 text-center">
+        <span className="font-bold text-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent drop-shadow">
           I-NET Report Reconciliation
         </span>
       </div>
-      <div className="flex justify-between gap-2 items-center">
-        <div className="flex mr-3 items-center gap-2 text-sm font-medium">
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-sm font-medium">
           <span className="text-[var(--primary)]">{greeting} 👋</span>
           {isMounted ? (
             <LiveClock />
@@ -63,7 +65,7 @@ export default function InetSidebarNavbar() {
           )}
         </div>
         <Button
-          className="mr-3 border-[var(--primary)] text-[var(--primary)] bg-[var(--muted)] hover:bg-[var(--primary)] hover:text-[var(--primary-foreground)] transition"
+          className="border-[var(--primary)] text-[var(--primary)] bg-[var(--muted)] hover:bg-[var(--primary)] hover:text-[var(--primary-foreground)] transition"
           variant="outline"
           size="icon"
           onClick={toggleTheme}
@@ -71,7 +73,7 @@ export default function InetSidebarNavbar() {
           {theme === "dark" ? <SunIcon /> : <MoonIcon />}
         </Button>
         <Button
-          className="mr-5 bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] hover:from-[var(--secondary)] hover:to-[var(--primary)] transition"
+          className="bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] hover:from-[var(--secondary)] hover:to-[var(--primary)] transition"
           variant="destructive"
           size="icon"
           onClick={handleLogout}
