@@ -97,7 +97,13 @@ export default function UserDetailsForm() {
         setIsSubmitting(true);
         try {
             const payload = { ...formData, tenantName };
-            const res = await axios.post("http://localhost:5000/api/getEbodetailedData", payload, {
+            // const res = await axios.post("http://localhost:5000/api/getEbodetailedData", payload, {
+            //     headers: {
+            //         "Content-Type": "multipart/form-data",
+            //     },
+            //     timeout: 120000,
+            // });
+            const res = await axios.post("http://192.168.1.157:5000/api/getEbodetailedData", payload, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -225,24 +231,20 @@ export default function UserDetailsForm() {
     };
     let columnOrder: string[] = [];
 
-if (tenantName === "ITI UP Users") {
-    columnOrder = [
-        "UserName", "Vle_Id", "Customer_Name", "Phone_Num", "Email",
-        "total_due_dates", "payment_done", "payment_not_done", "Expiry_Date"
-    ];
-} else if (tenantName === "UPe-District Chitrakoot PS Users") {
-    columnOrder = [
-        "UserName", "Vle_Id", "Customer_Name", "Phone_Num", "Email", "Expiry_Date"
-    ];
-} else {
-    columnOrder = [
-        "UserName", "Customer_Name", "Phone_Num", "Email", "Package_Name", "Expiry_Date"
-    ];
-}
-
-    // const columnOrder = tenantName === "ITI UP Users" || "UPe-District Chitrakoot PS Users"
-    //     ? ["UserName", "Vle_Id", "Customer_Name", "Phone_Num", "Email","total_due_dates","payment_done","payment_not_done", "Expiry_Date"]
-    //     : ["UserName", "Customer_Name", "Phone_Num", "Email", "Package_Name", "Expiry_Date"];
+    if (tenantName === "ITI UP Users") {
+        columnOrder = [
+            "UserName", "Vle_Id", "Customer_Name", "Phone_Num", "Email",
+            "total_due_dates", "payment_done", "payment_not_done", "Expiry_Date"
+        ];
+    } else if (tenantName === "UPe-District Chitrakoot PS Users") {
+        columnOrder = [
+            "UserName", "Vle_Id", "Customer_Name", "Phone_Num", "Email", "Expiry_Date"
+        ];
+    } else {
+        columnOrder = [
+            "UserName", "Customer_Name", "Phone_Num", "Email", "Package_Name", "Expiry_Date"
+        ];
+    }
 
     const exportToExcel = () => {
         if (!isClient) return;
