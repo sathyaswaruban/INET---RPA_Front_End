@@ -67,13 +67,13 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     const formattedDate = today.toISOString().split('T')[0];
     let matchedSection: { key: string; label: string }[] = [];
 
-    if (service_name === "SULTANPURSCA" || service_name === "SULTANPUR_IS" || service_name=="CHITRAKOOT_IS" || service_name == "CHITRAKOOT_SCA") {
+    if (service_name === "SULTANPURSCA" || service_name === "SULTANPUR_IS" || service_name == "CHITRAKOOT_IS" || service_name == "CHITRAKOOT_SCA" || service_name) {
         matchedSection = [{ key: "matched", label: "VEN_IHUB" }];
     } else {
         matchedSection = [
             { key: "VEND_IHUB_SUC", label: "Vend_Suc - Ihub_Suc" },
             { key: "VEND_IHUB_FAIL", label: "Vend_Fail - Ihub_Fail" },
-            {key: "VEND_IHUB_SUC-NIL", label: "Vend_IHub_Succ - NIL"},
+            { key: "VEND_IHUB_SUC-NIL", label: "Vend_IHub_Succ - NIL" },
             { key: "IHUB_VEND_FAIL-NIL", label: "Vend_IHub_Fail - NIL" },
         ];
     }
@@ -122,7 +122,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
             "Hub_Tntwallettopup_status"
         ];
     }
-    else if (service_name == "SULTANPURSCA" || service_name == "SULTANPUR_IS" || service_name=="CHITRAKOOT_IS" || service_name == "CHITRAKOOT_SCA") {
+    else if (service_name == "SULTANPURSCA" || service_name == "SULTANPUR_IS" || service_name == "CHITRAKOOT_IS" || service_name == "CHITRAKOOT_SCA") {
         orderedColumns = [
             "EBO_ID",
             "USERNAME",
@@ -139,6 +139,20 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
             "VILLAGE",
 
         ]
+    }
+    else if (service_name == "MANUAL_TB") {
+        orderedColumns = [
+            "IHUB_USERNAME",
+            "NAME",
+            "BANK_NAME",
+            "REFID",
+            "ACC_NO",
+            "UTR_NO",
+            "AMOUNT",
+            `${service_name}_STATUS`,
+            "SERVICE_DATE",
+            "VENDOR_DATE",
+        ];
     }
     else {
         orderedColumns = [

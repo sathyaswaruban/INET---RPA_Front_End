@@ -46,7 +46,7 @@ const exportListToExcel = (list: any[], fileName: string) => {
   const mappedList = list.map((item) => ({
     UserName: item.UserName || "",
     FirstName: item.FirstName || "",
-    VleId : item.VleId || "",
+    VleId: item.VleId || "",
     MobileNo: item.MobileNo || "",
     Email: item.Email || "",
     Expiry_Date: formatDate(item.Expiry_Date),
@@ -137,9 +137,9 @@ export default function DashboardPage() {
           </div>
         </div>)}
       {user.role === "USER" && (
-          <div className="flex items-start mb-8">
-            <h1 className="text-2xl font-bold text-[var(--primary)]">Home Page / Dashboard</h1>
-          </div>)}
+        <div className="flex items-start mb-8">
+          <h1 className="text-2xl font-bold text-[var(--primary)]">Home Page / Dashboard</h1>
+        </div>)}
       <div className="p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
