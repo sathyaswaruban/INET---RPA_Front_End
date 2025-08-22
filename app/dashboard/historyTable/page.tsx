@@ -166,7 +166,7 @@ const HistoryTableWithFilters = () => {
         </CardHeader>
         <CardContent>
           <form
-            className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end"
+            className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-4 items-end"
             onSubmit={e => { e.preventDefault(); handleFilter(); }}
             aria-label="Filter form"
           >

@@ -67,7 +67,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     const formattedDate = today.toISOString().split('T')[0];
     let matchedSection: { key: string; label: string }[] = [];
 
-    if (service_name === "SULTANPURSCA" || service_name === "SULTANPUR_IS" || service_name == "CHITRAKOOT_IS" || service_name == "CHITRAKOOT_SCA" || service_name) {
+    if (service_name === "SULTANPURSCA" || service_name === "SULTANPUR_IS" || service_name === "CHITRAKOOT_IS" || service_name === "CHITRAKOOT_SCA") {
         matchedSection = [{ key: "matched", label: "VEN_IHUB" }];
     } else {
         matchedSection = [

@@ -191,49 +191,48 @@ const FilterForm = () => {
                 formData.append("transaction_type", values.transactionType);
             }
             formData.append("file", values.file);
-            // const res = await axios.post("http://localhost:5000/api/reconciliation", formData, {
-            //     headers: {
-            //         "Content-Type": "multipart/form-data",
-            //     },
-            //     timeout: 120000,
-            // });
-            const res = await axios.post("http://192.168.1.157:5000/api/reconciliation", formData, {
+            const res = await axios.post("http://localhost:5000/api/reconciliation", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
                 timeout: 120000,
             });
+            // const res = await axios.post("http://192.168.1.157:5000/api/reconciliation", formData, {
+            //     headers: {
+            //         "Content-Type": "multipart/form-data",
+            //     },
+            //     timeout: 120000,
+            // });
             const response = {
                 ...res,
                 data: normalizeResponse(res.data)
             };
-            if (response.status === 200) {
-                if (response.data?.isSuccess) {
-                    let Message = response?.data?.message;
-                    toast.success(Message, {
-                        duration: 5000,
-                        position: 'top-center'
-                    });
-                    setApiResponse(response.data);
-                    let status = 'Success';
-                    savingHistory(values, Message, status);
-                } else {
-                    let errorMessage = "Error processing file..! Check Inputs and try again..!";
 
-                    if (response?.data?.message.length > 0) {
-                        errorMessage = response?.data?.message;
-                    }
-                    toast.error(errorMessage, {
-                        duration: 5000,
-                        position: 'top-center'
-                    });
-                    let status = 'Failed';
-                    savingHistory(values, errorMessage, status);
-                    setApiResponse(null);
-                }
+            if (response.data?.isSuccess) {
+                let Message = response?.data?.message;
+                toast.success(Message, {
+                    duration: 5000,
+                    position: 'top-center'
+                });
+                setApiResponse(response.data);
+                let status = 'Success';
+                savingHistory(values, Message, status);
             } else {
-                throw new Error(`Unexpected status code: ${response.status}`);
+                let errorMessage = "NaN Error occured during processing.";
+
+                if (response?.data?.message.length > 0) {
+                    errorMessage = response?.data?.message;
+                }
+                toast.error(errorMessage, {
+                    duration: 5000,
+                    position: 'top-center'
+                });
+                let status = 'Failed';
+                savingHistory(values, errorMessage, status);
+                setApiResponse(null);
             }
+
+
         } catch (error: unknown) {
             console.error("API Error:", error);
 
