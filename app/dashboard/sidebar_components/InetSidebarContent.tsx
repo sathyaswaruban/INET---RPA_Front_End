@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Home, List, RefreshCcw,Users } from "lucide-react";
+import { Home, List, RefreshCcw, RefreshCcwDotIcon, RefreshCcwIcon, Users } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -67,6 +67,12 @@ export default function InetSidebarContent() {
       roles: ["ADMIN", "USER"],
     },
     {
+      title: "Vendor Ledger Comparision",
+      url: "/dashboard/vendorledger",
+      icon: RefreshCcwDotIcon,
+      roles: ["ADMIN", "USER"],
+    },
+    {
       title: "History Table",
       url: "/dashboard/historyTable",
       icon: List,
@@ -101,26 +107,23 @@ export default function InetSidebarContent() {
                     <a
                       href={item.url}
                       className={`flex items-center gap-2 px-2 py-2 rounded-lg duration-200 transition
-                        ${
-                          isActive
-                            ? "bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] shadow font-bold"
-                            : "hover:bg-[var(--muted)] text-[var(--muted-foreground)]"
+                        ${isActive
+                          ? "bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] shadow font-bold"
+                          : "hover:bg-[var(--muted)] text-[var(--muted-foreground)]"
                         }
                       `}
                     >
                       <item.icon
-                        className={`h-5 w-5 ${
-                          isActive
+                        className={`h-5 w-5 ${isActive
                             ? "text-[var(--primary-foreground)]"
                             : "text-[var(--muted-foreground)]"
-                        }`}
+                          }`}
                       />
                       <span
-                        className={`${
-                          isActive
+                        className={`${isActive
                             ? "text-[var(--primary-foreground)] font-bold"
                             : "text-[var(--muted-foreground)]"
-                        }`}
+                          }`}
                       >
                         {item.title}
                       </span>

@@ -103,6 +103,7 @@ export default function UserDetailsForm() {
             //     },
             //     timeout: 120000,
             // });
+
             const res = await axios.post("http://192.168.1.157:5000/api/getEbodetailedData", payload, {
                 headers: {
                     "Content-Type": "multipart/form-data",

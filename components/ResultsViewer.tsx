@@ -67,7 +67,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     const formattedDate = today.toISOString().split('T')[0];
     let matchedSection: { key: string; label: string }[] = [];
 
-    if (service_name === "SULTANPURSCA" || service_name === "SULTANPUR_IS" || service_name === "CHITRAKOOT_IS" || service_name === "CHITRAKOOT_SCA") {
+    if (service_name === "SULTANPURSCA" || service_name === "SULTANPUR_IS" || service_name === "CHITRAKOOT_IS" || service_name === "CHITRAKOOT_SCA" || service_name === "MANUAL_TB") {
         matchedSection = [{ key: "matched", label: "VEN_IHUB" }];
     } else {
         matchedSection = [
@@ -153,6 +153,19 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
             "SERVICE_DATE",
             "VENDOR_DATE",
         ];
+    }
+    else if (service_name == "IMPS") {
+        orderedColumns = [
+            "ITI_ID",
+            "REFID",
+            "ACTUAL_AMOUNT",
+            "REQUEST_AMOUNT",
+            "VENDOR_AMOUNT",
+            "VENDOR_STATUS",
+            `${service_name}_STATUS`,
+            "VENDOR_DATE",
+            "SERVICE_DATE",
+        ]
     }
     else {
         orderedColumns = [
