@@ -94,8 +94,8 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchebodata = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/getEboData");
-        // const response = await axios.get("http://192.168.1.157:5000/api/getEboData");
+        // const response = await axios.get("http://localhost:5000/api/getEboData");
+        const response = await axios.get("http://192.168.1.157:5000/api/getEboData");
         setData(response?.data); // response.data is of type Ebodata
       } catch (err) {
         console.error("Error fetching data", err);
