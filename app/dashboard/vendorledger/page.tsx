@@ -25,7 +25,7 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ResultsViewer } from "@/components/ResultsViewer";
+import { VendorResultsViewer } from "@/components/VendorResultsViewer";
 import Loader from "../loader/page";
 
 // ✅ Schema for form validation
@@ -37,12 +37,12 @@ const formSchema = z.object({
             message: "Please select a service",
         }),
     transactionType: z.string().optional(),
-    file1: z
+    vendor_statement: z
         .any()
         .refine((file) => file instanceof File && file.size > 0, {
             message: "File 1 is required",
         }),
-    file2: z
+    vendor_ledger: z
         .any()
         .refine((file) => file instanceof File && file.size > 0, {
             message: "File 2 is required",
@@ -53,25 +53,14 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const serviceOptions = [
-    { value: "ASTRO", label: "Astro Horoscope" },
     { value: "ABHIBUS", label: "Abhibus" },
     { value: "BBPS", label: "BBPS" },
     { value: "DMT", label: "DMT" },
-    { value: "INSURANCE_OFFLINE", label: "Insurance - Offline" },
     { value: "LIC", label: "LIC - Premium" },
-    { value: "MANUAL_TB", label: "Manual TB" },
     { value: "MATM", label: "Micro ATM (M-ATM)" },
-    { value: "MOVETOBANK", label: "Move To Bank" },
     { value: "RECHARGE", label: "PaySprint-Recharge" },
     { value: "AEPS", label: "PaySprint-Aeps" },
     { value: "PANUTI", label: "Pan-UTI" },
-    { value: "PANNSDL", label: "Pan - NSDL" },
-    { value: "PASSPORT", label: "Passport" },
-    { value: "UPIQR", label: "UPI - QR" },
-    { value: "SULTANPURSCA", label: "Sultanpur RPT_SCA" },
-    { value: "SULTANPUR_IS", label: "Sultanpur IS_Quota" },
-    { value: "CHITRAKOOT_SCA", label: "Chitrakoot RPT_SCA" },
-    { value: "CHITRAKOOT_IS", label: "Chitrakoot IS_Quota" },
 ];
 
 const transactionOptions = [
@@ -119,8 +108,8 @@ const vendorLedger = () => {
         defaultValues: {
             serviceName: "",
             transactionType: "default",
-            file1: undefined,
-            file2: undefined,
+            vendor_statement: undefined,
+            vendor_ledger: undefined,
         },
     });
 
@@ -129,9 +118,9 @@ const vendorLedger = () => {
         (e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0];
             if (file) {
-                form.setValue("file1", file);
+                form.setValue("vendor_statement", file);
                 setFileName1(file.name);
-                form.clearErrors("file1");
+                form.clearErrors("vendor_statement");
             }
         },
         [form]
@@ -141,9 +130,9 @@ const vendorLedger = () => {
         (e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0];
             if (file) {
-                form.setValue("file2", file);
+                form.setValue("vendor_ledger", file);
                 setFileName2(file.name);
-                form.clearErrors("file2");
+                form.clearErrors("vendor_ledger");
             }
         },
         [form]
@@ -172,14 +161,17 @@ const vendorLedger = () => {
     // Save history to backend
     const savingHistory = useCallback(
         async (values: any, Message: string, status: string) => {
+            const today = new Date().toISOString().split("T")[0];
             await axios.post("/api/user-task-history", {
                 uid: user?.id,
                 userName: user?.name,
                 serviceName: values.serviceName,
-                uploadedFileName: `${values.file1?.name || ""}, ${values.file2?.name || ""}`,
+                uploadedFileName: `${values.vendor_statement?.name || ""}, ${values.vendor_ledger?.name || ""}`,
                 responseMessage: Message,
                 responseStatus: status,
-                transactionType: values.transactionType,
+                transactionType: "",
+                fromDate: today,   // <-- add
+                toDate: today,
             });
         },
         [user]
@@ -196,11 +188,11 @@ const vendorLedger = () => {
                 if (values.transactionType && values.transactionType !== "default") {
                     formData.append("transaction_type", values.transactionType);
                 }
-                formData.append("file1", values.file1);
-                formData.append("file2", values.file2);
+                formData.append("vendor_statement", values.vendor_statement);
+                formData.append("vendor_ledger", values.vendor_ledger);
 
                 const res = await axios.post(
-                    "http://192.168.1.157:5000/api/reconciliation",
+                    "http://localhost:5000/api/vendorledger_reconciliation",
                     formData,
                     {
                         headers: {
@@ -294,13 +286,13 @@ const vendorLedger = () => {
             <div className="flex flex-col lg:flex-row gap-4 justify-center">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 justify-center">
                     {/* Input Field Card */}
-                    <Card className="col-span-12 lg:col-span-10 bg-[var(--card)] text-[var(--card-foreground)] shadow-2xl rounded-2xl border border-[var(--border)] p-0 m-0 overflow-hidden transition-colors">
+                    <Card className="col-span-12 lg:col-span-12 bg-[var(--card)] text-[var(--card-foreground)] shadow-2xl rounded-2xl border border-[var(--border)] p-0 m-0 overflow-hidden transition-colors">
                         <CardHeader className="flex flex-col items-center justify-center bg-gradient-to-r from-[var(--primary)] from-100% to-[var(--primary)]/80 to-80% px-6 py-6 sticky top-0 z-10 shadow-md mb-0 rounded-t-2xl">
                             <CardTitle className="text-3xl font-extrabold text-[var(--primary-foreground)] tracking-wide drop-shadow-lg">
-                                Vendor Ledger Comparisions
+                                Vendor Ledger Comparision
                             </CardTitle>
                             <p className="text-[var(--primary-foreground)]/80 mt-2 text-sm font-medium text-center">
-                                Please fill in the details below to process your Vendor Excel and Ledger.
+                                Select the details below to process your Vendor Excel and Ledger.
                             </p>
                         </CardHeader>
 
@@ -358,14 +350,14 @@ const vendorLedger = () => {
                                         {/* File Upload 1 */}
                                         <FormField
                                             control={form.control}
-                                            name="file1"
+                                            name="vendor_statement"
                                             render={() => (
                                                 <FormItem>
                                                     <FormLabel
                                                         className="font-semibold text-[var(--primary)]"
                                                         htmlFor="file-upload-1"
                                                     >
-                                                        Upload Vendor Statement 
+                                                        Upload Vendor Statement
                                                     </FormLabel>
                                                     <div className="flex items-center gap-4">
                                                         <Button
@@ -388,7 +380,7 @@ const vendorLedger = () => {
                                                                 />
                                                             </label>
                                                         </Button>
-                                                        <span className="text-sm text-[var(--primary)] font-medium">
+                                                        <span className="text-sm font-medium">
                                                             {fileName1}
                                                         </span>
                                                     </div>
@@ -400,7 +392,7 @@ const vendorLedger = () => {
                                         {/* File Upload 2 */}
                                         <FormField
                                             control={form.control}
-                                            name="file2"
+                                            name="vendor_ledger"
                                             render={() => (
                                                 <FormItem>
                                                     <FormLabel
@@ -430,7 +422,7 @@ const vendorLedger = () => {
                                                                 />
                                                             </label>
                                                         </Button>
-                                                        <span className="text-sm text-[var(--primary)] font-medium">
+                                                        <span className="text-sm font-medium">
                                                             {fileName2}
                                                         </span>
                                                     </div>
@@ -477,7 +469,7 @@ const vendorLedger = () => {
                     </div>
                 ) : (
                     apiResponse?.isSuccess && (
-                        <ResultsViewer responseData={apiResponse} />
+                        <VendorResultsViewer responseData={apiResponse} />
                     )
                 )}
             </div>

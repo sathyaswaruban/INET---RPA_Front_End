@@ -10,20 +10,26 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // 🔹 added loading state
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true); // 🔹 set loading true when submitting
 
     try {
       const response = await axios.post("/api/auth/login", { email, password });
       if (response.data.success) {
         window.location.href = "/dashboard";
+      } else {
+        setError("Invalid credentials");
+        setLoading(false); // 🔹 reset if invalid
       }
     } catch (err) {
       setError("Invalid credentials");
       console.error("Login error:", err);
+      setLoading(false); // 🔹 reset on error
     }
   };
 
@@ -113,23 +119,19 @@ export default function LoginPage() {
                   />
                 </div>
               </div>
-
-              <div className="text-right">
-                <a
-                  href="#"
-                  className="text-sm text-[var(--secondary)] hover:underline"
-                >
-                  Forgot password?
-                </a>
-              </div>
             </div>
 
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-md text-sm font-semibold text-[var(--primary-foreground)] bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] hover:from-[var(--secondary)] hover:to-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary)] transition"
+                disabled={loading} // 🔹 prevent multiple clicks
+                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-md text-sm font-semibold text-[var(--primary-foreground)] 
+                  bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] 
+                  hover:from-[var(--secondary)] hover:to-[var(--primary)] 
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary)] transition
+                  ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
               >
-                Sign in
+                {loading ? "Signing in..." : "Sign in"}
               </button>
             </div>
           </form>

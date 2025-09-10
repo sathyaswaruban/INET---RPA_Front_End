@@ -124,8 +124,19 @@ const FilterForm = () => {
             transactionType: "default",
             file: undefined,
         },
+        mode: "onChange",
+        reValidateMode: "onChange",
     });
 
+    // 👇 Add this effect to trigger validation when fromDate changes
+    useEffect(() => {
+        const subscription = form.watch((value, { name }) => {
+            if (name === "fromDate" && value.fromDate) {
+                form.trigger("toDate"); // force validate To Date when From Date changes
+            }
+        });
+        return () => subscription.unsubscribe();
+    }, [form]);
     // Watch service selection
     const selectedService = form.watch("serviceName");
     useEffect(() => {
@@ -191,18 +202,18 @@ const FilterForm = () => {
                 formData.append("transaction_type", values.transactionType);
             }
             formData.append("file", values.file);
-            // const res = await axios.post("http://localhost:5000/api/reconciliation", formData, {
-            //     headers: {
-            //         "Content-Type": "multipart/form-data",
-            //     },
-            //     timeout: 120000,
-            // });
-            const res = await axios.post("http://192.168.1.157:5000/api/reconciliation", formData, {
+            const res = await axios.post("http://localhost:5000/api/reconciliation", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
                 timeout: 120000,
             });
+            // const res = await axios.post("http://192.168.1.157:5000/api/reconciliation", formData, {
+            //     headers: {
+            //         "Content-Type": "multipart/form-data",
+            //     },
+            //     timeout: 120000,
+            // });
             const response = {
                 ...res,
                 data: normalizeResponse(res.data)
@@ -377,6 +388,7 @@ const FilterForm = () => {
                                             />
                                         </div>
                                         {/* To Date */}
+                                        {/* To Date */}
                                         <div className="w-full">
                                             <FormField
                                                 control={form.control}
@@ -385,8 +397,14 @@ const FilterForm = () => {
                                                     <FormItem>
                                                         <FormLabel className="font-semibold text-[var(--primary)]" htmlFor="to-date">To Date</FormLabel>
                                                         <FormControl>
-                                                            <Input id="to-date" type="date" {...field} aria-label="To Date"
-                                                                className="rounded-lg border border-[var(--border)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)] transition bg-[var(--card)] text-[var(--card-foreground)]" />
+                                                            <Input
+                                                                id="to-date"
+                                                                type="date"
+                                                                {...field}
+                                                                min={form.watch("fromDate") || ""}  // 👈 restrict To Date to be >= From Date
+                                                                aria-label="To Date"
+                                                                className="rounded-lg border border-[var(--border)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)] transition bg-[var(--card)] text-[var(--card-foreground)]"
+                                                            />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>

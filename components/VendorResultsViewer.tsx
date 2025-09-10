@@ -23,35 +23,24 @@ interface DataItem {
     [key: string]: any;
 }
 
-interface ResultsViewerProps {
+interface VendorResultsViewerProps {
     responseData: any;
 }
 
-export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
+export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerProps) => {
     const localData = responseData;
-    const combinedData = localData?.data?.combined || [];
-    const Total_success_count = localData?.data?.Total_Success_count || 0;
-    const Total_failed_count = localData?.data?.Total_Failed_count || 0;
-    const Excel_count = localData?.data?.Excel_value_count;
-    const HUB_count = localData?.data?.HUB_Value_count;
+    const Statement_count = localData?.data?.statement_count;
+    const Ledger_count = localData?.data?.ledger_count;
+    const Total_matched_count = localData?.data?.matched_trans_count
+    const Total_failed_count = localData?.data?.failed_trans_count
+    const Ledger_credit_count = localData?.data?.ledger_credit_count
     const otherSections = { ...localData.data };
     const message = localData?.data?.message || " "
     const dataSections = [
-        { key: "not_in_Portal", label: "Not in Portal" },
-        { key: "NOT_IN_PORTAL_VENDOR_SUCC", label: "Vend_suc - Not_In_IhubPortal" },
-        { key: "VEND_IHUB_SUC-NIL", label: "Vend_IHub_Succ - NIL" },
-        { key: "VEND_FAIL_IHUB_SUC-NIL", label: "Vend_Fail_IHub_Suc - NIL" },
-        { key: "VEND_SUC_IHUB_FAIL-NIL", label: "Vend_Suc - IHub_Fail - NIL" },
-        { key: "IHUB_INT_VEND_SUC-NIL", label: "Vend_Suc - Ihub_Ini - NIL" },
-        { key: "VEND_FAIL_IHUB_INT-NIL", label: "Vend_Fail - Ihub_Ini - NIL" },
-        { key: "IHUB_VEND_FAIL-NIL", label: "Vend_IHub_Fail - NIL" },
-        { key: "VEND_FAIL_IHUB_SUC", label: "Vend_Fail - Ihub_Suc" },
-        { key: "VEND_SUC_IHUB_FAIL", label: "Vend_Suc - Ihub_Fail" },
-        { key: "IHUB_INT_VEND_SUC", label: "Vend_Suc - Ihub_Ini" },
-        { key: "VEND_FAIL_IHUB_INT", label: "Vend_Fail - Ihub_Ini" },
-        { key: "Tenant_db_ini_not_in_hubdb", label: "Tenant_Ini_Not_In_Hub" },
-        { key: "In_portal_date_diff", label: "In_Portal_Date_Diff" },
-        { key: "not_in_vendor", label: "Not_In_Vendor" },
+        { key: "not_in_ledger", label: "Not in Ledger" },
+        // { key: "matching_refunds", label: "Matching Refunds" },
+        { key: "not_matching_refunds", label: "Mismatch Ledger Refunds" },
+
     ];
 
 
@@ -67,16 +56,13 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     const formattedDate = today.toISOString().split('T')[0];
     let matchedSection: { key: string; label: string }[] = [];
 
-    if (service_name === "SULTANPURSCA" || service_name === "SULTANPUR_IS" || service_name === "CHITRAKOOT_IS" || service_name === "CHITRAKOOT_SCA" || service_name === "MANUAL_TB") {
-        matchedSection = [{ key: "matched", label: "VEN_IHUB" }];
-    } else {
-        matchedSection = [
-            { key: "VEND_IHUB_SUC", label: "Vend_Suc - Ihub_Suc" },
-            { key: "VEND_IHUB_FAIL", label: "Vend_Fail - Ihub_Fail" },
-            { key: "VEND_IHUB_SUC-NIL", label: "Vend_IHub_Succ - NIL" },
-            { key: "IHUB_VEND_FAIL-NIL", label: "Vend_IHub_Fail - NIL" },
-        ];
-    }
+
+    matchedSection = [
+        { key: "matching_trans", label: "Matched Transactions" },
+        { key: "matching_refunds", label: "Matching Refunds" },
+
+    ];
+
 
     const activeMatchedSections = matchedSection.filter(section => {
         const sectionData = otherSections[section.key];
@@ -85,25 +71,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
 
     if (service_name == "PASSPORT") {
         orderedColumns = [
-            "CATEGORY",
-            "TENANT_ID",
-            "IHUB_REFERENCE",
-            "REFID",
-            "IHUB_USERNAME",
-            "AMOUNT",
-            "HUB_AMOUNT",
-            "SERVICE_DATE",
-            "VENDOR_DATE",
-            "VENDOR_STATUS",
-            "IHUB_MASTER_STATUS",
-            `${service_name}_STATUS`,
-            "IHUB_LEDGER_STATUS",
-            "BILL_FETCH_STATUS",
-            "TENANT_LEDGER_STATUS",
-            "TRANSACTION_DEBIT",
-            "TRANSACTION_CREDIT",
-            "COMMISSION_CREDIT",
-            "COMMISSION_REVERSAL"
+            "TXNID", "USERNAME", "AMOUNT", "COMM", "TDS", "DATE"
         ];
     } else if (service_name == "UPIQR") {
         orderedColumns = [
@@ -112,8 +80,8 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
             "VENDOR_REFERENCE",
             "REFID",
             "IHUB_USERNAME",
-            "AMOUNT",
             "TRANS_MODE",
+            "AMOUNT",
             "SERVICE_DATE",
             "VENDOR_DATE",
             "VENDOR_STATUS",
@@ -170,25 +138,8 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     }
     else {
         orderedColumns = [
-            "CATEGORY",
-            "TENANT_ID",
-            "IHUB_REFERENCE",
-            "REFID",
-            "IHUB_USERNAME",
-            "AMOUNT",
-            "COMMISSION_AMOUNT",
-            "SERVICE_DATE",
-            "VENDOR_DATE",
-            "VENDOR_STATUS",
-            "IHUB_MASTER_STATUS",
-            `${service_name}_STATUS`,
-            "IHUB_LEDGER_STATUS",
-            "BILL_FETCH_STATUS",
-            "TENANT_LEDGER_STATUS",
-            "TRANSACTION_DEBIT",
-            "TRANSACTION_CREDIT",
-            "COMMISSION_CREDIT",
-            "COMMISSION_REVERSAL"]
+            "TXNID", "REFUND_TXNID", "REFID", "TYPE", "AMOUNT", "COMM", "TDS", "DATE"
+        ];
     }
 
     const exportToExcel = (data: DataItem[], fileName: string) => {
@@ -211,7 +162,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
 
         const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-        saveAs(blob, `Matched_result_${service_name}_${formattedDate}.xlsx`);
+        saveAs(blob, `VendorLedger_Matched_result_${service_name}_${formattedDate}.xlsx`);
     };
 
     const exportAllTabsToExcel = () => {
@@ -227,7 +178,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
 
         const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-        saveAs(blob, `detailed_result_${service_name}_${formattedDate}.xlsx`);
+        saveAs(blob, `VendorLedger_detailed_result_${service_name}_${formattedDate}.xlsx`);
     };
 
     const formatValue = (value: any) => {
@@ -237,69 +188,46 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     };
 
     const [paginationState, setPaginationState] = useState<{ [key: string]: number }>({});
-    const itemsPerPage = 10;
+    const itemsPerPage = 20;
 
     return (
         <div className="space-y-8 w-full max-w-6xl mx-auto px-2 md:px-0">
             <Card className="shadow-lg rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
-                <CardHeader className="grid grid-cols-1 md:grid-cols-4 gap-4 px-4 py-2">
-
+                <CardHeader className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 py-2">
                     {/* Column 1 */}
-                    <div className="col-span-1 flex flex-col gap-2">
+                    <div className="col-span-1 flex flex-col gap-5">
                         <CardTitle className="text-[var(--primary)] text-center text-base bg-[var(--muted)] px-3 py-1 rounded-lg shadow-sm">
-                            Excel Data Count: <span className="ml-1">{Excel_count}</span>
+                            Statement Count: <span className="ml-1">{Statement_count}</span>
                         </CardTitle>
-                        <CardTitle className="text-red-600 text-base mt-3 text-center bg-red-100 dark:bg-red-900/40 px-3 py-1 rounded-lg shadow-sm">
+                        <CardTitle className="text-green-600 text-base mt-3 text-center bg-green-100 dark:bg-red-900/40 px-3 py-1 rounded-lg shadow-sm">
+                            Total Matched: <span className="ml-1">{Total_matched_count}</span>
+                        </CardTitle>
+
+                    </div>
+
+                    <div className="col-span-1 flex flex-col gap-5">
+                        <CardTitle className="text-orange-600 text-base text-center bg-orange-100 dark:bg-orange-900/40 px-3 py-1 rounded-lg shadow-sm">
+                            Ledger Count: <span className="ml-1">{Ledger_count}</span>
+                        </CardTitle>
+                        <CardTitle className="text-blue-600 text-base mt-3 text-center bg-blue-100 dark:bg-red-900/40 px-3 py-1 rounded-lg shadow-sm">
+                            Total Ledger Credit: <span className="ml-1">{Ledger_credit_count}</span>
+                        </CardTitle>
+                    </div>
+                    <div className="col-span-1 flex flex-col gap-5">
+                        <CardTitle className="text-red-600 text-base text-center bg-red-100 dark:bg-red-900/40 px-3 py-1 rounded-lg shadow-sm">
                             Total Failed: <span className="ml-1">{Total_failed_count}</span>
                         </CardTitle>
-                    </div>
-
-                    {/* Column 2 */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <CardTitle className="text-orange-600 text-base text-center bg-orange-100 dark:bg-orange-900/40 px-3 py-1 rounded-lg shadow-sm">
-                            HUB Data Count: <span className="ml-1">{HUB_count}</span>
-                        </CardTitle>
-                        <CardTitle className="text-violet-600 text-base mt-3 bg-violet-100  text-center dark:bg-violet-900/40 px-3 py-1 rounded-lg shadow-sm">
-                            Combined Data Count: <span className="ml-1">{combinedData.length}</span>
-                        </CardTitle>
-                    </div>
-
-                    {/* Column 3 */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <CardTitle className="text-black text-base bg-gray-100 text-center dark:bg-orange-900/40 px-3 py-1 rounded-lg shadow-sm">
-                            TOTAL: <span className="ml-1">{Total_success_count + Total_failed_count + combinedData.length}</span>
-                        </CardTitle>
-
-                        {combinedData.length > 0 && (
-                            <Button
-                                onClick={() => exportToExcel(combinedData, 'combined_data')}
-                                variant="outline"
-                                className="flex items-center gap-2 mt-3 border-gray-400 text-center hover:bg-gray-100 dark:hover:bg-gray-900/20 transition rounded-lg shadow-sm"
-                            >
-                                <FileSpreadsheet className="w-4 h-4 text-green-600" />
-                                <span className="font-semibold text-gray dark:text-green-100">Export Combined Data</span>
-                            </Button>
-                        )}
-                    </div>
-
-                    {/* Column 4 */}
-                    <div className="col-span-1 flex flex-col gap-2">
-                        <CardTitle className="text-green-800 text-base bg-green-100 text-center  dark:bg-green-900/40 px-3 py-1 rounded-lg shadow-sm">
-                            Total Success: <span className="ml-1">{Total_success_count}</span>
-                        </CardTitle>
-
                         {activeMatchedSections.length > 0 && (
                             <Button
                                 onClick={exportMatchedTabsToExcel}
                                 variant="outline"
-                                className="flex items-center gap-2 mt-3 border-blue-400 text-center hover:bg-blue-50 dark:hover:bg-blue-900/20 transition rounded-lg shadow-sm"
+                                className="border-blue-400 mt-3 text-center hover:bg-blue-50 dark:hover:bg-blue-900/20 transition rounded-lg shadow-sm"
                             >
                                 <FileSpreadsheet className="w-4 h-4 text-green-600" />
                                 <span className="font-semibold text-blue-800">Export Matched Data</span>
                             </Button>
                         )}
                     </div>
-
                 </CardHeader>
             </Card>
             <Card className="shadow-xl rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
