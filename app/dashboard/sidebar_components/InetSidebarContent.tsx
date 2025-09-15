@@ -67,7 +67,7 @@ export default function InetSidebarContent() {
       roles: ["ADMIN", "USER"],
     },
     {
-      title: "Vendor Ledger Comparision",
+      title: "Vendor Ledger Comparison",
       url: "/dashboard/vendorledger",
       icon: RefreshCcwDotIcon,
       roles: ["ADMIN", "USER"],

@@ -83,7 +83,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
         return Array.isArray(sectionData) && sectionData.length > 0;
     });
 
-    if (service_name == "PASSPORT") {
+    if (service_name == "PASSPORT" || service_name == "INSURANCE_OFFLINE") {
         orderedColumns = [
             "CATEGORY",
             "TENANT_ID",

@@ -53,14 +53,14 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const serviceOptions = [
-    { value: "ABHIBUS", label: "Abhibus" },
-    { value: "BBPS", label: "BBPS" },
+    // { value: "ABHIBUS", label: "Abhibus" },
+    // { value: "BBPS", label: "BBPS" },
     { value: "DMT", label: "DMT" },
-    { value: "LIC", label: "LIC - Premium" },
+    // { value: "LIC", label: "LIC - Premium" },
     { value: "MATM", label: "Micro ATM (M-ATM)" },
     { value: "RECHARGE", label: "PaySprint-Recharge" },
     { value: "AEPS", label: "PaySprint-Aeps" },
-    { value: "PANUTI", label: "Pan-UTI" },
+    // { value: "PANUTI", label: "Pan-UTI" },
 ];
 
 const transactionOptions = [
@@ -345,7 +345,6 @@ const vendorLedger = () => {
                                                                 <SelectItem
                                                                     key={option.value}
                                                                     value={option.value}
-                                                                    disabled={option.value !== "RECHARGE"}
                                                                     className="hover:bg-[var(--muted)]"
                                                                 >
                                                                     {option.label}

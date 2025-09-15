@@ -39,8 +39,10 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
     const dataSections = [
         { key: "not_in_ledger", label: "Not in Ledger" },
         // { key: "matching_refunds", label: "Matching Refunds" },
-        { key: "not_matching_refunds", label: "Mismatch Ledger Refunds" },
-
+        { key: "mismatch_statement_refunds", label: "Mismatch Statement Refunds" },
+        { key: "mismatch_ledger_refunds", label: "Mismatch Ledger Refunds" },
+        { key: "not_in_statement", label: "Not in Statement" },
+        { key: "amount_mismatch", label: "Ledger & Statement Amount Mismatch" },
     ];
 
 
@@ -56,12 +58,18 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
     const formattedDate = today.toISOString().split('T')[0];
     let matchedSection: { key: string; label: string }[] = [];
 
+    if (service_name == "AEPS") {
+        matchedSection = [
+            { key: "matching_trans", label: "Matched Transactions" },
+        ]
+    }
+    else {
+        matchedSection = [
+            { key: "matching_trans", label: "Matched Transactions" },
+            { key: "matching_refunds", label: "Matching Refunds" },
 
-    matchedSection = [
-        { key: "matching_trans", label: "Matched Transactions" },
-        { key: "matching_refunds", label: "Matching Refunds" },
-
-    ];
+        ];
+    }
 
 
     const activeMatchedSections = matchedSection.filter(section => {
@@ -69,71 +77,26 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
         return Array.isArray(sectionData) && sectionData.length > 0;
     });
 
-    if (service_name == "PASSPORT") {
+    if (service_name == "AEPS") {
         orderedColumns = [
-            "TXNID", "USERNAME", "AMOUNT", "COMM", "TDS", "DATE"
-        ];
-    } else if (service_name == "UPIQR") {
-        orderedColumns = [
-            "CATEGORY",
-            "TENANT_ID",
-            "VENDOR_REFERENCE",
-            "REFID",
-            "IHUB_USERNAME",
-            "TRANS_MODE",
-            "AMOUNT",
-            "SERVICE_DATE",
-            "VENDOR_DATE",
-            "VENDOR_STATUS",
-            "IHUB_MASTER_STATUS",
-            `${service_name}_STATUS`,
-            "TenantDB_wallettopup_status",
-            "Hub_Tntwallettopup_status"
+            "SETTLED_ID",
+            "COMMISSION_SNO",
+            "SERIALNUMBER",
+            "ACKNO",
+            "AMOUNT_STATEMENT",
+            "COMMISSION_STATEMENT",
+            "AMOUNT_LEDGER",
+            "UTR",
+            "TYPE",
+            "STATUS",
+            "DATE",
+            "SUM_AMOUNT",
         ];
     }
-    else if (service_name == "SULTANPURSCA" || service_name == "SULTANPUR_IS" || service_name == "CHITRAKOOT_IS" || service_name == "CHITRAKOOT_SCA") {
+    else if (service_name == "MATM") {
         orderedColumns = [
-            "EBO_ID",
-            "USERNAME",
-            "VLE_ID",
-            "REFID",
-            "SERVICE_CODE",
-            "APPLICATION_COUNT",
-            "RATE",
-            "TOTAL_AMOUNT",
-            "JENSEVA_TYPE",
-            "VENDOR_DATE",
-            "SERVICE_DATE",
-            "SUB_DISTRICT",
-            "VILLAGE",
-
-        ]
-    }
-    else if (service_name == "MANUAL_TB") {
-        orderedColumns = [
-            "IHUB_USERNAME",
-            "NAME",
-            "BANK_NAME",
-            "REFID",
-            "ACC_NO",
-            "UTR_NO",
-            "AMOUNT",
-            `${service_name}_STATUS`,
-            "SERVICE_DATE",
-            "VENDOR_DATE",
-        ];
-    }
-    else if (service_name == "IMPS") {
-        orderedColumns = [
-            "ITI_ID",
-            "REFID",
-            "ACTUAL_AMOUNT",
-            "REQUEST_AMOUNT",
-            "VENDOR_AMOUNT",
-            "VENDOR_STATUS",
-            `${service_name}_STATUS`,
-            "VENDOR_DATE",
-            "SERVICE_DATE",
+            "BCID", "AMOUNT_STATEMENT", "AMOUNT_LEDGER", "RRN",
+            "DATE",
         ]
     }
     else {
