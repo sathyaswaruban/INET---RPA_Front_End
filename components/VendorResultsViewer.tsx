@@ -43,6 +43,7 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
         { key: "mismatch_ledger_refunds", label: "Mismatch Ledger Refunds" },
         { key: "not_in_statement", label: "Not in Statement" },
         { key: "amount_mismatch", label: "Ledger & Statement Amount Mismatch" },
+        { key: "credit_transactions_ledger", label: "Credit Transactions in Ledger" },
     ];
 
 
@@ -67,7 +68,6 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
         matchedSection = [
             { key: "matching_trans", label: "Matched Transactions" },
             { key: "matching_refunds", label: "Matching Refunds" },
-
         ];
     }
 
@@ -98,6 +98,11 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
             "BCID", "AMOUNT_STATEMENT", "AMOUNT_LEDGER", "RRN",
             "DATE",
         ]
+    }
+    else if (service_name == "BBPS") {
+        orderedColumns = [
+            "TRANS_REF_ID", "AMOUNT_LEDGER", "AMOUNT_STATEMENT", "DATE"
+        ];
     }
     else {
         orderedColumns = [
