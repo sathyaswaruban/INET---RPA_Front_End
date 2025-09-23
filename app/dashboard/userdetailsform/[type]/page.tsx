@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import Loader from "../../loader/page";
 import * as XLSX from 'xlsx';
-import { ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import { ChevronLeft, ArrowLeft, Download } from 'lucide-react';
+import Link from "next/link";
 
 interface FormDataType {
     from_date: string;
@@ -97,19 +98,19 @@ export default function UserDetailsForm() {
         setIsSubmitting(true);
         try {
             const payload = { ...formData, tenantName };
-            // const res = await axios.post("http://localhost:5000/api/getEbodetailedData", payload, {
-            //     headers: {
-            //         "Content-Type": "multipart/form-data",
-            //     },
-            //     timeout: 120000,
-            // });
-
-            const res = await axios.post("http://192.168.1.157:5000/api/getEbodetailedData", payload, {
+            const res = await axios.post("http://localhost:5000/api/getEbodetailedData", payload, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
                 timeout: 120000,
             });
+
+            // const res = await axios.post("http://192.168.1.157:5000/api/getEbodetailedData", payload, {
+            //     headers: {
+            //         "Content-Type": "multipart/form-data",
+            //     },
+            //     timeout: 120000,
+            // });
 
             const response = {
                 ...res,
@@ -241,7 +242,12 @@ export default function UserDetailsForm() {
         columnOrder = [
             "UserName", "Vle_Id", "Customer_Name", "Phone_Num", "Email", "Expiry_Date"
         ];
-    } else {
+    } else if (
+        tenantName === "I-NET UP Users") {
+        columnOrder = [
+            "UserName", "Vle_Id", "Customer_Name", "Phone_Num", "Email", "Package_Name", "Expiry_Date"]
+    }
+    else {
         columnOrder = [
             "UserName", "Customer_Name", "Phone_Num", "Email", "Package_Name", "Expiry_Date"
         ];
@@ -275,15 +281,22 @@ export default function UserDetailsForm() {
 
     return (
         <div className="p-8">
-            <h1 className="text-3xl font-bold text-[var(--primary)]">
-                {tenantName}
-            </h1>
+            <div className="flex items-center gap-3">
+                <Link href="/dashboard/ihubuserdetails">
+                    <ArrowLeft className="w-10 h-10 border rounded-sm p-2 cursor-pointer hover:opacity-75" />
+                </Link>
+
+                <h1 className="text-3xl font-bold text-[var(--primary)]">
+                    {tenantName}
+                </h1>
+            </div>
+
             <div className="flex flex-col items-center justify-center mt-10">
                 <Card className="border border-[var(--border)] shadow-xl rounded-2xl bg-[var(--card)] w-3/4">
 
                     <CardHeader className="rounded-t-2xl text-xl font-bold py-3">
                         <div className="flex flex-col items-center w-full">
-                            <span>User Reports</span>
+                            <span>{tenantName} Reports</span>
                             <div className="w-full h-[2px] mt-2 bg-gradient-to-r from-transparent via-[var(--primary)] to-transparent"></div>
                         </div>
                     </CardHeader>

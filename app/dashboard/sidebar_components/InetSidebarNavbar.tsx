@@ -64,14 +64,14 @@ export default function InetSidebarNavbar() {
             <span className="text-[var(--secondary)]">--:--:-- --</span>
           )}
         </div>
-        <Button
+        {/* <Button
           className="border-[var(--primary)] text-[var(--primary)] bg-[var(--muted)] hover:bg-[var(--primary)] hover:text-[var(--primary-foreground)] transition"
           variant="outline"
           size="icon"
           onClick={toggleTheme}
-        >
-          {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-        </Button>
+        > */}
+          {/* {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+        </Button> */}
         <Button
           className="bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] hover:from-[var(--secondary)] hover:to-[var(--primary)] transition"
           variant="destructive"
