@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import axios from "axios";
@@ -56,7 +56,7 @@ const serviceOptions = [
     // { value: "ABHIBUS", label: "Abhibus" },
     { value: "BBPS", label: "BBPS" },
     { value: "DMT", label: "DMT" },
-    // { value: "LIC", label: "LIC - Premium" },
+    { value: "LIC", label: "LIC - Premium" },
     { value: "MATM", label: "Micro ATM (M-ATM)" },
     { value: "RECHARGE", label: "PaySprint-Recharge" },
     { value: "AEPS", label: "PaySprint-Aeps" },
@@ -85,6 +85,8 @@ const vendorLedger = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [fileName1, setFileName1] = useState("No file chosen");
     const [fileName2, setFileName2] = useState("No file chosen");
+    const [vendorStatementFile, setVendorStatementFile] = useState<File | null>(null);
+    const [vendorLedgerFile, setVendorLedgerFile] = useState<File | null>(null);
 
     // Fetch user info
     useEffect(() => {
@@ -112,12 +114,14 @@ const vendorLedger = () => {
             vendor_ledger: undefined,
         },
     });
-
+    const fileInput1Ref = useRef<HTMLInputElement>(null);
+    const fileInput2Ref = useRef<HTMLInputElement>(null);
     // File change handler
     const handleFileChange1 = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0];
             if (file) {
+                setVendorStatementFile(file);
                 form.setValue("vendor_statement", file);
                 setFileName1(file.name);
                 form.clearErrors("vendor_statement");
@@ -130,6 +134,7 @@ const vendorLedger = () => {
         (e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0];
             if (file) {
+                setVendorLedgerFile(file);
                 form.setValue("vendor_ledger", file);
                 setFileName2(file.name);
                 form.clearErrors("vendor_ledger");
@@ -144,6 +149,8 @@ const vendorLedger = () => {
         setFileName1("No file chosen");
         setFileName2("No file chosen");
         setApiResponse(null);
+        if (fileInput1Ref.current) fileInput1Ref.current.value = "";
+        if (fileInput2Ref.current) fileInput2Ref.current.value = "";
     }, [form]);
 
     // Normalize API response
@@ -162,7 +169,7 @@ const vendorLedger = () => {
     const savingHistory = useCallback(
         async (values: any, Message: string, status: string) => {
             const today = new Date().toISOString().split("T")[0];
-            const servicename=values.serviceName + " - Vendor Ledger";
+            const servicename = values.serviceName + " - Vendor Ledger";
             await axios.post("/api/user-task-history", {
                 uid: user?.id,
                 userName: user?.name,
@@ -185,6 +192,8 @@ const vendorLedger = () => {
             setApiResponse(null);
             try {
                 const formData = new FormData();
+                if (vendorStatementFile) formData.append("vendor_statement", vendorStatementFile);
+                if (vendorLedgerFile) formData.append("vendor_ledger", vendorLedgerFile);
                 formData.append("service_name", values.serviceName);
                 if (values.transactionType && values.transactionType !== "default") {
                     formData.append("transaction_type", values.transactionType);
@@ -192,18 +201,8 @@ const vendorLedger = () => {
                 formData.append("vendor_statement", values.vendor_statement);
                 formData.append("vendor_ledger", values.vendor_ledger);
 
-                // const res = await axios.post(
-                //     "http://localhost:5000/api/vendorledger_reconciliation",
-                //     formData,
-                //     {
-                //         headers: {
-                //             "Content-Type": "multipart/form-data",
-                //         },
-                //         timeout: 120000,
-                //     }
-                // );
                 const res = await axios.post(
-                    "http://192.168.1.157:5000/api//vendorledger_reconciliation",
+                    "http://localhost:5000/api/vendorledger_reconciliation",
                     formData,
                     {
                         headers: {
@@ -212,6 +211,16 @@ const vendorLedger = () => {
                         timeout: 120000,
                     }
                 );
+                // const res = await axios.post(
+                //     "http://192.168.1.157:5000/api//vendorledger_reconciliation",
+                //     formData,
+                //     {
+                //         headers: {
+                //             "Content-Type": "multipart/form-data",
+                //         },
+                //         timeout: 120000,
+                //     }
+                // );
 
                 const response = {
                     ...res,
@@ -386,6 +395,7 @@ const vendorLedger = () => {
                                                                     type="file"
                                                                     accept=".xlsx"
                                                                     className="hidden"
+                                                                    ref={fileInput1Ref}
                                                                     onChange={handleFileChange1}
                                                                     aria-label="Upload Vendor Statement"
                                                                 />
@@ -428,6 +438,7 @@ const vendorLedger = () => {
                                                                     type="file"
                                                                     accept=".xlsx"
                                                                     className="hidden"
+                                                                    ref={fileInput2Ref}
                                                                     onChange={handleFileChange2}
                                                                     aria-label="Upload Vendor Ledger"
                                                                 />

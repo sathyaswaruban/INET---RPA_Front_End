@@ -104,6 +104,16 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
             "TRANS_REF_ID", "AMOUNT_LEDGER", "AMOUNT_STATEMENT", "DATE"
         ];
     }
+    else if (service_name == "LIC") {
+        orderedColumns = [
+            "LDG_TID",
+            "COMMISSION_TID",
+            "LDG_AMOUNT",
+            "STMT_AMOUNT",
+            "COMM_AMT",
+            "DATE",
+        ];
+    }
     else {
         orderedColumns = [
             "TXNID", "REFUND_TXNID", "REFID", "TYPE", "AMOUNT", "COMM", "TDS", "DATE"
