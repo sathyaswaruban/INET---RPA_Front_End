@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import axios from "axios";
@@ -97,6 +97,9 @@ const FilterForm = () => {
     const [apiResponse, setApiResponse] = useState<any>(null); // To store API response
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [vendorStatementFile, setVendorStatementFile] = useState<File | null>(null);
+    const fileInput1Ref = useRef<HTMLInputElement>(null);
+
 
     // Fetch user info
     useEffect(() => {
@@ -149,6 +152,7 @@ const FilterForm = () => {
     const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            setVendorStatementFile(file);
             form.setValue("file", file);
             setFileName(file.name);
             form.clearErrors("file");
@@ -160,6 +164,8 @@ const FilterForm = () => {
         form.reset();
         setFileName("No file chosen");
         setApiResponse(null);
+        if (fileInput1Ref.current) fileInput1Ref.current.value = "";
+
     }, [form]);
 
 
@@ -484,6 +490,7 @@ const FilterForm = () => {
                                                                 type="file"
                                                                 accept=".xlsx"
                                                                 className="hidden"
+                                                                ref={fileInput1Ref}
                                                                 onChange={handleFileChange}
                                                                 aria-label="Upload Excel File"
                                                             />

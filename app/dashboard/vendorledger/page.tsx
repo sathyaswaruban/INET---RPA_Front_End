@@ -53,14 +53,14 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const serviceOptions = [
-    // { value: "ABHIBUS", label: "Abhibus" },
+    { value: "ABHIBUS", label: "Abhibus" },
     { value: "BBPS", label: "BBPS" },
     { value: "DMT", label: "DMT" },
     { value: "LIC", label: "LIC - Premium" },
     { value: "MATM", label: "Micro ATM (M-ATM)" },
     { value: "RECHARGE", label: "PaySprint-Recharge" },
     { value: "AEPS", label: "PaySprint-Aeps" },
-    // { value: "PANUTI", label: "Pan-UTI" },
+    { value: "PANUTI", label: "Pan-UTI" },
 ];
 
 const transactionOptions = [
@@ -116,6 +116,7 @@ const vendorLedger = () => {
     });
     const fileInput1Ref = useRef<HTMLInputElement>(null);
     const fileInput2Ref = useRef<HTMLInputElement>(null);
+
     // File change handler
     const handleFileChange1 = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -200,19 +201,9 @@ const vendorLedger = () => {
                 }
                 formData.append("vendor_statement", values.vendor_statement);
                 formData.append("vendor_ledger", values.vendor_ledger);
-
-                const res = await axios.post(
-                    "http://localhost:5000/api/vendorledger_reconciliation",
-                    formData,
-                    {
-                        headers: {
-                            "Content-Type": "multipart/form-data",
-                        },
-                        timeout: 120000,
-                    }
-                );
+                
                 // const res = await axios.post(
-                //     "http://192.168.1.157:5000/api//vendorledger_reconciliation",
+                //     "http://localhost:5000/api/vendorledger_reconciliation",
                 //     formData,
                 //     {
                 //         headers: {
@@ -221,6 +212,16 @@ const vendorLedger = () => {
                 //         timeout: 120000,
                 //     }
                 // );
+                const res = await axios.post(
+                    "http://192.168.1.157:5000/api//vendorledger_reconciliation",
+                    formData,
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                        timeout: 120000,
+                    }
+                );
 
                 const response = {
                     ...res,
@@ -321,7 +322,7 @@ const vendorLedger = () => {
                                 <form
                                     onSubmit={form.handleSubmit(processData)}
                                     className="flex flex-col gap-6"
-                                    aria-label="Filter Form"
+                                    aria-label="Vendor Ledger Form"
                                 >
                                     {/* Inputs in one row */}
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
@@ -383,7 +384,7 @@ const vendorLedger = () => {
                                                         <Button
                                                             asChild
                                                             variant="outline"
-                                                            className="border-[var(--primary)] hover:bg-[var(--muted)] font-semibold"
+                                                            className="border-[var(--primary)] hover:bg-[var(--muted)] font-semibold focus:ring-2 focus:ring-blue-400"
                                                         >
                                                             <label
                                                                 className="cursor-pointer"
@@ -426,7 +427,7 @@ const vendorLedger = () => {
                                                         <Button
                                                             asChild
                                                             variant="outline"
-                                                            className="border-[var(--primary)] hover:bg-[var(--muted)] font-semibold"
+                                                            className="border-[var(--primary)] hover:bg-[var(--muted)] font-semibold focus:ring-2 focus:ring-blue-400"
                                                         >
                                                             <label
                                                                 className="cursor-pointer"
@@ -458,7 +459,7 @@ const vendorLedger = () => {
                                     <div className="flex gap-4">
                                         <Button
                                             type="submit"
-                                            className="flex-1 font-bold flex items-center justify-center bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] hover:from-[var(--secondary)] hover:to-[var(--primary)] shadow-lg rounded-lg transition"
+                                            className="flex-1 font-bold flex items-center justify-center bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] hover:from-[var(--secondary)] hover:to-[var(--primary)] shadow-lg rounded-lg transition focus:ring-2 focus:ring-blue-400"
                                             disabled={isSubmitting}
                                             aria-label="Process"
                                         >
@@ -468,7 +469,7 @@ const vendorLedger = () => {
                                         <Button
                                             type="button"
                                             variant="outline"
-                                            className="flex-1 border-[var(--primary)] text-[var(--primary)] font-bold hover:bg-[var(--muted)] rounded-lg transition"
+                                            className="flex-1 border-[var(--primary)] text-[var(--primary)] font-bold hover:bg-[var(--muted)] rounded-lg transition focus:ring-2 focus:ring-blue-400"
                                             onClick={clearForm}
                                             disabled={isSubmitting}
                                             aria-label="Clear"

@@ -15,7 +15,7 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import * as XLSX from 'xlsx';
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useState, useCallback } from "react";
 import { FileSpreadsheet } from "lucide-react";
 import { saveAs } from 'file-saver';
 
@@ -27,6 +27,7 @@ interface VendorResultsViewerProps {
     responseData: any;
 }
 
+// VendorResultsViewer: Displays vendor reconciliation results with export and pagination features
 export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerProps) => {
     const localData = responseData;
     const Statement_count = localData?.data?.statement_count;
@@ -114,22 +115,36 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
             "DATE",
         ];
     }
+    else if (service_name == "PANUTI") {
+        orderedColumns = [
+            "LDG_REFERENCE_NO",
+            "STMT_REFERENCE_NO",
+            "AMOUNT_LEDGER",
+            "AMOUNT_STATEMENT",
+            "LEDGER_DATE",
+            "STATEMENT_DATE",
+        ]
+    }
+    else if (service_name == "ABHIBUS") {
+        orderedColumns = [
+            'TKT. NUMBER', 'BOOKED DATE', 'TICKET AMOUNT', 'SERVICE TAX', 'COMM.', 'COMM TDS', 'FINAL_AMOUNT',
+            "AMOUNT_LEDGER", "AMOUNT_STATEMENT", 'MAPPING_STATUS',
+        ];
+    }
     else {
         orderedColumns = [
             "TXNID", "REFUND_TXNID", "REFID", "TYPE", "AMOUNT", "COMM", "TDS", "DATE"
         ];
     }
 
-    // const exportToExcel = (data: DataItem[], fileName: string) => {
-    //     const worksheet = XLSX.utils.json_to_sheet(data);
-    //     const workbook = XLSX.utils.book_new();
-    //     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    //     XLSX.writeFile(workbook, `${fileName}.xlsx`);
-    // };
 
-    const exportMatchedTabsToExcel = () => {
+    // Export handlers with loading state
+    const [isExportingMatched, setIsExportingMatched] = useState(false);
+    const [isExportingAll, setIsExportingAll] = useState(false);
+
+    const exportMatchedTabsToExcel = useCallback(() => {
+        setIsExportingMatched(true);
         const workbook = XLSX.utils.book_new();
-
         activeMatchedSections.forEach((section) => {
             const data = otherSections[section.key] || [];
             if (data.length > 0) {
@@ -137,15 +152,15 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
                 XLSX.utils.book_append_sheet(workbook, worksheet, section.label || section.key);
             }
         });
-
         const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
         saveAs(blob, `VendorLedger_Matched_result_${service_name}_${formattedDate}.xlsx`);
-    };
+        setTimeout(() => setIsExportingMatched(false), 800);
+    }, [activeMatchedSections, otherSections, orderedColumns, service_name, formattedDate]);
 
-    const exportAllTabsToExcel = () => {
+    const exportAllTabsToExcel = useCallback(() => {
+        setIsExportingAll(true);
         const workbook = XLSX.utils.book_new();
-
         activeSections.forEach((section) => {
             const data = otherSections[section.key] || [];
             if (data.length > 0) {
@@ -153,11 +168,11 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
                 XLSX.utils.book_append_sheet(workbook, worksheet, section.label || section.key);
             }
         });
-
         const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
         saveAs(blob, `VendorLedger_detailed_result_${service_name}_${formattedDate}.xlsx`);
-    };
+        setTimeout(() => setIsExportingAll(false), 800);
+    }, [activeSections, otherSections, orderedColumns, service_name, formattedDate]);
 
     const formatValue = (value: any) => {
         if (value === null || value === undefined || value === "") return "N/A";
@@ -168,11 +183,13 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
     const [paginationState, setPaginationState] = useState<{ [key: string]: number }>({});
     const itemsPerPage = 20;
 
+    // Main render
     return (
         <div className="space-y-8 w-full max-w-6xl mx-auto px-2 md:px-0">
+            {/* Summary Card */}
             <Card className="shadow-lg rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
                 <CardHeader className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 py-2">
-                    {/* Column 1 */}
+                    {/* Statement & Matched */}
                     <div className="col-span-1 flex flex-col gap-5">
                         <CardTitle className="text-[var(--primary)] text-center text-base bg-[var(--muted)] px-3 py-1 rounded-lg shadow-sm">
                             Statement Count: <span className="ml-1">{Statement_count}</span>
@@ -180,9 +197,8 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
                         <CardTitle className="text-green-600 text-base mt-3 text-center bg-green-100 dark:bg-red-900/40 px-3 py-1 rounded-lg shadow-sm">
                             Total Matched: <span className="ml-1">{Total_matched_count}</span>
                         </CardTitle>
-
                     </div>
-
+                    {/* Ledger & Credit */}
                     <div className="col-span-1 flex flex-col gap-5">
                         <CardTitle className="text-orange-600 text-base text-center bg-orange-100 dark:bg-orange-900/40 px-3 py-1 rounded-lg shadow-sm">
                             Ledger Count: <span className="ml-1">{Ledger_count}</span>
@@ -191,6 +207,7 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
                             Total Ledger Credit: <span className="ml-1">{Ledger_credit_count}</span>
                         </CardTitle>
                     </div>
+                    {/* Failed & Export */}
                     <div className="col-span-1 flex flex-col gap-5">
                         <CardTitle className="text-red-600 text-base text-center bg-red-100 dark:bg-red-900/40 px-3 py-1 rounded-lg shadow-sm">
                             Total Failed: <span className="ml-1">{Total_failed_count}</span>
@@ -199,15 +216,18 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
                             <Button
                                 onClick={exportMatchedTabsToExcel}
                                 variant="outline"
-                                className="border-blue-400 mt-3 text-center hover:bg-blue-50 dark:hover:bg-blue-900/20 transition rounded-lg shadow-sm"
+                                aria-label="Export Matched Data"
+                                className="border-blue-400 mt-3 text-center hover:bg-blue-50 dark:hover:bg-blue-900/20 transition rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 flex items-center justify-center"
+                                disabled={isExportingMatched}
                             >
-                                <FileSpreadsheet className="w-4 h-4 text-green-600" />
-                                <span className="font-semibold text-blue-800">Export Matched Data</span>
+                                {isExportingMatched ? <span className="loader mr-2" /> : <FileSpreadsheet className="w-4 h-4 text-green-600" />}
+                                <span className="font-semibold text-blue-800">{isExportingMatched ? "Exporting..." : "Export Matched Data"}</span>
                             </Button>
                         )}
                     </div>
                 </CardHeader>
             </Card>
+            {/* Detailed Results Card */}
             <Card className="shadow-xl rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <CardTitle className="font-bold text-2xl ml-5 text-[var(--primary)] tracking-tight">Detailed Results</CardTitle>
@@ -215,10 +235,12 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
                         <Button
                             onClick={exportAllTabsToExcel}
                             variant="outline"
-                            className="flex items-center mr-5 gap-2 border-[var(--primary)] hover:bg-[var(--muted)] transition rounded-lg shadow-sm"
+                            aria-label="Export All Tabs"
+                            className="flex items-center mr-5 gap-2 border-[var(--primary)] hover:bg-[var(--muted)] transition rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400"
+                            disabled={isExportingAll}
                         >
-                            <FileSpreadsheet className="h-4 w-4 text-green-600" />
-                            <span className="font-semibold text-[var(--primary)]">Export All Tabs</span>
+                            {isExportingAll ? <span className="loader mr-2" /> : <FileSpreadsheet className="h-4 w-4 text-green-600" />}
+                            <span className="font-semibold text-[var(--primary)]">{isExportingAll ? "Exporting..." : "Export All Tabs"}</span>
                         </Button>
                     )}
                 </CardHeader>
@@ -228,7 +250,7 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
                             <p>{message}</p>
                         </div>
                     ) : (
-                        <Tabs defaultValue={activeSections[0]?.key || ''} className="w-full">
+                        <Tabs defaultValue={activeSections[0]?.key || ''} className="w-full" aria-label="Results Tabs">
                             <div className="overflow-x-auto pb-2">
                                 <TabsList className="flex w-full justify-start bg-gradient-to-r from-[var(--primary)] via-[var(--primary)] to-[var(--secondary)] rounded-lg p-1 shadow-md">
                                     {activeSections.map((section) => (
@@ -267,7 +289,7 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
                                             </CardHeader>
                                             <CardContent className="pt-0">
                                                 <div className="overflow-x-auto rounded-lg border border-[var(--border)] bg-[var(--card)] shadow-inner">
-                                                    <Table>
+                                                    <Table aria-label={`Results Table for ${section.label}`}>
                                                         <TableHeader className="bg-gradient-to-r from-[var(--primary)] from-100% to-[var(--primary)]/80 to-80%">
                                                             <TableRow>
                                                                 {orderedColumns.map((column) => (
@@ -300,7 +322,7 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
                                                     </Table>
 
                                                     {totalPages > 1 && (
-                                                        <div className="flex flex-col md:flex-row justify-between items-center mt-6 gap-2 px-2">
+                                                        <div className="flex flex-col md:flex-row justify-between items-center mt-6 gap-2 px-2" aria-label="Pagination Controls">
                                                             <p className="text-sm text-[var(--muted-foreground)]">
                                                                 Page <span className="font-semibold">{currentPage}</span> of <span className="font-semibold">{totalPages}</span>
                                                             </p>
