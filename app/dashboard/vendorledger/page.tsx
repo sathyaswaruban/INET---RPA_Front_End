@@ -303,12 +303,12 @@ const vendorLedger = () => {
     }
 
     return (
-        <div className="flex flex-col min-h-screen p-4">
+        <div className="flex flex-col p-4">
             <div className="flex flex-col lg:flex-row gap-4 justify-center">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 justify-center">
                     {/* Input Field Card */}
                     <Card className="col-span-12 lg:col-span-12 bg-[var(--card)] text-[var(--card-foreground)] shadow-2xl rounded-2xl border border-[var(--border)] p-0 m-0 overflow-hidden transition-colors">
-                        <CardHeader className="flex flex-col items-center justify-center bg-gradient-to-r from-[var(--primary)] from-100% to-[var(--primary)]/80 to-80% px-6 py-6 sticky top-0 z-10 shadow-md mb-0 rounded-t-2xl">
+                        <CardHeader className="flex flex-col items-center justify-center card-header px-6 py-6 sticky top-0 z-10 shadow-md mb-0 rounded-t-2xl">
                             <CardTitle className="text-3xl font-extrabold text-[var(--primary-foreground)] tracking-wide drop-shadow-lg">
                                 Vendor Ledger Comparison
                             </CardTitle>

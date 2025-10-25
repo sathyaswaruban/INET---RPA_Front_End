@@ -161,7 +161,7 @@ const HistoryTableWithFilters = () => {
     <div className="p-6 min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <h2 className="text-2xl font-bold mb-4 text-center" tabIndex={0}>User Task History</h2>
       <Card className="mb-6 mt-0 pt-0 shadow-xl rounded-2xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
-        <CardHeader className="bg-gradient-to-r from-[var(--primary)] from-100% to-[var(--primary)]/80 to-80% rounded-t-2xl px-6 py-4">
+        <CardHeader className="card-header rounded-t-2xl px-6 py-4">
           <CardTitle className="text-xl font-bold text-[var(--primary-foreground)]">Filter Reports</CardTitle>
         </CardHeader>
         <CardContent>

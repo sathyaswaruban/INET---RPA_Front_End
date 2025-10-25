@@ -5,7 +5,7 @@ export interface UserCard {
   value: string;      // URL slug
   apiUrl: string;     // API endpoint
   icon: React.ElementType; // Lucide icon component
-  bgColor: string;    // Tailwind background color class
+  textColor: string;    // Tailwind background color class
 }
 
 export const userCards: UserCard[] = [
@@ -14,41 +14,41 @@ export const userCards: UserCard[] = [
     value: "inet-users",
     apiUrl: "/api/users/inet",
     icon: User,
-    bgColor: "bg-blue-600"
+    textColor: "text-[#FF375F]"
   },
   {
     key: "I-NET UP Users",
     value: "inet-up-users",
     apiUrl: "/api/users/inet-up",
     icon: UserCog,
-    bgColor: "bg-green-600"
+    textColor: "text-[#5E5CE6]"
   },
   {
     key: "UPe-District Sultanpur PS Users",
     value: "upe-sultanpur-ps-users",
     apiUrl: "/api/users/upe-sultanpur-ps",
     icon: Users,
-    bgColor: "bg-yellow-500"
+    textColor: "text-[#FF6482]"
   },
   {
     key: "ITI UP Users",
     value: "iti-up-users",
     apiUrl: "/api/users/iti-up",
     icon: Users2,
-    bgColor: "bg-purple-600"
+    textColor: "text-[#FF9F0A]"
   },
   {
     key: "UPe-District Chitrakoot PS Users",
     value: "upe-chitrakoot-ps-users",
     apiUrl: "/api/users/upe-chitrakoot-ps",
     icon: UserCheck2,
-    bgColor: "bg-orange-600"
+    textColor: "text-[#BF5AF2]"
   },
   {
     key: "I-NET PACCS Users",
     value: "inet-paccs-users",
     apiUrl: "/api/users/inet-paccs",
     icon: User2Icon,
-    bgColor: "bg-violet-600"
+    textColor: "text-[#279989]"
   }
 ];

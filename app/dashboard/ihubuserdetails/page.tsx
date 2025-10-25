@@ -37,8 +37,8 @@ export default function IhubUserDetails() {
         fetchUser();
     }, [router]);
 
-    if(isLoading){
-        <Loader/>
+    if (isLoading) {
+        <Loader />
     }
 
     return (
@@ -57,11 +57,17 @@ export default function IhubUserDetails() {
                             onClick={() =>
                                 router.push(`/dashboard/userdetailsform/${card.value}`)
                             }
-                            className="glass-card hover-glow cursor-pointer p-0 m-0 relative hover:scale-105"
+                            className="glass-card hover-glow cursor-pointer relative overflow-hidden"
                         >
-                            <CardContent className={`card-content flex flex-col items-center text-center h-full text-white ${card.bgColor} p-6 rounded-xl`}>
-                                <Icon size={40} className="mb-4" />
-                                <p className="font-semibold text-xl">{card.key}</p>
+                            <CardContent className="card-content flex flex-col items-center justify-center h-full p-6">
+                                <div className="flex flex-col items-center gap-3">
+                                    <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm">
+                                        <Icon size={40} className={card.textColor || "text-primary"}  />
+                                    </div>
+                                    <p className={`font-semibold text-lg tracking-tight ${card.textColor}`}>
+                                        {card.key}
+                                    </p>
+                                </div>
                             </CardContent>
                         </Card>
                     );

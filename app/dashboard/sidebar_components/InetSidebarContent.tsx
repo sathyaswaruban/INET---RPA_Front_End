@@ -108,7 +108,7 @@ export default function InetSidebarContent() {
                       href={item.url}
                       className={`flex items-center gap-2 px-2 py-2 rounded-lg duration-200 transition
                         ${isActive
-                          ? "bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] shadow font-bold"
+                          ? "bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)]/40 text-[var(--primary-foreground)] shadow font-bold"
                           : "hover:bg-[var(--muted)] text-[var(--muted-foreground)]"
                         }
                       `}

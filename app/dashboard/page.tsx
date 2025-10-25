@@ -94,8 +94,8 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchebodata = async () => {
       try {
-        // const response = await axios.get("http://localhost:5000/api/getEboData");
-        const response = await axios.get("http://192.168.1.157:5000/api/getEboData");
+        const response = await axios.get("http://localhost:5000/api/getEboData");
+        // const response = await axios.get("http://192.168.1.157:5000/api/getEboData");
         setData(response?.data); // response.data is of type Ebodata
       } catch (err) {
         console.error("Error fetching data", err);
@@ -206,7 +206,7 @@ export default function DashboardPage() {
           </Card>
 
           <Card className="glass-card hover-glow cursor-pointer relative">
-            <CardHeader className="card-header flex justify-between items-start">
+            <CardHeader className="card-header bg-card-header flex justify-between items-start">
               <CardTitle className="card-title">Current Month Expiry User</CardTitle>
 
             </CardHeader>
@@ -222,7 +222,7 @@ export default function DashboardPage() {
 
 
           <Card className="glass-card hover-glow cursor-pointer relative">
-            <CardHeader className="card-header flex justify-between items-start">
+            <CardHeader className="card-header bg-card-header flex justify-between items-start">
               <CardTitle className="card-title">Past Month Expired Count</CardTitle>
             </CardHeader>
             <CardContent className="card-content text-red-600">

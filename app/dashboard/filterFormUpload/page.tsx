@@ -231,8 +231,24 @@ const FilterForm = () => {
                     duration: 5000,
                     position: 'top-center'
                 });
-                setApiResponse(response.data);
-                let status = 'Success';
+                console.log("API RESPONSE STATE:", response.data);
+                console.log("SET API RESPONSE:", {
+                    ...response.data.data,
+                    isSuccess: response.data.isSuccess,
+                    message: response.data.message,
+                    service_name: response.data.service_name,
+                    fromDate: values.fromDate,
+                    toDate: values.toDate,
+                });
+                setApiResponse({
+                    ...response.data.data,    // spread inner data
+                    isSuccess: response.data.isSuccess,
+                    message: response.data.message,
+                    service_name: response.data.service_name,
+                    fromDate: values.fromDate,
+                    toDate: values.toDate,
+                });
+                const status = 'Success';
                 savingHistory(values, Message, status);
             } else {
                 let errorMessage = "NaN Error occured during processing.";
@@ -359,12 +375,12 @@ const FilterForm = () => {
     }
 
     return (
-        <div className="flex flex-col min-h-screen p-4">
+        <div className="flex flex-col p-4">
             <div className="flex flex-col lg:flex-row gap-4 justify-center">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 justify-center">
                     {/* Input Field Card: 5 columns on large screens */}
                     <Card className="col-span-12 lg:col-span-5 bg-[var(--card)] text-[var(--card-foreground)] shadow-2xl rounded-2xl border border-[var(--border)] p-0 m-0 overflow-hidden transition-colors">
-                        <CardHeader className="flex flex-col items-center justify-center bg-gradient-to-r from-[var(--primary)] from-100% to-[var(--primary)]/80 to-80% px-6 py-6 sticky top-0 z-10 shadow-md mb-0 rounded-t-2xl">
+                        <CardHeader className="flex flex-col items-center justify-center card-header px-6 py-6 sticky top-0 z-10 shadow-md mb-0 rounded-t-2xl">
                             <CardTitle className="text-3xl font-extrabold text-[var(--primary-foreground)] tracking-wide drop-shadow-lg">
                                 Select Input Details
                             </CardTitle>
@@ -431,7 +447,7 @@ const FilterForm = () => {
                                                             <SelectValue placeholder="--Select service--" />
                                                         </SelectTrigger>
                                                     </FormControl>
-                                                    <SelectContent className="bg-[var(--card)] text-[var(--card-foreground)]">
+                                                    <SelectContent className="bg-[var(--card)] font-semibold text-[var(--card-foreground)]">
                                                         {serviceOptions.map((option) => (
                                                             <SelectItem
                                                                 key={option.value}
@@ -532,12 +548,10 @@ const FilterForm = () => {
                     </Card>
                     {/* Status Label Card: 7 columns on large screens */}
                     <Card className="col-span-12 lg:col-span-7 max-h-[70vh] m-0 p-0 overflow-y-auto shadow-xl rounded-2xl border-0 bg-[var(--card)] text-[var(--card-foreground)]">
-                        <CardHeader className="flex flex-row items-center gap-3 bg-gradient-to-r from-[var(--primary)] from-100% to-[var(--primary)]/80 to-80% sticky top-0 z-10 rounded-t-2xl px-6 py-4 mb-0">
-                            <span className="inline-flex items-center justify-center bg-[var(--card)] text-[var(--primary)] rounded-full w-10 h-10 shadow-md">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 20c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z" />
-                                </svg>
-                            </span>
+                        <CardHeader className="flex flex-row items-center gap-3 card-header sticky top-0 z-10 rounded-t-2xl px-6 py-4 mb-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#ffffff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 20c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z" />
+                            </svg>
                             <CardTitle className="text-2xl font-bold text-[var(--primary-foreground)] tracking-wide">
                                 Status Labels
                             </CardTitle>
