@@ -201,19 +201,9 @@ const vendorLedger = () => {
                 }
                 formData.append("vendor_statement", values.vendor_statement);
                 formData.append("vendor_ledger", values.vendor_ledger);
-                
-                const res = await axios.post(
-                    "http://localhost:5000/api/vendorledger_reconciliation",
-                    formData,
-                    {
-                        headers: {
-                            "Content-Type": "multipart/form-data",
-                        },
-                        timeout: 120000,
-                    }
-                );
+
                 // const res = await axios.post(
-                //     "http://192.168.1.157:5000/api//vendorledger_reconciliation",
+                //     "http://localhost:5000/api/vendorledger_reconciliation",
                 //     formData,
                 //     {
                 //         headers: {
@@ -222,6 +212,16 @@ const vendorLedger = () => {
                 //         timeout: 120000,
                 //     }
                 // );
+                const res = await axios.post(
+                    "http://192.168.1.157:5000/api//vendorledger_reconciliation",
+                    formData,
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                        timeout: 120000,
+                    }
+                );
 
                 const response = {
                     ...res,

@@ -51,13 +51,13 @@ export default function InetSidebarNavbar() {
       </div>
 
       <div className="flex-1 text-center">
-        <span className="font-bold text-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent drop-shadow">
+        <span className="font-bold text-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] bg-clip-text text-transparent drop-shadow dark:from-[var(--primary-foreground)] dark:to-[var(--secondary)]">
           I-NET Report Reconciliation
         </span>
       </div>
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-2 text-sm font-medium">
-          <span className="text-[var(--primary)]">{greeting} 👋</span>
+          <span className="text-[var(--primary)] dark:text-[var(--secondary)]">{greeting} 👋</span>
           {isMounted ? (
             <LiveClock />
           ) : (
