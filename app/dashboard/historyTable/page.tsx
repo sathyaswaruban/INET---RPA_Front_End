@@ -146,7 +146,7 @@ const HistoryTableWithFilters = () => {
     setCurrentPage(1);
   }, [data]);
 
-  // Pagination logic
+  // Pagination logic/
   const pageCount = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginatedData = filtered.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
