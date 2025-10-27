@@ -375,7 +375,13 @@ const FilterForm = () => {
     }
 
     return (
+        
         <div className="flex flex-col p-4">
+             <div className="flex items-start mb-8">
+                <h1 className="text-2xl font-bold text-[var(--primary)] dark:text-[var(--primary-foreground)]">
+                    Auto Reconciliation
+                </h1>
+            </div>
             <div className="flex flex-col lg:flex-row gap-4 justify-center">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 justify-center">
                     {/* Input Field Card: 5 columns on large screens */}

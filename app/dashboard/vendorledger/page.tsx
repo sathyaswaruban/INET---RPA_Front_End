@@ -304,16 +304,21 @@ const vendorLedger = () => {
 
     return (
         <div className="flex flex-col p-4">
+            <div className="flex items-start mb-8">
+                <h1 className="text-2xl font-bold text-[var(--primary)] dark:text-[var(--primary-foreground)]">
+                    Vendor Ledger Comparison
+                </h1>
+            </div>
             <div className="flex flex-col lg:flex-row gap-4 justify-center">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 justify-center">
                     {/* Input Field Card */}
                     <Card className="col-span-12 lg:col-span-12 bg-[var(--card)] text-[var(--card-foreground)] shadow-2xl rounded-2xl border border-[var(--border)] p-0 m-0 overflow-hidden transition-colors">
                         <CardHeader className="flex flex-col items-center justify-center card-header px-6 py-6 sticky top-0 z-10 shadow-md mb-0 rounded-t-2xl">
                             <CardTitle className="text-3xl font-extrabold text-[var(--primary-foreground)] tracking-wide drop-shadow-lg">
-                                Vendor Ledger Comparison
+                               Select Input Details
                             </CardTitle>
                             <p className="text-[var(--primary-foreground)]/80 mt-2 text-sm font-medium text-center">
-                                Select the details below to process your Vendor Excel and Ledger.
+                               Please fill in the details below to process Vendor Data Comparison.
                             </p>
                         </CardHeader>
 

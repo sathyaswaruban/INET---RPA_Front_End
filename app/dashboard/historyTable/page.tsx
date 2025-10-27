@@ -159,6 +159,11 @@ const HistoryTableWithFilters = () => {
 
   return (
     <div className="p-6 min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+       <div className="flex items-start mb-8">
+                <h1 className="text-2xl font-bold text-[var(--primary)] dark:text-[var(--primary-foreground)]">
+                    History Table
+                </h1>
+            </div>
       <h2 className="text-2xl font-bold mb-4 text-center" tabIndex={0}>User Task History</h2>
       <Card className="mb-6 mt-0 pt-0 shadow-xl rounded-2xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
         <CardHeader className="card-header rounded-t-2xl px-6 py-4">

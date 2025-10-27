@@ -44,7 +44,7 @@ export default function IhubUserDetails() {
     return (
         <div className="flex flex-col bg-[var(--background)] text-[var(--foreground)] p-4 md:p-8">
             <div className="flex items-start mb-8">
-                <h1 className="text-2xl font-bold text-[var(--primary)]">
+                <h1 className="text-2xl font-bold text-[var(--primary)] dark:text-[var(--primary-foreground)]">
                     IHUB User Details
                 </h1>
             </div>
