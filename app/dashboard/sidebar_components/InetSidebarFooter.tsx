@@ -44,7 +44,7 @@ export default function InetSidebarFooter() {
           {user &&
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] font-bold hover:from-[var(--secondary)] hover:to-[var(--primary)] transition">
+                <SidebarMenuButton className="flex items-center font-bold gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-[var(--secondary)] to-[var(--primary)] text-[var(--primary-foreground)]  hover:from-[var(--primary)] hover:to-[var(--secondary)] transition">
                   <User2 className="w-5 h-5" /> {user?.name}
                   <ChevronUp className="ml-auto w-4 h-4" />
                 </SidebarMenuButton>

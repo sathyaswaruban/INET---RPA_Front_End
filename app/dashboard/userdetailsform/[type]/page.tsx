@@ -361,7 +361,7 @@ export default function UserDetailsForm() {
                                         <Button
                                             type="submit"
                                             disabled={isSubmitting}
-                                            className="bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] cursor-pointer text-[var(--primary-foreground)] px-5 py-2 rounded-lg hover:from-[var(--secondary)] hover:to-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-bold transition w-full"
+                                            className="bg-gradient-to-r from-[var(--secondary)] to-[var(--primary)]  hover:from-[var(--primary)] hover:to-[var(--secondary)] cursor-pointer text-[var(--primary-foreground)] px-5 py-2 rounded-lg  font-bold transition w-full focus:ring-2 focus:ring-blue-400"
                                         >
                                             {isSubmitting ? "Loading..." : "Search"}
                                         </Button>

@@ -469,7 +469,7 @@ const vendorLedger = () => {
                                         <Button
                                             type="button"
                                             variant="outline"
-                                            className="flex-1 border-[var(--primary)] dark:text-[var(--primary-foreground)] cursor-pointer dark:border-[var(--primary-foreground)] text-[var(--primary)] font-bold hover:bg-[var(--muted)] rounded-lg transition focus:ring-2 focus:ring-blue-400"
+                                            className="flex-1 border-[var(--primary)] dark:text-[var(--primary-foreground)] cursor-pointer text-[var(--primary)] font-bold hover:bg-[var(--muted)] rounded-lg transition focus:ring-2 focus:ring-blue-400"
                                             onClick={clearForm}
                                             disabled={isSubmitting}
                                             aria-label="Clear"

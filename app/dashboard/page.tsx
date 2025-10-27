@@ -126,7 +126,7 @@ export default function DashboardPage() {
         {user.role === "ADMIN" && (
           <div className="flex justify-between">
             <div className="flex items-start mb-8">
-              <h1 className="text-2xl font-bold text-[var(--primary)]">Home Page / Dashboard</h1>
+              <h1 className="text-2xl font-bold text-[var(--primary)] dark:text-[var(--primary-foreground)]">Home Page / Dashboard</h1>
             </div>
             <div className="items-end flex-wrap gap-4">
               <Button
@@ -141,7 +141,7 @@ export default function DashboardPage() {
 
         {user.role === "USER" && (
           <div className="flex items-start mb-8">
-            <h1 className="text-2xl font-bold text-[var(--primary)]">Home Page / Dashboard</h1>
+            <h1 className="text-2xl font-bold text-[var(--primary)] dark:text-[var(--primary-foreground)]">Home Page / Dashboard</h1>
           </div>
         )}
 

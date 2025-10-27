@@ -524,7 +524,7 @@ const FilterForm = () => {
                                     <div className="flex gap-4">
                                         <Button
                                             type="submit"
-                                            className="flex-1 font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] hover:from-[var(--secondary)] hover:to-[var(--primary)] shadow-lg rounded-lg transition cursor-pointer"
+                                            className="flex-1 font-bold bg-gradient-to-r from-[var(--secondary)] to-[var(--primary)] text-[var(--primary-foreground)] font-bold hover:from-[var(--primary)] hover:to-[var(--secondary)] shadow-lg rounded-lg transition cursor-pointer focus:ring-2 focus:ring-blue-400"
                                             disabled={isSubmitting}
                                             aria-label="Process"
                                         >
@@ -534,7 +534,7 @@ const FilterForm = () => {
                                         <Button
                                             type="button"
                                             variant="outline"
-                                            className="flex-1 border-[var(--primary)] text-[var(--primary)] dark:text-[var(--primary-foreground)] dark:border-[var(--primary-foreground)] font-bold hover:bg-[var(--muted)] rounded-lg transition cursor-pointer"
+                                            className="flex-1 border-[var(--primary)] text-[var(--primary)] dark:text-[var(--primary-foreground)] dark:border-[var(--primary-foreground)] font-bold hover:bg-[var(--muted)] rounded-lg transition cursor-pointer focus:ring-2 focus:ring-blue-400"
                                             onClick={clearForm}
                                             disabled={isSubmitting}
                                             aria-label="Clear"

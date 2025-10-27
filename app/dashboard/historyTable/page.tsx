@@ -208,7 +208,7 @@ const HistoryTableWithFilters = () => {
               <button
                 type="submit"
                 onClick={handleFilter}
-                className="bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] px-4 py-2 rounded-lg hover:from-[var(--secondary)] hover:to-[var(--primary)] w-full focus:outline-none focus:ring-2 focus:ring-[var(--primary)] flex items-center justify-center font-bold transition"
+                className="bg-gradient-to-r from-[var(--secondary)] to-[var(--primary)] text-[var(--primary-foreground)] cursor-pointer px-4 py-2 rounded-lg hover:from-[var(--primary)] hover:to-[var(--secondary)] w-full font-bold transition focus:ring-2 focus:ring-blue-400"
                 aria-label="Search"
                 disabled={isFiltering}
               >
@@ -217,7 +217,7 @@ const HistoryTableWithFilters = () => {
               <button
                 type="button"
                 onClick={handleClear}
-                className="border border-[var(--primary)] dark:text-[var(--primary-foreground)] dark:border-[var(--primary-foreground)] cursor-pointer text-[var(--primary)] px-4 py-2 rounded-lg hover:bg-[var(--muted)] w-full focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-bold transition"
+                className="border border-[var(--primary)] dark:text-[var(--primary-foreground)] dark:border-[var(--primary-foreground)] cursor-pointer text-[var(--primary)] px-4 py-2 rounded-lg hover:bg-[var(--muted)] w-full font-bold transition focus:ring-2 focus:ring-blue-400"
                 aria-label="Clear"
               >
                 Clear
