@@ -22,7 +22,7 @@ interface FormDataType {
 interface TableData {
     [key: string]: any;
 }
-
+// Main component
 export default function UserDetailsForm() {
     const { type } = useParams();
     const [formData, setFormData] = useState<FormDataType>({
