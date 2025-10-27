@@ -131,8 +131,7 @@ export default function DashboardPage() {
             <div className="items-end flex-wrap gap-4">
               <Button
                 onClick={() => router.push("/auth/register")}
-                className="bg-gradient-to-r from-[var(--secondary)] to-[var(--primary)] text-[var(--primary-foreground)] font-bold hover:from-[var(--primary)] hover:to-[var(--secondary)] rounded-lg transition"
-              >
+                className="bg-gradient-to-r from-[var(--secondary)] to-[var(--primary)] text-[var(--primary-foreground)] font-bold hover:from-[var(--primary)] hover:to-[var(--secondary)] rounded-lg transition cursor-pointer">
                 Register New User
               </Button>
             </div>

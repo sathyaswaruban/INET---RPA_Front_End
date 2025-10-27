@@ -18,6 +18,7 @@ import * as XLSX from 'xlsx';
 import { memo, useEffect, useState, useCallback } from "react";
 import { FileSpreadsheet } from "lucide-react";
 import { saveAs } from 'file-saver';
+import { toast } from "sonner";
 
 interface DataItem {
     [key: string]: any;
@@ -40,10 +41,10 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
     const dataSections = [
         { key: "not_in_ledger", label: "Not in Ledger" },
         // { key: "matching_refunds", label: "Matching Refunds" },
-        { key: "mismatch_statement_refunds", label: "Mismatch Statement Refunds" },
+        { key: "mismatch_statement_refunds", label: "Mismatch Stmnt Refunds" },
         { key: "mismatch_ledger_refunds", label: "Mismatch Ledger Refunds" },
         { key: "not_in_statement", label: "Not in Statement" },
-        { key: "amount_mismatch", label: "Ledger & Statement Amount Mismatch" },
+        { key: "amount_mismatch", label: "Ledger & Stmnt Amount Mismatch" },
         { key: "credit_transactions_ledger", label: "Credit Transactions in Ledger" },
     ];
 
@@ -160,19 +161,31 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
 
     const exportAllTabsToExcel = useCallback(() => {
         setIsExportingAll(true);
-        const workbook = XLSX.utils.book_new();
-        activeSections.forEach((section) => {
-            const data = otherSections[section.key] || [];
-            if (data.length > 0) {
-                const worksheet = XLSX.utils.json_to_sheet(data, { header: orderedColumns });
-                XLSX.utils.book_append_sheet(workbook, worksheet, section.label || section.key);
-            }
-        });
-        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-        const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-        saveAs(blob, `VendorLedger_detailed_result_${service_name}_${formattedDate}.xlsx`);
-        setTimeout(() => setIsExportingAll(false), 800);
-    }, [activeSections, otherSections, orderedColumns, service_name, formattedDate]);
+
+        try {
+            const workbook = XLSX.utils.book_new();
+            // Then try to add your actual data
+            activeSections.forEach((section) => {
+                const data = otherSections[section.key] || [];
+                if (data.length > 0) {
+                    try {
+                        const worksheet = XLSX.utils.json_to_sheet(data, { header: orderedColumns });
+                        XLSX.utils.book_append_sheet(workbook, worksheet,  section.label || section.key);
+                    } catch (error) {
+                        console.error(`Failed to add sheet for ${section.key}`, error);
+                    }
+                }
+            });
+            const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+            const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+            saveAs(blob, `VendorLedger_Mismatched_result_${service_name}_${formattedDate}.xlsx`);
+        } catch (error) {
+            console.error('Export error:', error);
+            toast.error('Export failed: ' + (error as Error).message);
+        } finally {
+            setTimeout(() => setIsExportingAll(false), 800);
+        }
+    }, [activeSections, otherSections, formattedDate]);
 
     const formatValue = (value: any) => {
         if (value === null || value === undefined || value === "") return "N/A";
@@ -187,29 +200,34 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
     return (
         <div className="space-y-8 w-full max-w-6xl mx-auto px-2 md:px-0">
             {/* Summary Card */}
-            <Card className="shadow-lg rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
-                <CardHeader className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 py-2">
+            <Card className="shadow-lg rounded-xl mt-0 pt-0 border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
+                <CardHeader className="card-header">
+                    <CardTitle className="font-bold text-2xl ml-5 text-[var(--primary-foreground)] tracking-tight">
+                        Vendor Comprison Summary
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 py-2">
                     {/* Statement & Matched */}
                     <div className="col-span-1 flex flex-col gap-5">
-                        <CardTitle className="text-[var(--primary)] text-center text-base bg-[var(--muted)] px-3 py-1 rounded-lg shadow-sm">
+                        <CardTitle className="text-violet-600 text-base  text-center bg-violet-100  px-3 py-1 rounded-lg shadow-sm">
                             Statement Count: <span className="ml-1">{Statement_count}</span>
                         </CardTitle>
-                        <CardTitle className="text-green-600 text-base mt-3 text-center bg-green-100 dark:bg-red-900/40 px-3 py-1 rounded-lg shadow-sm">
+                        <CardTitle className="text-green-600 text-base mt-3 text-center bg-green-100  px-3 py-1 rounded-lg shadow-sm">
                             Total Matched: <span className="ml-1">{Total_matched_count}</span>
                         </CardTitle>
                     </div>
                     {/* Ledger & Credit */}
                     <div className="col-span-1 flex flex-col gap-5">
-                        <CardTitle className="text-orange-600 text-base text-center bg-orange-100 dark:bg-orange-900/40 px-3 py-1 rounded-lg shadow-sm">
+                        <CardTitle className="text-orange-600 text-base text-center bg-orange-100  px-3 py-1 rounded-lg shadow-sm">
                             Ledger Count: <span className="ml-1">{Ledger_count}</span>
                         </CardTitle>
-                        <CardTitle className="text-blue-600 text-base mt-3 text-center bg-blue-100 dark:bg-red-900/40 px-3 py-1 rounded-lg shadow-sm">
+                        <CardTitle className="text-blue-600 text-base mt-3 text-center bg-blue-100  px-3 py-1 rounded-lg shadow-sm">
                             Total Ledger Credit: <span className="ml-1">{Ledger_credit_count}</span>
                         </CardTitle>
                     </div>
                     {/* Failed & Export */}
                     <div className="col-span-1 flex flex-col gap-5">
-                        <CardTitle className="text-red-600 text-base text-center bg-red-100 dark:bg-red-900/40 px-3 py-1 rounded-lg shadow-sm">
+                        <CardTitle className="text-red-600 text-base text-center bg-red-100 px-3 py-1 rounded-lg shadow-sm">
                             Total Failed: <span className="ml-1">{Total_failed_count}</span>
                         </CardTitle>
                         {activeMatchedSections.length > 0 && (
@@ -217,15 +235,15 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
                                 onClick={exportMatchedTabsToExcel}
                                 variant="outline"
                                 aria-label="Export Matched Data"
-                                className="border-blue-400 mt-3 text-center hover:bg-blue-50 dark:hover:bg-blue-900/20 transition rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 flex items-center justify-center"
+                                className="mt-3 text-center px-3 py-1 shadow-lg focus:ring-2 focus:ring-blue-400 border-[var(--primary)] hover:bg-[var(--muted)] cursor-pointer transition rounded-lg"
                                 disabled={isExportingMatched}
                             >
                                 {isExportingMatched ? <span className="loader mr-2" /> : <FileSpreadsheet className="w-4 h-4 text-green-600" />}
-                                <span className="font-semibold text-blue-800">{isExportingMatched ? "Exporting..." : "Export Matched Data"}</span>
+                                <span className="font-semibold">{isExportingMatched ? "Exporting..." : "Export Matched Data"}</span>
                             </Button>
                         )}
                     </div>
-                </CardHeader>
+                </CardContent>
             </Card>
             {/* Detailed Results Card */}
             <Card className="shadow-xl rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
@@ -236,7 +254,7 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
                             onClick={exportAllTabsToExcel}
                             variant="outline"
                             aria-label="Export All Tabs"
-                            className="flex items-center mr-5 gap-2 border-[var(--primary)] hover:bg-[var(--muted)] transition rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400"
+                            className="flex items-center mr-5 gap-2 border-[var(--primary)] hover:bg-[var(--muted)] transition rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 cursor-pointer"
                             disabled={isExportingAll}
                         >
                             {isExportingAll ? <span className="loader mr-2" /> : <FileSpreadsheet className="h-4 w-4 text-green-600" />}
@@ -252,12 +270,12 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
                     ) : (
                         <Tabs defaultValue={activeSections[0]?.key || ''} className="w-full" aria-label="Results Tabs">
                             <div className="overflow-x-auto pb-2">
-                                <TabsList className="flex w-full justify-start bg-gradient-to-r from-[var(--primary)] via-[var(--primary)] to-[var(--secondary)] rounded-lg p-1 shadow-md">
+                                <TabsList className="flex w-full justify-start rounded-lg p-1 shadow-md">
                                     {activeSections.map((section) => (
                                         <TabsTrigger
                                             key={section.key}
                                             value={section.key}
-                                            className="text-[var(--primary-foreground)] px-4 py-2 rounded-md font-semibold hover:bg-[var(--primary)]/80 data-[state=active]:bg-[var(--card)] data-[state=active]:text-[var(--primary)] transition-colors shadow-sm"
+                                            className="ttext-[var(--primary)] px-4 py-2 rounded-md font-semibold hover:bg-[var(--primary)]/30 data-[state=active]:bg-[#0A84FF] data-[state=active]:text-[var(--primary-foreground)] transition-colors shadow-sm"
                                         >
                                             {section.label}
                                         </TabsTrigger>

@@ -297,7 +297,7 @@ export default function UserDetailsForm() {
                     <CardHeader className="rounded-t-2xl text-xl font-bold py-3">
                         <div className="flex flex-col items-center w-full">
                             <span>{tenantName} Reports</span>
-                            <div className="w-full h-[2px] mt-2 bg-gradient-to-r from-transparent via-[var(--primary)] to-transparent"></div>
+                            <div className="w-full h-[2px] mt-2 bg-gradient-to-r from-transparent via-[var(--primary)] to-transparent dark:from-transparent dark:via-blue-200 dark:to-transparent"></div>
                         </div>
                     </CardHeader>
                     <CardContent className="pb-5">
@@ -305,7 +305,7 @@ export default function UserDetailsForm() {
                             <div className="flex flex-col gap-4">
                                 <div className="flex flex-wrap items-end gap-6">
                                     <div className="flex-1 min-w-[200px] max-w-[250px]">
-                                        <label htmlFor="from-date" className="block text-m font-semibold mb-1 text-[var(--primary)]">
+                                        <label htmlFor="from-date" className="block text-m font-semibold mb-1 text-[var(--primary)] dark:text-[var(--primary-foreground)]">
                                             From Date
                                         </label>
                                         <input
@@ -319,7 +319,7 @@ export default function UserDetailsForm() {
                                         />
                                     </div>
                                     <div className="flex-1 min-w-[200px] max-w-[250px]">
-                                        <label className="block text-m font-semibold mb-1 text-[var(--primary)]">
+                                        <label className="block text-m font-semibold mb-1 text-[var(--primary)] dark:text-[var(--primary-foreground)]">
                                             To Date
                                         </label>
                                         <input
@@ -333,7 +333,7 @@ export default function UserDetailsForm() {
                                         />
                                     </div>
                                     <div className="flex-1 min-w-[200px] max-w-[250px]">
-                                        <label htmlFor="status" className="block text-m font-semibold mb-1 text-[var(--primary)]">
+                                        <label htmlFor="status" className="block text-m font-semibold mb-1 text-[var(--primary)] dark:text-[var(--primary-foreground)]">
                                             User Status
                                         </label>
                                         <Select
@@ -398,11 +398,11 @@ export default function UserDetailsForm() {
                         <Card className="border border-[var(--border)] shadow-xl rounded-2xl mt-5 bg-[var(--card)]">
                             <CardHeader className="rounded-t-2xl py-3">
                                 <div className="flex justify-between items-center">
-                                    <h2 className="text-xl font-bold"> Showing user details for <strong>{tenantName}</strong></h2>
+                                    <h2 className="text-xl font-bold"> Showing user details for <strong className="text-[var(--primary)]">{tenantName}</strong></h2>
                                     <Button
                                         onClick={exportToExcel}
                                         variant="outline"
-                                        className="flex items-center gap-2 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--muted)]"
+                                        className="flex items-center gap-2 border-[var(--primary)]  hover:bg-[var(--muted)]"
                                     >
                                         <Download size={16} />
                                         Export to Excel

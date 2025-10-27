@@ -159,11 +159,11 @@ const HistoryTableWithFilters = () => {
 
   return (
     <div className="p-6 min-h-screen bg-[var(--background)] text-[var(--foreground)]">
-       <div className="flex items-start mb-8">
-                <h1 className="text-2xl font-bold text-[var(--primary)] dark:text-[var(--primary-foreground)]">
-                    History Table
-                </h1>
-            </div>
+      <div className="flex items-start mb-8">
+        <h1 className="text-2xl font-bold text-[var(--primary)] dark:text-[var(--primary-foreground)]">
+          History Table
+        </h1>
+      </div>
       <h2 className="text-2xl font-bold mb-4 text-center" tabIndex={0}>User Task History</h2>
       <Card className="mb-6 mt-0 pt-0 shadow-xl rounded-2xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
         <CardHeader className="card-header rounded-t-2xl px-6 py-4">
@@ -176,7 +176,7 @@ const HistoryTableWithFilters = () => {
             aria-label="Filter form"
           >
             <div>
-              <label htmlFor="from-date" className="block text-sm font-bold mb-1 text-[var(--primary)]">From Date</label>
+              <label htmlFor="from-date" className="block text-sm font-bold mb-1 text-[var(--primary)] dark:text-[var(--primary-foreground)]">From Date</label>
               <input
                 id="from-date"
                 type="date"
@@ -187,7 +187,7 @@ const HistoryTableWithFilters = () => {
               />
             </div>
             <div>
-              <label htmlFor="to-date" className="block text-sm font-bold mb-1 text-[var(--primary)]">To Date</label>
+              <label htmlFor="to-date" className="block text-sm font-bold mb-1 text-[var(--primary)] dark:text-[var(--primary-foreground)]">To Date</label>
               <input
                 id="to-date"
                 type="date"
@@ -198,7 +198,7 @@ const HistoryTableWithFilters = () => {
               />
             </div>
             <div className="md:col-span-2">
-              <label htmlFor="search" className="block text-sm font-bold mb-1 text-[var(--primary)]">Search</label>
+              <label htmlFor="search" className="block text-sm font-bold mb-1 text-[var(--primary)] dark:text-[var(--primary-foreground)]">Search</label>
               <input
                 id="search"
                 type="text"

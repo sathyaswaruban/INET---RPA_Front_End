@@ -394,7 +394,7 @@ const FilterForm = () => {
                                 Please fill in the details below to process your reconciliation.
                             </p>
                         </CardHeader>
-                        <CardContent className="py-8 px-8 pt-4 bg-[var(--card)] text-[var(--card-foreground)]">
+                        <CardContent className="py-8 px-8 pt-4 bg-[var(--card)] text-[var(--card-foreground)] ">
                             <Form {...form}>
                                 <form onSubmit={form.handleSubmit(processData)} className="space-y-8" aria-label="Filter Form">
                                     <div className="flex gap-4 flex-col md:flex-row justify-between">
@@ -405,7 +405,7 @@ const FilterForm = () => {
                                                 name="fromDate"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel className="font-semibold text-[var(--primary)]" htmlFor="from-date">From Date</FormLabel>
+                                                        <FormLabel className="font-semibold text-[var(--primary)] dark:text-[var(--primary-foreground)]" htmlFor="from-date">From Date</FormLabel>
                                                         <FormControl>
                                                             <Input id="from-date" type="date" {...field} aria-label="From Date"
                                                                 className="rounded-lg border border-[var(--border)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)] transition bg-[var(--card)] text-[var(--card-foreground)]" />
@@ -423,7 +423,7 @@ const FilterForm = () => {
                                                 name="toDate"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel className="font-semibold text-[var(--primary)]" htmlFor="to-date">To Date</FormLabel>
+                                                        <FormLabel className="font-semibold text-[var(--primary)] dark:text-[var(--primary-foreground)]" htmlFor="to-date">To Date</FormLabel>
                                                         <FormControl>
                                                             <Input
                                                                 id="to-date"
@@ -446,14 +446,14 @@ const FilterForm = () => {
                                         name="serviceName"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="font-semibold text-[var(--primary)]" htmlFor="service-name">Select Service</FormLabel>
+                                                <FormLabel className="font-semibold text-[var(--primary)] dark:text-[var(--primary-foreground)]" htmlFor="service-name">Select Service</FormLabel>
                                                 <Select value={field.value} onValueChange={field.onChange}>
                                                     <FormControl>
                                                         <SelectTrigger className="w-full rounded-lg border border-[var(--border)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)] transition bg-[var(--card)] text-[var(--card-foreground)]" id="service-name" aria-label="Select Service">
                                                             <SelectValue placeholder="--Select service--" />
                                                         </SelectTrigger>
                                                     </FormControl>
-                                                    <SelectContent className="bg-[var(--card)] font-semibold text-[var(--card-foreground)]">
+                                                    <SelectContent className="bg-[var(--card)]/95 text-[var(--card-foreground)] backdrop-blur-sm border border-[var(--border)] font-semibold">
                                                         {serviceOptions.map((option) => (
                                                             <SelectItem
                                                                 key={option.value}
@@ -476,14 +476,14 @@ const FilterForm = () => {
                                             name="transactionType"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="font-semibold text-[var(--primary)]" htmlFor="transaction-type">Transaction Type</FormLabel>
+                                                    <FormLabel className="font-semibold text-[var(--primary)] dark:text-[var(--primary-foreground)]" htmlFor="transaction-type">Transaction Type</FormLabel>
                                                     <Select onValueChange={field.onChange}>
                                                         <FormControl>
                                                             <SelectTrigger className="w-full rounded-lg border border-[var(--border)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)] transition bg-[var(--card)] text-[var(--card-foreground)]" id="transaction-type" aria-label="Select Transaction Type">
                                                                 <SelectValue placeholder="--Select transaction--" />
                                                             </SelectTrigger>
                                                         </FormControl>
-                                                        <SelectContent className="bg-[var(--card)] text-[var(--card-foreground)]">
+                                                        <SelectContent className="bg-[var(--card)]/95 text-[var(--card-foreground)] backdrop-blur-sm border border-[var(--border)] font-semibold">
                                                             {transactionOptions.map((option) => (
                                                                 <SelectItem key={option.value} value={option.value} className="hover:bg-[var(--muted)]">
                                                                     {option.label}
@@ -502,7 +502,7 @@ const FilterForm = () => {
                                         name="file"
                                         render={() => (
                                             <FormItem>
-                                                <FormLabel className="font-semibold text-[var(--primary)]" htmlFor="file-upload">Upload Excel File</FormLabel>
+                                                <FormLabel className="font-semibold text-[var(--primary)] dark:text-[var(--primary-foreground)]" htmlFor="file-upload">Upload Excel File</FormLabel>
                                                 <div className="flex items-center gap-4">
                                                     <Button asChild variant="outline" className="border-[var(--primary)] hover:bg-[var(--muted)] font-semibold">
                                                         <label className="cursor-pointer" htmlFor="file-upload">
@@ -518,7 +518,7 @@ const FilterForm = () => {
                                                             />
                                                         </label>
                                                     </Button>
-                                                    <span className="text-sm text-[var(--primary)] font-medium">
+                                                    <span className="text-sm text-[var(--primary)] dark:text-[var(--primary-foreground)] font-medium">
                                                         {fileName}
                                                     </span>
                                                 </div>

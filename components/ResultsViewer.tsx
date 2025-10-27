@@ -301,12 +301,12 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
                     ) : (
                         <Tabs defaultValue={activeSections[0]?.key || ""} className="w-full">
                             <div className="overflow-x-auto pb-2">
-                                <TabsList className="flex w-full justify-start  rounded-lg p-1 shadow-md">
+                                <TabsList className="flex w-full justify-start rounded-lg p-1 shadow-md">
                                     {activeSections.map((section) => (
                                         <TabsTrigger
                                             key={section.key}
                                             value={section.key}
-                                            className="text-[var(--primary)] px-4 py-2 rounded-md font-semibold hover:bg-[var(--primary)]/30 data-[state=active]:bg-[#0A84FF] data-[state=active]:text-[var(--primary-foreground)] transition-colors shadow-sm"
+                                            className="px-4 py-2 rounded-md font-semibold hover:bg-[var(--primary)]/30 data-[state=active]:bg-[#0A84FF] data-[state=active]:text-[var(--primary-foreground)] transition-colors shadow-sm"
                                         >
                                             {section.label}
                                         </TabsTrigger>
@@ -333,7 +333,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
                                     <TabsContent key={section.key} value={section.key} className="pt-6">
                                         <Card className="rounded-lg shadow-md border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
                                             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                                <CardTitle className="font-bold text-lg text-[var(--primary)]">{section.label}</CardTitle>
+                                                <CardTitle className="font-bold text-lg">{section.label}</CardTitle>
                                                 <span className="font-bold text-[var(--foreground)] bg-[var(--muted)] px-2 py-1 rounded-md shadow-sm">Total: {data.length}</span>
                                             </CardHeader>
                                             <CardContent className="pt-0">

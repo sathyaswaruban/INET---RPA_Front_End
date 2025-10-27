@@ -77,7 +77,7 @@ interface User {
     createdAt: string;
 }
 
-const vendorLedger = () => {
+const VendorLedger = () => {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [apiResponse, setApiResponse] = useState<any>(null); // To store API response
@@ -193,8 +193,8 @@ const vendorLedger = () => {
             setApiResponse(null);
             try {
                 const formData = new FormData();
-                if (vendorStatementFile) formData.append("vendor_statement", vendorStatementFile);
-                if (vendorLedgerFile) formData.append("vendor_ledger", vendorLedgerFile);
+                // if (vendorStatementFile) formData.append("vendor_statement", vendorStatementFile);
+                // if (vendorLedgerFile) formData.append("vendor_ledger", vendorLedgerFile);
                 formData.append("service_name", values.serviceName);
                 if (values.transactionType && values.transactionType !== "default") {
                     formData.append("transaction_type", values.transactionType);
@@ -312,9 +312,9 @@ const vendorLedger = () => {
             <div className="flex flex-col lg:flex-row gap-4 justify-center">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 justify-center">
                     {/* Input Field Card */}
-                    <Card className="col-span-12 lg:col-span-12 bg-[var(--card)] text-[var(--card-foreground)] shadow-2xl rounded-2xl border border-[var(--border)] p-0 m-0 overflow-hidden transition-colors">
+                    <Card className="col-span-12 lg:col-span-12 bg-[var(--card)] text-[var(--card-foreground)] shadow-2xl rounded-2xl border border-[var(--border)] p-0 m-0 overflow-hidden transition-colors glass-card">
                         <CardHeader className="flex flex-col items-center justify-center card-header px-6 py-6 sticky top-0 z-10 shadow-md mb-0 rounded-t-2xl">
-                            <CardTitle className="text-3xl font-extrabold text-[var(--primary-foreground)] tracking-wide drop-shadow-lg">
+                            <CardTitle className="text-3xl font-extrabold text-[var(--primary-foreground)]  tracking-wide drop-shadow-lg">
                                Select Input Details
                             </CardTitle>
                             <p className="text-[var(--primary-foreground)]/80 mt-2 text-sm font-medium text-center">
@@ -322,7 +322,7 @@ const vendorLedger = () => {
                             </p>
                         </CardHeader>
 
-                        <CardContent className="py-8 px-8 pt-4 bg-[var(--card)] text-[var(--card-foreground)]">
+                        <CardContent className="py-8 px-8 pt-4 bg-[var(--card)] text-[var(--card-foreground)] ">
                             <Form {...form}>
                                 <form
                                     onSubmit={form.handleSubmit(processData)}
@@ -338,7 +338,7 @@ const vendorLedger = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel
-                                                        className="font-semibold text-[var(--primary)]"
+                                                        className="font-semibold text-[var(--primary)] dark:text-[var(--primary-foreground)]"
                                                         htmlFor="service-name"
                                                     >
                                                         Select Service
@@ -349,14 +349,14 @@ const vendorLedger = () => {
                                                     >
                                                         <FormControl>
                                                             <SelectTrigger
-                                                                className="w-full rounded-lg border border-[var(--border)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)] transition bg-[var(--card)] text-[var(--card-foreground)]"
+                                                                className="w-full rounded-lg border border-[var(--border)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)] font-semibold transition bg-[var(--card)] text-[var(--card-foreground)]"
                                                                 id="service-name"
                                                                 aria-label="Select Service"
                                                             >
                                                                 <SelectValue placeholder="--Select service--" />
                                                             </SelectTrigger>
                                                         </FormControl>
-                                                        <SelectContent className="bg-[var(--card)] text-[var(--card-foreground)]">
+                                                        <SelectContent className="bg-[var(--card)]/95 text-[var(--card-foreground)] backdrop-blur-sm border border-[var(--border)] font-semibold">
                                                             {serviceOptions.map((option) => (
                                                                 <SelectItem
                                                                     key={option.value}
@@ -380,7 +380,7 @@ const vendorLedger = () => {
                                             render={() => (
                                                 <FormItem>
                                                     <FormLabel
-                                                        className="font-semibold text-[var(--primary)]"
+                                                        className="font-semibold text-[var(--primary)] dark:text-[var(--primary-foreground)]"
                                                         htmlFor="file-upload-1"
                                                     >
                                                         Upload Vendor Statement
@@ -423,7 +423,7 @@ const vendorLedger = () => {
                                             render={() => (
                                                 <FormItem>
                                                     <FormLabel
-                                                        className="font-semibold text-[var(--primary)]"
+                                                        className="font-semibold text-[var(--primary)] dark:text-[var(--primary-foreground)]"
                                                         htmlFor="file-upload-2"
                                                     >
                                                         Upload Vendor Ledger
@@ -464,7 +464,7 @@ const vendorLedger = () => {
                                     <div className="flex gap-4">
                                         <Button
                                             type="submit"
-                                            className="flex-1 font-bold flex items-center justify-center cursor-pointer bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] hover:from-[var(--secondary)] hover:to-[var(--primary)] shadow-lg rounded-lg transition focus:ring-2 focus:ring-blue-400"
+                                            className="flex-1 font-bold flex items-center justify-center cursor-pointer bg-gradient-to-r from-[var(--secondary)] to-[var(--primary)] text-[var(--primary-foreground)] hover:from-[var(--primary)] hover:to-[var(--secondary)] shadow-lg rounded-lg transition focus:ring-2 focus:ring-blue-400"
                                             disabled={isSubmitting}
                                             aria-label="Process"
                                         >
@@ -474,7 +474,7 @@ const vendorLedger = () => {
                                         <Button
                                             type="button"
                                             variant="outline"
-                                            className="flex-1 border-[var(--primary)] dark:text-[var(--primary-foreground)] cursor-pointer text-[var(--primary)] font-bold hover:bg-[var(--muted)] rounded-lg transition focus:ring-2 focus:ring-blue-400"
+                                            className="flex-1 border-[var(--primary)] dark:text-[var(--primary-foreground)] dark:border-[var(--primary-foreground)] cursor-pointer text-[var(--primary)] font-bold hover:bg-[var(--muted)] rounded-lg transition focus:ring-2 focus:ring-blue-400"
                                             onClick={clearForm}
                                             disabled={isSubmitting}
                                             aria-label="Clear"
@@ -505,4 +505,4 @@ const vendorLedger = () => {
     );
 };
 
-export default vendorLedger;
+export default VendorLedger;
