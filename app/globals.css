@@ -137,7 +137,7 @@
 
 /* iOS-style vibrant header with glass effect */
 .card-header {
-  border-radius: 15px 15px  0 0;
+  border-radius: 15px 15px 0 0;
   padding: 12px 20px;
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
@@ -149,17 +149,23 @@
     inset 0 1px 2px 0 rgba(255, 255, 255, 0.3);
 }
 
-.bg-card-header {
+.dark .card-header {
+   background: linear-gradient(135deg,
+      rgb(0, 123, 255) 0%,
+      #0a84ff9c 100%);
+}
+.rd-card-header {
   background: linear-gradient(135deg,
       #fa0505d5 0%,
       #fa050560 100%);
 }
 
-.dark .card-header {
+.dark .rd-card-header {
   background: linear-gradient(135deg,
-      rgba(10, 132, 255, 0.9) 0%,
-      rgba(30, 144, 255, 0.75) 100%);
+      #fa0505d5 0%,
+      #fa050560 100%);
 }
+
 
 /* iOS SF Pro inspired title */
 .card-title {

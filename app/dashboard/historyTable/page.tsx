@@ -217,7 +217,7 @@ const HistoryTableWithFilters = () => {
               <button
                 type="button"
                 onClick={handleClear}
-                className="border border-[var(--primary)] text-[var(--primary)] px-4 py-2 rounded-lg hover:bg-[var(--muted)] w-full focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-bold transition"
+                className="border border-[var(--primary)] dark:text-[var(--primary-foreground)] dark:border-[var(--primary-foreground)] cursor-pointer text-[var(--primary)] px-4 py-2 rounded-lg hover:bg-[var(--muted)] w-full focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-bold transition"
                 aria-label="Clear"
               >
                 Clear

@@ -131,7 +131,7 @@ export default function DashboardPage() {
             <div className="items-end flex-wrap gap-4">
               <Button
                 onClick={() => router.push("/auth/register")}
-                className="bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] font-bold hover:from-[var(--secondary)] hover:to-[var(--primary)] rounded-lg transition"
+                className="bg-gradient-to-r from-[var(--secondary)] to-[var(--primary)] text-[var(--primary-foreground)] font-bold hover:from-[var(--primary)] hover:to-[var(--secondary)] rounded-lg transition"
               >
                 Register New User
               </Button>
@@ -209,7 +209,7 @@ export default function DashboardPage() {
             </Card>
 
             <Card className="glass-card hover-glow cursor-pointer relative">
-              <CardHeader className="card-header bg-card-header flex justify-between items-start">
+              <CardHeader className="card-header rd-card-header flex justify-between items-start">
                 <CardTitle className="card-title">Current Month Expiry User</CardTitle>
               </CardHeader>
               <CardContent className="card-content text-red-600">
@@ -223,7 +223,7 @@ export default function DashboardPage() {
             </Card>
 
             <Card className="glass-card hover-glow cursor-pointer relative">
-              <CardHeader className="card-header bg-card-header flex justify-between items-start">
+              <CardHeader className="card-header rd-card-header dark:bg-red-800 flex justify-between items-start">
                 <CardTitle className="card-title">Past Month Expired Count</CardTitle>
               </CardHeader>
               <CardContent className="card-content text-red-600">

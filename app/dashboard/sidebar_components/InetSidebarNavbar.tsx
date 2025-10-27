@@ -65,7 +65,7 @@ export default function InetSidebarNavbar() {
           )}
         </div>
         <Button
-          className="border-[var(--primary)] text-[var(--primary)] bg-[var(--muted)] hover:bg-[var(--primary)] hover:text-[var(--primary-foreground)] transition"
+          className="border border-[var(--primary)] dark:text-[var(--primary-foreground)] bg-[var(--muted)] hover:bg-gray-800 dark:hover:bg-gray-100 hover:text-[var(--primary-foreground)] dark:hover:text-yellow-500 cursor-pointer transition-colors duration-300"
           variant="outline"
           size="icon"
           onClick={toggleTheme}

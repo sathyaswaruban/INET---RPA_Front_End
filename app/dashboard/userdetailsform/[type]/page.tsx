@@ -361,7 +361,7 @@ export default function UserDetailsForm() {
                                         <Button
                                             type="submit"
                                             disabled={isSubmitting}
-                                            className="bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] px-5 py-2 rounded-lg hover:from-[var(--secondary)] hover:to-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-bold transition w-full"
+                                            className="bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] cursor-pointer text-[var(--primary-foreground)] px-5 py-2 rounded-lg hover:from-[var(--secondary)] hover:to-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-bold transition w-full"
                                         >
                                             {isSubmitting ? "Loading..." : "Search"}
                                         </Button>
@@ -372,7 +372,7 @@ export default function UserDetailsForm() {
                                             type="button"
                                             onClick={handleClear}
                                             variant="outline"
-                                            className="border border-[var(--primary)] text-[var(--primary)] px-5 py-2 rounded-lg hover:bg-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-bold transition w-full"
+                                            className="border border-[var(--primary)] dark:text-[var(--primary-foreground)] cursor-pointer dark:border-[var(--primary-foreground)] text-[var(--primary)] px-5 py-2 rounded-lg hover:bg-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-bold transition w-full"
                                         >
                                             Clear
                                         </Button>
