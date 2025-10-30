@@ -120,7 +120,7 @@ export default function DashboardPage() {
   return (
     <>
       {/* Pass the user ID to make popup user-specific */}
-      <WelcomePopup userId={user.id} />
+      {/* <WelcomePopup userId={user.id} /> */}
 
       <div className="flex flex-col bg-[var(--background)] text-[var(--foreground)] p-4 md:p-8">
         {user.role === "ADMIN" && (

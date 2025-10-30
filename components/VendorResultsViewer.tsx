@@ -46,6 +46,8 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
         { key: "not_in_statement", label: "Not in Statement" },
         { key: "amount_mismatch", label: "Ledger & Stmnt Amount Mismatch" },
         { key: "credit_transactions_ledger", label: "Credit Transactions in Ledger" },
+        { key: "refund_amount_mismatch", label: "Refund Amount Mismatch" },
+        { key: "Credit_Trans_in_Ledger_not_in_Stmnt", label: " Credit_in_Ldgr_Not_in_Stmnt" },
     ];
 
 
@@ -97,13 +99,13 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
     }
     else if (service_name == "MATM") {
         orderedColumns = [
-            "BCID", "AMOUNT_STATEMENT", "AMOUNT_LEDGER", "RRN",
+            "BCID", "AMOUNT_STATEMENT", "AMOUNT_LEDGER", "RRN", "TRANSACTIONSTATUS",
             "DATE",
         ]
     }
     else if (service_name == "BBPS") {
         orderedColumns = [
-            "TRANS_REF_ID", "AMOUNT_LEDGER", "AMOUNT_STATEMENT", "DATE"
+            "TRANS_REF_ID", "AMOUNT_LEDGER", "AMOUNT_STATEMENT", "TRANSACTION_STATUS", "REFUNDED_AMOUNT", "DATE", "ACTUAL_TRANS_DATE",
         ];
     }
     else if (service_name == "LIC") {
@@ -170,7 +172,7 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
                 if (data.length > 0) {
                     try {
                         const worksheet = XLSX.utils.json_to_sheet(data, { header: orderedColumns });
-                        XLSX.utils.book_append_sheet(workbook, worksheet,  section.label || section.key);
+                        XLSX.utils.book_append_sheet(workbook, worksheet, section.label || section.key);
                     } catch (error) {
                         console.error(`Failed to add sheet for ${section.key}`, error);
                     }

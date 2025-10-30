@@ -32,6 +32,10 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
 
     // ✅ Direct access to flattened structure
     const combinedData = localData?.combined || [];
+    const excludedCategories = ["IHUB_FAIL_VEND_FAIL-NIL", "VEND_IHUB_SUC-NIL"];
+    const filteredCombinedLength = combinedData?.filter((item: any) =>
+        !excludedCategories.includes(item.CATEGORY)
+    ).length || 0
     const Total_success_count = localData?.Total_Success_count || 0;
     const Total_failed_count = localData?.Total_Failed_count || 0;
     const Excel_count = localData?.Excel_value_count || 0;
@@ -235,7 +239,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
                     {/* Column 3 */}
                     <div className="col-span-1 flex flex-col gap-2">
                         <CardTitle className="text-orange text-base bg-gray-100 text-center dark:bg-orange-900/40 px-3 py-1 rounded-lg shadow-sm">
-                            TOTAL: <span className="ml-1">{Total_success_count + Total_failed_count + combinedData.length}</span>
+                            TOTAL: <span className="ml-1">{Total_success_count + Total_failed_count + filteredCombinedLength}</span>
                         </CardTitle>
                         <CardTitle className="text-green-800 mt-3 text-sm  text-center  dark:bg-green-900/40 px-3 py-1 rounded-lg shadow-sm">
                             Total Success: <span className="ml-1">{Total_success_count}</span>
@@ -244,7 +248,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
                             Total Failed: <span className="ml-1">{Total_failed_count}</span>
                         </CardTitle>
                         <CardTitle className="text-blue-600 text-sm mt-3  text-center dark:bg-violet-900/40 px-3 py-1 rounded-lg shadow-sm">
-                            Mismatch Data Count: <span className="ml-1">{combinedData.length - (otherSections['IHUB_VEND_FAIL-NIL']?.length || 0)}</span>
+                            Mismatch Data Count: <span className="ml-1">{filteredCombinedLength}</span>
                         </CardTitle>
                     </div>
 
