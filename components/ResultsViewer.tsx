@@ -181,7 +181,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
         });
         const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-        saveAs(blob, `Mismatch_${service_name}_${fromDate}_${toDate}.xlsx`);
+        saveAs(blob, `Error_${service_name}_${fromDate}_${toDate}.xlsx`);
     };
 
     const formatValue = (value: any) => {
@@ -248,7 +248,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
                             Total Failed: <span className="ml-1">{Total_failed_count}</span>
                         </CardTitle>
                         <CardTitle className="text-blue-600 text-sm mt-3  text-center dark:bg-violet-900/40 px-3 py-1 rounded-lg shadow-sm">
-                            Mismatch Data Count: <span className="ml-1">{filteredCombinedLength}</span>
+                            Error Data Count: <span className="ml-1">{filteredCombinedLength}</span>
                         </CardTitle>
                     </div>
 
@@ -271,7 +271,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
                                 className="flex items-center gap-2 mt-3 border-blue-400 text-center hover:bg-blue-50 dark:hover:bg-blue-900/20 transition rounded-lg shadow-sm"
                             >
                                 <FileSpreadsheet className="h-4 w-4 text-green-600" />
-                                <span className="font-semibold text-red-600">Export Mismatched Data</span>
+                                <span className="font-semibold text-red-600">Export Error Data</span>
                             </Button>
                         )}
 
@@ -294,7 +294,7 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
             <Card className="shadow-xl rounded-xl mt-0 pt-0 pb-3 border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
                 <CardHeader className="flex flex-row items-center card-header  justify-between pb-2">
                     <CardTitle className="font-bold  text-2xl ml-5 text-[var(--primary-foreground)]">
-                        Mismatch Results ( {fromDate} → {toDate} )
+                        Detailed Results ( {fromDate} → {toDate} )
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">

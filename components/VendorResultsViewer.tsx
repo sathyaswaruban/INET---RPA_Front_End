@@ -28,7 +28,7 @@ interface VendorResultsViewerProps {
     responseData: any;
 }
 
-// VendorResultsViewer: Displays vendor reconciliation results with export and pagination features
+// VendorResultsViewer: Displays vendor reconciliation results with export and pagination features//
 export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerProps) => {
     const localData = responseData;
     const Statement_count = localData?.data?.statement_count;
@@ -48,6 +48,7 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
         { key: "credit_transactions_ledger", label: "Credit Transactions in Ledger" },
         { key: "refund_amount_mismatch", label: "Refund Amount Mismatch" },
         { key: "Credit_Trans_in_Ledger_not_in_Stmnt", label: " Credit_in_Ldgr_Not_in_Stmnt" },
+        { key: "failed_not_refunded", label: "Pending Refunds" }
     ];
 
 
@@ -74,8 +75,6 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
             { key: "matching_refunds", label: "Matching Refunds" },
         ];
     }
-
-
     const activeMatchedSections = matchedSection.filter(section => {
         const sectionData = otherSections[section.key];
         return Array.isArray(sectionData) && sectionData.length > 0;
@@ -136,7 +135,7 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
     }
     else {
         orderedColumns = [
-            "TXNID", "REFUND_TXNID", "REFID", "TYPE", "AMOUNT", "COMM", "TDS", "DATE"
+            "TXNID", "REFUND_TXNID", "REFID", "TYPE", "AMOUNT", "COMM", "TDS", "STATUS", "DATE", "REFUNDED_DATE"
         ];
     }
 
@@ -180,7 +179,7 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
             });
             const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
             const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
-            saveAs(blob, `VendorLedger_Mismatched_result_${service_name}_${formattedDate}.xlsx`);
+            saveAs(blob, `VendorLedger_Error_result_${service_name}_${formattedDate}.xlsx`);
         } catch (error) {
             console.error('Export error:', error);
             toast.error('Export failed: ' + (error as Error).message);
@@ -250,7 +249,7 @@ export const VendorResultsViewer = memo(({ responseData }: VendorResultsViewerPr
             {/* Detailed Results Card */}
             <Card className="shadow-xl rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--card-foreground)]">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="font-bold text-2xl ml-5 text-[var(--primary)] tracking-tight">Detailed Results</CardTitle>
+                    <CardTitle className="font-bold text-2xl ml-5 tracking-tight">Detailed Results</CardTitle>
                     {activeSections.length > 0 && (
                         <Button
                             onClick={exportAllTabsToExcel}

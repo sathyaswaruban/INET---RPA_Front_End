@@ -202,18 +202,8 @@ const VendorLedger = () => {
                 formData.append("vendor_statement", values.vendor_statement);
                 formData.append("vendor_ledger", values.vendor_ledger);
 
-                const res = await axios.post(
-                    "http://localhost:5000/api/vendorledger_reconciliation",
-                    formData,
-                    {
-                        headers: {
-                            "Content-Type": "multipart/form-data",
-                        },
-                        timeout: 120000,
-                    }
-                );
                 // const res = await axios.post(
-                //     "http://192.168.1.157:5000/api//vendorledger_reconciliation",
+                //     "http://localhost:5000/api/vendorledger_reconciliation",
                 //     formData,
                 //     {
                 //         headers: {
@@ -222,6 +212,16 @@ const VendorLedger = () => {
                 //         timeout: 120000,
                 //     }
                 // );
+                const res = await axios.post(
+                    "http://192.168.1.157:5000/api//vendorledger_reconciliation",
+                    formData,
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                        timeout: 120000,
+                    }
+                );
 
                 const response = {
                     ...res,
@@ -315,10 +315,10 @@ const VendorLedger = () => {
                     <Card className="col-span-12 lg:col-span-12 bg-[var(--card)] text-[var(--card-foreground)] shadow-2xl rounded-2xl border border-[var(--border)] p-0 m-0 overflow-hidden transition-colors glass-card">
                         <CardHeader className="flex flex-col items-center justify-center card-header px-6 py-6 sticky top-0 z-10 shadow-md mb-0 rounded-t-2xl">
                             <CardTitle className="text-3xl font-extrabold text-[var(--primary-foreground)]  tracking-wide drop-shadow-lg">
-                               Select Input Details
+                                Select Input Details
                             </CardTitle>
                             <p className="text-[var(--primary-foreground)]/80 mt-2 text-sm font-medium text-center">
-                               Please fill in the details below to process Vendor Data Comparison.
+                                Please fill in the details below to process Vendor Data Comparison.
                             </p>
                         </CardHeader>
 
