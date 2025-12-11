@@ -12,6 +12,7 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
+    FormDescription
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -36,9 +37,7 @@ const formSchema = z.object({
         message: "Please select a service",
     }),
     transactionType: z.string().optional(),
-    file: z.instanceof(File).refine(file => file.size > 0, {
-        message: "File is required",
-    }),
+    file: z.instanceof(File).optional(),
 }).refine(data => {
     if (data.fromDate && data.toDate) {
         const from = new Date(data.fromDate);
@@ -49,6 +48,15 @@ const formSchema = z.object({
 }, {
     message: "To Date must be after From Date",
     path: ["toDate"],
+}).refine(data => {
+    // Make file mandatory only for services other than IRCTC
+    if (data.serviceName && data.serviceName !== "IRCTC") {
+        return data.file && data.file.size > 0;
+    }
+    return true;
+}, {
+    message: "File is required for this service",
+    path: ["file"],
 });
 
 // Types
@@ -75,6 +83,8 @@ const serviceOptions = [
     { value: "CHITRAKOOT_SCA", label: "Chitrakoot RPT_SCA" },
     { value: "CHITRAKOOT_IS", label: "Chitrakoot IS_Quota" },
     { value: "IMPS", label: "ITI - IMPS" },
+    { value: "BBPS_DATA_ENTRY", label: "BBPS Data Entry" },
+    { value: "IRCTC", label: "IRCTC EBO Wallet Check" }
 ];
 
 const transactionOptions = [
@@ -130,7 +140,7 @@ const FilterForm = () => {
         mode: "onChange",
         reValidateMode: "onChange",
     });
-
+    const serviceName = form.watch("serviceName");
     // 👇 Add this effect to trigger validation when fromDate changes
     useEffect(() => {
         const subscription = form.watch((value, { name }) => {
@@ -188,7 +198,7 @@ const FilterForm = () => {
             serviceName: values.serviceName,
             fromDate: values.fromDate,
             toDate: values.toDate,
-            uploadedFileName: values.file.name,
+            uploadedFileName: values.file?.name || "No file uploaded",
             responseMessage: Message,
             responseStatus: status,
             transactionType: values.transactionType,
@@ -207,7 +217,7 @@ const FilterForm = () => {
             if (values.transactionType && values.transactionType !== "default") {
                 formData.append("transaction_type", values.transactionType);
             }
-            formData.append("file", values.file);
+            formData.append("file", values?.file || "No file uploaded");
             // const res = await axios.post("http://localhost:5000/api/reconciliation", formData, {
             //     headers: {
             //         "Content-Type": "multipart/form-data",
@@ -429,7 +439,7 @@ const FilterForm = () => {
                                                                 id="to-date"
                                                                 type="date"
                                                                 {...field}
-                                                                min={form.watch("fromDate") || ""}  // 👈 restrict To Date to be >= From Date
+                                                                min={form.watch("fromDate") || ""}
                                                                 aria-label="To Date"
                                                                 className="rounded-lg border border-[var(--border)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--ring)] transition bg-[var(--card)] text-[var(--card-foreground)]"
                                                             />
@@ -501,8 +511,11 @@ const FilterForm = () => {
                                         control={form.control}
                                         name="file"
                                         render={() => (
+
                                             <FormItem>
-                                                <FormLabel className="font-semibold text-[var(--primary)] dark:text-[var(--primary-foreground)]" htmlFor="file-upload">Upload Excel File</FormLabel>
+                                                <FormLabel className="font-semibold text-[var(--primary)] dark:text-[var(--primary-foreground)]" htmlFor="file-upload">
+                                                    Upload Excel File {form.watch("serviceName") !== "IRCTC" && " *"}
+                                                </FormLabel>
                                                 <div className="flex items-center gap-4">
                                                     <Button asChild variant="outline" className="border-[var(--primary)] hover:bg-[var(--muted)] font-semibold">
                                                         <label className="cursor-pointer" htmlFor="file-upload">
@@ -522,6 +535,15 @@ const FilterForm = () => {
                                                         {fileName}
                                                     </span>
                                                 </div>
+                                                {form.watch("serviceName") === "IRCTC" ? (
+                                                    <FormDescription>
+                                                        Optional for IRCTC service
+                                                    </FormDescription>
+                                                ) : (
+                                                    <FormDescription>
+                                                        Required for this service
+                                                    </FormDescription>
+                                                )}
                                                 <FormMessage />
                                             </FormItem>
                                         )}

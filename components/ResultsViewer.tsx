@@ -69,6 +69,8 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
         { key: "In_portal_date_diff", label: "In_Portal_Date_Diff" },
         { key: "not_in_vendor", label: "Not_In_Vendor" },
         { key: "bank_ref_not_updated", label: "Bank_Ref_Not_Updated" },
+        { key: "irctc_data", label: "IRCTC_Wallet_data" },
+
     ];
     const activeSections = dataSections.filter(section => {
         const sectionData = otherSections[section.key];
@@ -88,7 +90,8 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
             { key: "VEND_IHUB_SUC-NIL", label: "Vend_IHub_Succ - NIL" },
             { key: "IHUB_VEND_FAIL-NIL", label: "Vend_IHub_Fail - NIL" },
             { key: "iti_Matched", label: "Entries_Matched_in_ITI" },
-
+            // { key: "matched_bbps_data", label: "BBPS Matched Data" },
+            // { key: "irctc_data", label: "IRCTC_Wallet_data" },
         ];
     }
 
@@ -98,53 +101,77 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
     });
 
     // ✅ Same orderedColumns logic
-    if (["PASSPORT", "INSURANCE_OFFLINE"].includes(service_name)) {
-        orderedColumns = [
+    const columnMap: Record<string, string[]> = {
+        PASSPORT: [
             "CATEGORY", "TENANT_ID", "IHUB_REFERENCE", "REFID", "IHUB_USERNAME",
             "VENDOR_AMOUNT", "HUB_AMOUNT", "SERVICE_DATE", "VENDOR_DATE",
-            "VENDOR_STATUS", "IHUB_MASTER_STATUS", `${service_name}_STATUS`,
+            "VENDOR_STATUS", "IHUB_MASTER_STATUS", "PASSPORT_STATUS",
             "IHUB_LEDGER_STATUS", "BILL_FETCH_STATUS", "TENANT_LEDGER_STATUS",
             "TRANSACTION_DEBIT", "TRANSACTION_CREDIT", "COMMISSION_CREDIT", "COMMISSION_REVERSAL"
-        ];
-    } else if (service_name === "UPIQR") {
-        orderedColumns = [
+        ],
+        INSURANCE_OFFLINE: [
+            "CATEGORY", "TENANT_ID", "IHUB_REFERENCE", "REFID", "IHUB_USERNAME",
+            "VENDOR_AMOUNT", "HUB_AMOUNT", "SERVICE_DATE", "VENDOR_DATE",
+            "VENDOR_STATUS", "IHUB_MASTER_STATUS", "INSURANCE_OFFLINE_STATUS",
+            "IHUB_LEDGER_STATUS", "BILL_FETCH_STATUS", "TENANT_LEDGER_STATUS",
+            "TRANSACTION_DEBIT", "TRANSACTION_CREDIT", "COMMISSION_CREDIT", "COMMISSION_REVERSAL"
+        ],
+        UPIQR: [
             "CATEGORY", "TENANT_ID", "VENDOR_REFERENCE", "REFID", "REFERENCE_NO", "IHUB_USERNAME",
             "VENDOR_AMOUNT", "HUB_AMOUNT", "TRANS_MODE", "SERVICE_DATE", "VENDOR_DATE",
-            "VENDOR_STATUS", "IHUB_MASTER_STATUS", `${service_name}_STATUS`, "EBO_WALLET_CREDIT", "TRANSACTION_TYPE"
-
-        ];
-    } else if (["SULTANPURSCA", "SULTANPUR_IS", "CHITRAKOOT_IS", "CHITRAKOOT_SCA"].includes(service_name)) {
-        orderedColumns = [
+            "VENDOR_STATUS", "IHUB_MASTER_STATUS", "UPIQR_STATUS",
+            "EBO_WALLET_CREDIT", "TRANSACTION_TYPE"
+        ],
+        SULTANPURSCA: [
             "EBO_ID", "USERNAME", "VLE_ID", "REFID", "SERVICE_CODE", "APPLICATION_COUNT",
             "RATE", "TOTAL_AMOUNT", "JENSEVA_TYPE", "VENDOR_DATE", "SERVICE_DATE",
-            "SUB_DISTRICT", "VILLAGE",
-        ];
-    } else if (service_name === "MANUAL_TB") {
-        orderedColumns = [
+            "SUB_DISTRICT", "VILLAGE"
+        ],
+        SULTANPUR_IS: [
+            "EBO_ID", "USERNAME", "VLE_ID", "REFID", "SERVICE_CODE", "APPLICATION_COUNT",
+            "RATE", "TOTAL_AMOUNT", "JENSEVA_TYPE", "VENDOR_DATE", "SERVICE_DATE",
+            "SUB_DISTRICT", "VILLAGE"
+        ],
+        CHITRAKOOT_IS: [
+            "EBO_ID", "USERNAME", "VLE_ID", "REFID", "SERVICE_CODE", "APPLICATION_COUNT",
+            "RATE", "TOTAL_AMOUNT", "JENSEVA_TYPE", "VENDOR_DATE", "SERVICE_DATE",
+            "SUB_DISTRICT", "VILLAGE"
+        ],
+        CHITRAKOOT_SCA: [
+            "EBO_ID", "USERNAME", "VLE_ID", "REFID", "SERVICE_CODE", "APPLICATION_COUNT",
+            "RATE", "TOTAL_AMOUNT", "JENSEVA_TYPE", "VENDOR_DATE", "SERVICE_DATE",
+            "SUB_DISTRICT", "VILLAGE"
+        ],
+        MANUAL_TB: [
             "IHUB_USERNAME", "NAME", "BANK_NAME", "REFID", "ACC_NO", "UTR_NO", "AMOUNT",
-            `${service_name}_STATUS`, "SERVICE_DATE", "VENDOR_DATE",
-        ];
-    } else if (service_name === "IMPS") {
-        orderedColumns = [
+            "MANUAL_TB_STATUS", "SERVICE_DATE", "VENDOR_DATE",
+        ],
+        IMPS: [
             "ITI_ID", "REFID", "ACTUAL_AMOUNT", "REQUEST_AMOUNT", "VENDOR_AMOUNT",
-            "VENDOR_STATUS", `${service_name}_STATUS`, "VENDOR_DATE", "SERVICE_DATE",
-        ];
-    }
-    else if (service_name === "BBPS") {
-        orderedColumns = [
+            "VENDOR_STATUS", "IMPS_STATUS", "VENDOR_DATE", "SERVICE_DATE"
+        ],
+        BBPS: [
             "CATEGORY", "TENANT_ID", "IHUB_REFERENCE", "REFID", "BBPS_CATEGORY", "IHUB_USERNAME",
-            "VENDOR_AMOUNT", "HUB_AMOUNT", "COMMISSION_AMOUNT", "SERVICE_DATE",
-            "VENDOR_DATE", "VENDOR_STATUS", "IHUB_MASTER_STATUS", `${service_name}_STATUS`,
+            "VENDOR_AMOUNT", "HUB_AMOUNT", "COMMISSION_AMOUNT", "SERVICE_DATE", "VENDOR_DATE",
+            "VENDOR_STATUS", "IHUB_MASTER_STATUS", "BBPS_STATUS",
             "IHUB_LEDGER_STATUS", "BILL_FETCH_STATUS", "TENANT_LEDGER_STATUS",
             "TRANSACTION_DEBIT", "TRANSACTION_CREDIT", "COMMISSION_CREDIT", "COMMISSION_REVERSAL"
-        ];
-    }
-    else {
+        ],
+        IRCTC: [
+            "IHUB_REFERENCE_ID", "VENDOR_REF_ID", "DEBIT_AMOUNT", "CREDIT_AMOUNT",
+            "TRANSACTION_DEBIT", "TRANSACTION_CREDIT", "COMMISSION_CREDIT", "COMMISSION_REVERSAL"
+        ]
+    };
+
+    orderedColumns = columnMap[service_name];
+
+    if (!orderedColumns) {
         orderedColumns = [
             "CATEGORY", "TENANT_ID", "IHUB_REFERENCE", "REFID", "IHUB_USERNAME",
             "VENDOR_AMOUNT", "HUB_AMOUNT", "COMMISSION_AMOUNT", "SERVICE_DATE",
             "VENDOR_DATE", "VENDOR_STATUS", "IHUB_MASTER_STATUS", `${service_name}_STATUS`,
-            "IHUB_LEDGER_STATUS", "TENANT_LEDGER_STATUS", "TRANSACTION_DEBIT", "TRANSACTION_CREDIT", "COMMISSION_CREDIT", "COMMISSION_REVERSAL"
+            "IHUB_LEDGER_STATUS", "TENANT_LEDGER_STATUS", "TRANSACTION_DEBIT",
+            "TRANSACTION_CREDIT", "COMMISSION_CREDIT", "COMMISSION_REVERSAL"
         ];
     }
 
@@ -186,9 +213,22 @@ export const ResultsViewer = memo(({ responseData }: ResultsViewerProps) => {
 
     const formatValue = (value: any) => {
         if (value === null || value === undefined || value === "") return "N/A";
-        if (!isNaN(Number(value))) return Number(value).toFixed(2);
-        return String(value);
+
+        const str = String(value);
+
+        // If the value is all digits AND more than 12 digits → treat as ID, not number
+        if (/^\d+$/.test(str) && str.length > 6) {
+            return str; // return as-is
+        }
+
+        // If value is numeric → format to 1 decimal
+        if (!isNaN(Number(value))) {
+            return Number(value).toFixed(2);
+        }
+
+        return str;
     };
+
 
     const [paginationState, setPaginationState] = useState<{ [key: string]: number }>({});
     const itemsPerPage = 10;
