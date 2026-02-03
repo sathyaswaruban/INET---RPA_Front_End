@@ -103,19 +103,19 @@ export default function UserDetailsForm() {
         setIsSubmitting(true);
         try {
             const payload = { ...formData, tenantName };
-            const res = await axios.post("http://localhost:5000/api/getEbodetailedData", payload, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-                timeout: 120000,
-            });
-
-            // const res = await axios.post("http://192.168.1.157:5000/api/getEbodetailedData", payload, {
+            // const res = await axios.post("http://localhost:5000/api/getEbodetailedData", payload, {
             //     headers: {
             //         "Content-Type": "multipart/form-data",
             //     },
             //     timeout: 120000,
             // });
+
+            const res = await axios.post("http://192.168.1.157:5000/api/getEbodetailedData", payload, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                timeout: 120000,
+            });
 
             const response = {
                 ...res,
