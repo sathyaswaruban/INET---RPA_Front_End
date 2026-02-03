@@ -48,7 +48,7 @@ export default function IhubUserDetails() {
                     IHUB User Details
                 </h1>
             </div>
-            <div className="grid grid-cols-1 p-4 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 p-2 sm:grid-cols-2 lg:grid-cols-4 gap-10">
                 {userCards.map((card) => {
                     const Icon = card.icon;
                     return (
@@ -62,7 +62,7 @@ export default function IhubUserDetails() {
                             <CardContent className="card-content flex flex-col items-center justify-center h-full p-6">
                                 <div className="flex flex-col items-center gap-3">
                                     <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm">
-                                        <Icon size={40} className={card.textColor || "text-primary"}  />
+                                        <Icon size={40} className={card.textColor || "text-primary"} />
                                     </div>
                                     <p className={`font-semibold text-lg tracking-tight ${card.textColor}`}>
                                         {card.key}

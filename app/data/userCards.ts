@@ -1,4 +1,4 @@
-import { Users, UserCog,  User, Users2, UserCheck2, User2Icon } from "lucide-react"; // Lucide icons
+import { Users, UserCog, User, Users2, UserCheck2, User2Icon, FileText, FileArchive } from "lucide-react"; // Lucide icons
 
 export interface UserCard {
   key: string;        // Card title
@@ -50,5 +50,19 @@ export const userCards: UserCard[] = [
     apiUrl: "/api/users/inet-paccs",
     icon: User2Icon,
     textColor: "text-[#279989]"
+  },
+  {
+    key: "ITI Chitrakoot PS Report",
+    value: "iti-chitrakoot-ps-report",
+    apiUrl: "/api/users/iti-chitrakoot-ps-report",
+    icon: FileArchive,
+    textColor: "text-[#334155]"
+  },
+  {
+    key: "UP-edist Sultanpur PS Report From 2025",
+    value: "up-edist-sultanpur-ps-report",
+    apiUrl: "/api/users/up-edist-sultanpur-ps-report",
+    icon: FileText,
+    textColor: "text-[#0891B2]"
   }
 ];

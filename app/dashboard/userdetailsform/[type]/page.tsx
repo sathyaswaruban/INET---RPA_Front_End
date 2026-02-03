@@ -45,6 +45,10 @@ export default function UserDetailsForm() {
 
     const card = userCards.find((c) => c.value === type);
     const tenantName = card ? card.key : "Unknown Type";
+    const hideStatusForTenants = [
+        "ITI Chitrakoot PS Report",
+        "UP-edist Sultanpur PS Report From 2025"
+    ];
 
     useEffect(() => {
         setIsClient(true);
@@ -87,10 +91,11 @@ export default function UserDetailsForm() {
         e.preventDefault();
 
         setTouched({ from_date: true, to_date: true, status: true });
-
-        if (!formData.from_date || !formData.to_date || !formData.status) {
-            setError("All fields are mandatory.");
-            return;
+        if (tenantName !== "ITI Chitrakoot PS Report" && tenantName !== "UP-edist Sultanpur PS Report From 2025") {
+            if (!formData.from_date || !formData.to_date || !formData.status) {
+                setError("All fields are mandatory.");
+                return;
+            }
         }
 
         if (!validateDates()) return;
@@ -98,19 +103,19 @@ export default function UserDetailsForm() {
         setIsSubmitting(true);
         try {
             const payload = { ...formData, tenantName };
-            // const res = await axios.post("http://localhost:5000/api/getEbodetailedData", payload, {
-            //     headers: {
-            //         "Content-Type": "multipart/form-data",
-            //     },
-            //     timeout: 120000,
-            // });
-
-            const res = await axios.post("http://192.168.1.157:5000/api/getEbodetailedData", payload, {
+            const res = await axios.post("http://localhost:5000/api/getEbodetailedData", payload, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
                 timeout: 120000,
             });
+
+            // const res = await axios.post("http://192.168.1.157:5000/api/getEbodetailedData", payload, {
+            //     headers: {
+            //         "Content-Type": "multipart/form-data",
+            //     },
+            //     timeout: 120000,
+            // });
 
             const response = {
                 ...res,
@@ -231,27 +236,45 @@ export default function UserDetailsForm() {
             return 0;
         });
     };
-    let columnOrder: string[] = [];
 
-    if (tenantName === "ITI UP Users") {
-        columnOrder = [
+    const columnOrderMap: Record<string, string[]> = {
+        "ITI UP Users": [
             "UserName", "Vle_Id", "Customer_Name", "Phone_Num", "Email",
             "total_due_dates", "payment_done", "payment_not_done", "Expiry_Date"
-        ];
-    } else if (tenantName === "UPe-District Chitrakoot PS Users") {
-        columnOrder = [
+        ],
+
+        "UPe-District Chitrakoot PS Users": [
             "UserName", "Vle_Id", "Customer_Name", "Phone_Num", "Email", "Expiry_Date"
-        ];
-    } else if (
-        tenantName === "I-NET UP Users") {
-        columnOrder = [
-            "UserName", "Vle_Id", "Customer_Name", "Phone_Num", "Email", "Package_Name", "Expiry_Date"]
-    }
-    else {
-        columnOrder = [
-            "UserName", "Customer_Name", "Phone_Num", "Email", "Package_Name", "Expiry_Date"
-        ];
-    }
+        ],
+
+        "I-NET UP Users": [
+            "UserName", "Vle_Id", "Customer_Name", "Phone_Num", "Email",
+            "Package_Name", "Expiry_Date"
+        ],
+        "ITI Chitrakoot PS Report": [
+            "apna_id", "f_name", "phone_no", "rural_gram_panchyat", "rural_block", "Total_wallet_topup_amount", "main_tb_bal_amt",
+            "transaction_count", 'bt_transamount',
+        ],
+        "UP-edist Sultanpur PS Report From 2025": ["UserName",
+            "FirstName",
+            "MobileNo",
+            "Rural_block",
+            "rural_grampanchayat",
+            "total_trans_count",
+            "totalTransamount",
+            "total_subwallet_trans_count",
+            "total_subwallet_amount",]
+    };
+
+    // default fallback
+    const defaultColumnOrder = [
+        "UserName", "Customer_Name", "Phone_Num", "Email",
+        "Package_Name", "Expiry_Date"
+    ];
+
+    // get column order
+    const columnOrder = columnOrderMap[tenantName] || defaultColumnOrder;
+
 
     const exportToExcel = () => {
         if (!isClient) return;
@@ -259,7 +282,7 @@ export default function UserDetailsForm() {
         const data = getMainArray();
         if (data.length === 0) return;
 
-        // Reorder the data according to columnOrder
+        // Reorder data
         const orderedData = data.map((row) => {
             const newRow: any = {};
             columnOrder.forEach((col) => {
@@ -268,14 +291,36 @@ export default function UserDetailsForm() {
             return newRow;
         });
 
-        const ws = XLSX.utils.json_to_sheet(orderedData);
+        // 1️⃣ Create empty worksheet
+        const ws = XLSX.utils.aoa_to_sheet([]);
+
+        // 2️⃣ Add heading rows
+        const headingRows = [
+            [`Tenant Name : ${tenantName}${formData.status ? ` (Status: ${formData.status})` : ""}`],
+            [`From Date   : ${formData.from_date}`],
+            [`To Date     : ${formData.to_date}`],
+            [] // spacing
+        ];
+
+        XLSX.utils.sheet_add_aoa(ws, headingRows, { origin: "A1" });
+
+        // 3️⃣ Add table data starting from row 5
+        XLSX.utils.sheet_add_json(ws, orderedData, {
+            origin: "A5",
+            skipHeader: false
+        });
+
+        // 4️⃣ Create workbook
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        XLSX.utils.book_append_sheet(wb, ws, "Report");
+
         XLSX.writeFile(
             wb,
             `${tenantName}_Report_${new Date().toISOString().split("T")[0]}.xlsx`
         );
     };
+
+
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
 
@@ -332,7 +377,7 @@ export default function UserDetailsForm() {
                                                 }`}
                                         />
                                     </div>
-                                    <div className="flex-1 min-w-[200px] max-w-[250px]">
+                                    {!hideStatusForTenants.includes(tenantName) && (<div className="flex-1 min-w-[200px] max-w-[250px]">
                                         <label htmlFor="status" className="block text-m font-semibold mb-1 text-[var(--primary)] dark:text-[var(--primary-foreground)]">
                                             User Status
                                         </label>
@@ -356,7 +401,7 @@ export default function UserDetailsForm() {
                                                 )}
                                             </SelectContent>
                                         </Select>
-                                    </div>
+                                    </div>)}
                                     <div className="flex-1 min-w-[100px] max-w-[150px]">
                                         <Button
                                             type="submit"
